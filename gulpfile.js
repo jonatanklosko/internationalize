@@ -5,7 +5,9 @@ const gulp = require('gulp'),
       uglify = require('gulp-uglify'),
       babel = require('gulp-babel'),
       nodemon = require('gulp-nodemon'),
-      eslint = require('gulp-eslint');
+      eslint = require('gulp-eslint'),
+      jasmine = require('gulp-jasmine'),
+      JasmineSpecReporter = require('jasmine-spec-reporter');
 
 /* Sass */
 
@@ -74,6 +76,17 @@ gulp.task('lint', () => {
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
+});
+
+gulp.task('test:server', () => {
+  return gulp.src('spec/server/**/*.spec.js')
+    .pipe(jasmine({
+      reporter: new JasmineSpecReporter(),
+      config: {
+        spec_dir: 'spec',
+        helpers: ['server/spec-helper.js', 'server/support/**/*.js']
+      }
+    }));
 });
 
 /* Other */

@@ -11,19 +11,27 @@
   "author": "Jonatan Kłosko",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "2.3.0",
     "body-parser": "1.15.2",
     "express": "4.14.0",
-    "mongoose": "4.6.0"
+    "mongoose": "4.6.0",
+    "mongoose-unique-validator": "1.0.2"
   },
   "devDependencies": {
+    "app-module-path": "1.1.0",
     "babel-preset-es2015": "6.14.0",
+    "factory-girl": "4.0.0-beta.4",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
     "gulp-concat": "2.6.0",
     "gulp-eslint": "3.0.1",
+    "gulp-jasmine": "2.4.1",
     "gulp-nodemon": "2.1.0",
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.3.2",
-    "gulp-uglify": "2.0.0"
+    "gulp-uglify": "2.0.0",
+    "jasmine": "2.5.0",
+    "jasmine-promises": "0.4.1",
+    "jasmine-spec-reporter": "2.7.0"
   }
 }
