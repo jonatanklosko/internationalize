@@ -1,3 +1,5 @@
+const User = require('models/user');
+
 describe('User', () => {
   it('has a working factory', () => {
     return factory.build('user')
@@ -26,6 +28,10 @@ describe('User', () => {
     it('creates passwordDigest on assignment', () => {
       return factory.build('user', { password: "password" })
         .then(user => expect(user.passwordDigest).toBeDefined());
+    });
+
+    it('is validated even if not set', () => {
+      return helpers.expectValidationErrorToMatch('Password is required')(new User());
     });
   });
 

@@ -1,3 +1,6 @@
 angular.module('app', [
-  'ngRoute'
+  'ui.router',
+  'app.staticPages',
+  'app.users',
+  'app.services'
 ]);

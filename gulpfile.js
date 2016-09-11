@@ -43,7 +43,7 @@ gulp.task('js:app', () => {
 gulp.task('js', ['js:app'], () => {
   return gulp.src([
       'client/vendor/angular/angular.min.js',
-      'client/vendor/angular-route/angular-route.min.js',
+      'client/vendor/angular-ui-router/release/angular-ui-router.min.js',
       'client/build/app.min.js'
     ])
     .pipe(concat('app.min.js'))

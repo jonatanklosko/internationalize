@@ -14,7 +14,8 @@ const schema = new mongoose.Schema({
     required: [true, 'Name is required.']
   },
   passwordDigest: {
-    type: String
+    type: String,
+    default: ''
   }
 });
 
@@ -47,7 +48,6 @@ schema.path('passwordDigest').validate(function() {
     } else if(this.isNew) {
       this.invalidate('password', 'Password is required.');
     }
-
     if(this._passwordConfirmation !== this._password) {
       this.invalidate('passwordConfirmation', 'Password confirmation must match password.');
     }
