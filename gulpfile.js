@@ -7,7 +7,8 @@ const gulp = require('gulp'),
       nodemon = require('gulp-nodemon'),
       eslint = require('gulp-eslint'),
       jasmine = require('gulp-jasmine'),
-      JasmineSpecReporter = require('jasmine-spec-reporter');
+      JasmineSpecReporter = require('jasmine-spec-reporter'),
+      karma = require('karma');
 
 /* Sass */
 
@@ -87,6 +88,13 @@ gulp.task('test:server', () => {
         helpers: ['server/spec-helper.js', 'server/support/**/*.js']
       }
     }));
+});
+
+gulp.task('test:angular-unit', ['js'], done => {
+  new karma.Server({
+    configFile: `${__dirname}/spec/angular-unit/karma.conf.js`,
+    singleRun: true
+  }, done).start();
 });
 
 /* Other */

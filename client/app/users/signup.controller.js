@@ -9,7 +9,7 @@
     $scope.signup = user => {
       usersService.create(user)
         .success(() => $state.go('root'))
-        .error(console.log.bind(console));
+        .error(error => $scope.errors = error.errors);
     };
   }
 })();
