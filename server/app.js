@@ -6,23 +6,24 @@ require(`./config/environments/${process.env.NODE_ENV}`);
 const express = require('express'),
       mongoose = require('mongoose'),
       path = require('path'),
-      bodyParser = require('body-parser');
+      bodyParser = require('body-parser'),
+      passport = require('./config/passport'),
+      appRouter = require('./config/routes');
 
 mongoose.Promise = Promise;
 
 /* Create the app. */
 let app = express();
 
-/* Register used middleware. */
-
-app.use(bodyParser.json());
+/* Register the middleware used. */
 
 const staticFilesPath = path.join(`${__dirname}/../client`);
 app.use(express.static(staticFilesPath));
+app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(appRouter);
 
-require('./config/routes')(app);
-
-/* Expose app module API. */
+/* Expose the app module API. */
 
 let server;
 
