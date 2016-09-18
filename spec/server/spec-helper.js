@@ -5,7 +5,7 @@ require('app-module-path').addPath(`${__dirname}/../../server`);
 global.jasmineRequire = { interface: () => {} };
 require('jasmine-promises');
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
       factoryGirl = require('factory-girl');
 
 global.factory = factoryGirl.factory;

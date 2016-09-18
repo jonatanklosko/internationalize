@@ -1,7 +1,11 @@
 const Router = require('express').Router,
-      controllers = require('../controllers');
+      controllers = require('../controllers'),
+      status = require('http-status');
 
 let app = Router();
+
+const authenticateUser = (req, res, next) =>
+  req.isAuthenticated() ? next() : res.status(status.UNAUTHORIZED).send('Unauthorized request.');
 
 /* API routes ('/api') */
 app.use('/api', Router()
@@ -11,6 +15,8 @@ app.use('/api', Router()
 /* Authentication routes ('/auth') */
 app.use('/auth', Router()
   .post('/signin', controllers.auth.signin)
+  .get('/signout', authenticateUser, controllers.auth.signout)
+  .get('/me', authenticateUser, controllers.auth.me)
 );
 
 /* Application routes ('/') */

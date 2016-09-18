@@ -5,7 +5,7 @@ describe('UsersController', () => {
     it('when the data is valid creates a new user', () => {
       return factory.attrs('user')
         .then(attributes =>
-          request.post('/users')
+          request.post('/api/users')
             .send(attributes)
             .promisify())
         .then(() => User.count())
@@ -15,7 +15,7 @@ describe('UsersController', () => {
     it('when the data is invalid respods with validation errors', () => {
       return factory.attrs('user', { username: '' })
         .then(attributes =>
-          request.post('/users')
+          request.post('/api/users')
             .send(attributes)
             .promisify())
         .then(response => {

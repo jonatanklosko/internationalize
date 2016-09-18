@@ -2,11 +2,14 @@ const User = require('../models/user'),
       status = require('http-status');
 
 class UsersController {
-  create(req, res) {
+  create(req, res, next) {
     User.create(req.body)
-      .then(user => res.status(status.CREATED).json({ user: user }))
+      .then(user =>
+        req.logIn(user, error =>
+          error ? next(error)
+                : res.status(status.CREATED).json({ user: user })))
       .catch(error => res.status(status.UNPROCESSABLE_ENTITY).json({ errors: error.errors }));
   }
-};
+}
 
 module.exports = new UsersController();

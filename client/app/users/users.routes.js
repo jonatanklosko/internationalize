@@ -8,8 +8,13 @@
     $stateProvider
       .state('signup', {
         url: '/signup',
-        templateUrl: 'app/users/signup.template.html',
+        templateUrl: 'app/users/signup/signup.template.html',
         controller: 'SignupController'
+      })
+      .state('signin', {
+        url: '/signin',
+        templateUrl: 'app/users/signin/signin.template.html',
+        controller: 'SigninController'
       });
   }
 })();

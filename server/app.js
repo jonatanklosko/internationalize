@@ -7,6 +7,7 @@ const express = require('express'),
       mongoose = require('mongoose'),
       path = require('path'),
       bodyParser = require('body-parser'),
+      session = require('express-session'),
       passport = require('./config/passport'),
       appRouter = require('./config/routes');
 
@@ -20,7 +21,9 @@ let app = express();
 const staticFilesPath = path.join(`${__dirname}/../client`);
 app.use(express.static(staticFilesPath));
 app.use(bodyParser.json());
+app.use(session({ secret: process.env.SESSION_SECRET }));
 app.use(passport.initialize());
+app.use(passport.session());
 app.use(appRouter);
 
 /* Expose the app module API. */
