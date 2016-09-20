@@ -33,19 +33,37 @@ request.Request.prototype.promisify = function() {
 /* Prefix paths with the base url.
    Temporary solution until https://github.com/koenpunt/superagent-use/pull/3
    is merged and both superagent-use and superagent-prefix can be used. */
-const _end = request.Request.prototype.end;
+const __end = request.Request.prototype.end;
 request.Request.prototype.end = function(fn) {
   if(this.url[0] === '/') {
     this.url = `${process.env.BASE_URL}${this.url}`;
   }
-  return _end.call(this, fn);
+  return __end.call(this, fn);
 };
+/* This monkeypatching is meant to provide request (superagent) with an ability
+   to handle cookies stuff. It's mostly for tests when a user session is involved. */
+let cookie;
+const _end = request.Request.prototype.end;
+request.Request.prototype.end = function(fn) {
+  if(cookie) {
+    this.set('Cookie', cookie);
+  }
+  return _end.call(this, (error, response) => {
+    cookie = response && response.headers && response.headers['set-cookie'];
+    fn(error, response);
+  });
+};
+/* Clean cookies before each test. */
+beforeEach(() => cookie = null);
+
+
+/* Set up the app. */
 
 const app = require('app');
 
 beforeEach(done => {
   app.run(() => {
-    // Clean the database.
+    /* Clean the database. */
     mongoose.connection.db.dropDatabase(done);
   });
 });

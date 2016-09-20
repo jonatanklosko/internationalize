@@ -5,7 +5,7 @@ const Router = require('express').Router,
 let app = Router();
 
 const authenticateUser = (req, res, next) =>
-  req.isAuthenticated() ? next() : res.status(status.UNAUTHORIZED).send('Unauthorized request.');
+  req.isAuthenticated() ? next() : res.status(status.UNAUTHORIZED).json({ error: 'Unauthorized request.' });
 
 /* API routes ('/api') */
 app.use('/api', Router()

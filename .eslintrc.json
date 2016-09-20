@@ -6,5 +6,8 @@
     "node": true,
     "browser": true,
     "jasmine": true
+  },
+  "rules": {
+    "no-console": "off"
   }
 }

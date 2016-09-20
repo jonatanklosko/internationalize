@@ -21,7 +21,11 @@ let app = express();
 const staticFilesPath = path.join(`${__dirname}/../client`);
 app.use(express.static(staticFilesPath));
 app.use(bodyParser.json());
-app.use(session({ secret: process.env.SESSION_SECRET }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(appRouter);

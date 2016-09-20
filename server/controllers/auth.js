@@ -19,7 +19,7 @@ class AuthController {
 
   signout(req, res) {
     req.logOut();
-    res.status(status.OK).send('Signed out successfully.');
+    res.status(status.OK).json({ message: 'Signed out successfully.' });
   }
 
   me(req, res) {

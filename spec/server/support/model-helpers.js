@@ -1,7 +1,8 @@
 /**
- * Helpers meant to be used in Jasmine specs in promise chain.
+ * Helpers meant to be used in Jasmine specs in a promise chain.
+ * These are realated to model specs.
  */
-global.helpers = {
+global.helpers = Object.assign(global.helpers || {}, {
   /**
    * @example
    * getDocumentAsync()
@@ -29,4 +30,4 @@ global.helpers = {
     return doc => doc.validate()
       .catch(error => fail(`Expected document to be valid. But got an error: '${error}'.`));
   }
-};
+});

@@ -1,0 +1,7 @@
+{
+  "globals": {
+    "factory": false,
+    "request": false,
+    "helpers": false
+  }
+}
