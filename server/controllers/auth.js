@@ -2,7 +2,7 @@ const status = require('http-status'),
       passport = require('passport');
 
 class AuthController {
-  signin(req, res, next) {
+  signIn(req, res, next) {
     passport.authenticate('local', {
       badRequestMessage: 'Please provide both username and password.'
     }, (error, user, info) => {
@@ -17,7 +17,7 @@ class AuthController {
     })(req, res, next);
   }
 
-  signout(req, res) {
+  signOut(req, res) {
     req.logOut();
     res.status(status.OK).json({ message: 'Signed out successfully.' });
   }

@@ -1,11 +1,11 @@
 (() => {
   angular.module('app.users')
-    .controller('SigninController', SigninController);
+    .controller('SignInController', SignInController);
 
-  function SigninController($scope, authService, $state) {
+  function SignInController($scope, authService, $state) {
     'ngInject';
 
-    $scope.signin = credentials => {
+    $scope.signIn = credentials => {
       authService.signIn(credentials)
         .then(() => {
           $scope.error = null;

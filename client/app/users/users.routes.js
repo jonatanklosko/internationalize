@@ -6,15 +6,15 @@
     'ngInject';
 
     $stateProvider
-      .state('signup', {
+      .state('signUp', {
         url: '/signup',
-        templateUrl: 'app/users/signup/signup.template.html',
-        controller: 'SignupController'
+        templateUrl: 'app/users/sign-up/sign-up.template.html',
+        controller: 'SignUpController'
       })
-      .state('signin', {
+      .state('signIn', {
         url: '/signin',
-        templateUrl: 'app/users/signin/signin.template.html',
-        controller: 'SigninController'
+        templateUrl: 'app/users/sign-in/sign-in.template.html',
+        controller: 'SignInController'
       });
   }
 })();

@@ -1,12 +1,12 @@
 (() => {
   angular.module('app.users')
-    .controller('SignupController', SignupController);
+    .controller('SignUpController', SignUpController);
 
-  function SignupController($scope, userService, $state) {
+  function SignUpController($scope, userService, $state) {
     'ngInject';
 
     $scope.user = {};
-    $scope.signup = user => {
+    $scope.signUp = user => {
       userService.create(user)
         .then(() => $state.go('root'))
         .catch(errors => $scope.errors = errors);
