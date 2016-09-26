@@ -11,15 +11,6 @@
 
     return {
       /**
-       * @param {Object} A new user data.
-       * @return {Promise} Resolved with the user or rejected with validation errors.
-       */
-      signUp: userData =>
-        $http.post('/api/users', userData)
-          .then(captureUser)
-          .catch(res => $q.reject(res.data.errors)),
-
-      /**
        * @param {Object} User credentials (username and password).
        * @return {Promise} Resolved with the user or rejected with an error.
        */
@@ -34,6 +25,12 @@
       signOut: () =>
         $http.delete('/auth/signout')
           .then(() => user = null),
+
+      /**
+       * @param {Object} A user data.
+       * @return {Object} The user data.
+       */
+      setCurrentUser: userData => user = userData,
 
       /**
        * @return {Promise} Resolved with the current user.

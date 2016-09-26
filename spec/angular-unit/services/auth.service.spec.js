@@ -45,26 +45,6 @@ describe('authService', () => {
     });
   });
 
-  describe('signUp', () => {
-    it('when the response is successful, resolves with the new user', done => {
-      $httpBackend.expectPOST('/api/users', userData).respond(201, { user: userData });
-      authService.signUp(userData)
-        .then(user => expect(user).toEqual(userData))
-        .then(done, done.fail);
-      $httpBackend.flush();
-    });
-
-    it('when the response is unsuccessful, rejects with errors', done => {
-      const errors = { name: 'Too long' };
-      $httpBackend.expectPOST('/api/users').respond(422, { errors: errors });
-      authService.signUp({})
-        .catch(forward)
-        .then(err => expect(err).toEqual(errors))
-        .then(done, done.fail);
-      $httpBackend.flush();
-    });
-  });
-
   describe('signIn', () => {
     it('when the response is successful, resolves with the new user', done => {
       $httpBackend.expectPOST('/auth/signin', credentials).respond(200, { user: userData });
@@ -87,12 +67,10 @@ describe('authService', () => {
 
   describe('signOut', () => {
     it('clears the user data cache', done => {
-      $httpBackend.expectPOST('/auth/signin', credentials).respond(200, { user: userData });
       $httpBackend.expectDELETE('/auth/signout').respond(200);
       $httpBackend.expectGET('/auth/me').respond(401, { error: 'Unauthorized request.' });
-      authService.signIn(credentials)
-        .then(user => expect(user).toEqual(userData))
-        .then(() => authService.signOut())
+      authService.setCurrentUser(userData);
+      authService.signOut()
         .then(() => authService.currentUser())
         .then(user => expect(user).toBeNull())
         .then(done, done.fail);
