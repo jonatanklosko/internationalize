@@ -15,7 +15,7 @@ app.use('/api', Router()
 /* Authentication routes ('/auth') */
 app.use('/auth', Router()
   .post('/signin', controllers.auth.signin)
-  .get('/signout', authenticateUser, controllers.auth.signout)
+  .delete('/signout', authenticateUser, controllers.auth.signout)
   .get('/me', authenticateUser, controllers.auth.me)
 );
 

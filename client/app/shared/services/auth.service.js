@@ -2,9 +2,9 @@
   angular.module('app.services')
     .factory('authService', authServiceFactory);
 
-  authServiceFactory.$inject = ['$http'];
+  authServiceFactory.$inject = ['$http', '$q'];
 
-  function authServiceFactory($http) {
+  function authServiceFactory($http, $q) {
     let user = null;
 
     const captureUser = res => user = res.data.user;
@@ -17,7 +17,7 @@
       signUp: userData =>
         $http.post('/api/users', userData)
           .then(captureUser)
-          .catch(res => Promise.reject(res.data.errors)),
+          .catch(res => $q.reject(res.data.errors)),
 
       /**
        * @param {Object} User credentials (username and password).
@@ -26,20 +26,20 @@
       signIn: credentials =>
         $http.post('/auth/signin', credentials)
           .then(captureUser)
-          .catch(res => Promise.reject(res.data.error)),
+          .catch(res => $q.reject(res.data.error)),
 
       /**
        * @return {Promise} Resolved when the current user is signed out.
        */
       signOut: () =>
-        $http.get('/auth/signout')
+        $http.delete('/auth/signout')
           .then(() => user = null),
 
       /**
        * @return {Promise} Resolved with the current user.
        */
       currentUser: () =>
-        user ? Promise.resolve(user)
+        user ? $q.resolve(user)
              : $http.get('/auth/me').then(captureUser).catch(() => null)
     };
   }
