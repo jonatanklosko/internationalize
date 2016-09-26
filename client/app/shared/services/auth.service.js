@@ -2,9 +2,9 @@
   angular.module('app.services')
     .factory('authService', authServiceFactory);
 
-  authServiceFactory.$inject = ['$http', '$q'];
-
   function authServiceFactory($http, $q) {
+    'ngInject';
+
     let user = null;
 
     const captureUser = res => user = res.data.user;

@@ -2,9 +2,9 @@
   angular.module('app.users')
     .controller('SignupController', SignupController);
 
-  SignupController.$inject = ['$scope', 'userService', '$state'];
-
   function SignupController($scope, userService, $state) {
+    'ngInject';
+
     $scope.user = {};
     $scope.signup = user => {
       userService.create(user)

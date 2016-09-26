@@ -4,6 +4,7 @@ const gulp = require('gulp'),
       concat = require('gulp-concat'),
       uglify = require('gulp-uglify'),
       babel = require('gulp-babel'),
+      ngAnnotate = require('gulp-ng-annotate'),
       nodemon = require('gulp-nodemon'),
       eslint = require('gulp-eslint'),
       jasmine = require('gulp-jasmine'),
@@ -37,6 +38,7 @@ gulp.task('js:app', () => {
     .pipe(babel({
       presets: ['es2015']
     }))
+    .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(gulp.dest('client/build'));
 });

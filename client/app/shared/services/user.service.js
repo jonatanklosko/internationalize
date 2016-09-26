@@ -2,9 +2,9 @@
   angular.module('app.services')
     .factory('userService', userServiceFactory);
 
-  userServiceFactory.$inject = ['$http', '$q', 'authService'];
-
   function userServiceFactory($http, $q, authService) {
+    'ngInject';
+
     return {
       /**
        * @param {Object} A new user data.

@@ -2,9 +2,9 @@
   angular.module('app.users')
     .controller('SigninController', SigninController);
 
-  SigninController.$inject = ['$scope', 'authService', '$state'];
-
   function SigninController($scope, authService, $state) {
+    'ngInject';
+
     $scope.signin = credentials => {
       authService.signIn(credentials)
         .then(() => {

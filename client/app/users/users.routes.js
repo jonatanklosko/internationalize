@@ -2,9 +2,9 @@
   angular.module('app.users')
     .config(config);
 
-  config.$inject = ['$stateProvider'];
-
   function config($stateProvider) {
+    'ngInject';
+
     $stateProvider
       .state('signup', {
         url: '/signup',

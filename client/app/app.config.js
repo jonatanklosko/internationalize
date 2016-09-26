@@ -2,9 +2,9 @@
   angular.module('app')
     .config(config);
 
-  config.$inject = ['$urlRouterProvider'];
-
   function config($urlRouterProvider) {
+    'ngInject';
+
     // Set the default route.
     $urlRouterProvider.otherwise('/');
   }

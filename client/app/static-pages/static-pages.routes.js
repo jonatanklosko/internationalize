@@ -2,9 +2,9 @@
   angular.module('app.staticPages')
     .config(config);
 
-  config.$inject = ['$stateProvider'];
-
   function config($stateProvider) {
+    'ngInject';
+
     $stateProvider
       .state('root', {
         url: '/',
