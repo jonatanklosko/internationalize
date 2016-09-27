@@ -8,6 +8,7 @@ const express = require('express'),
       path = require('path'),
       bodyParser = require('body-parser'),
       session = require('express-session'),
+      MongoDbStore = require('connect-mongodb-session')(session),
       passport = require('./config/passport'),
       appRouter = require('./config/routes');
 
@@ -23,6 +24,10 @@ app.use(express.static(staticFilesPath));
 app.use(bodyParser.json());
 app.use(session({
   secret: process.env.SESSION_SECRET,
+  store: new MongoDbStore({
+    uri: process.env.MONGODB_URI,
+    collection: 'userSessions'
+  }),
   resave: false,
   saveUninitialized: false
 }));
