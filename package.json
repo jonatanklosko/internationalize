@@ -40,6 +40,8 @@
     "karma-jasmine": "1.0.2",
     "karma-ng-html2js-preprocessor": "1.0.0",
     "karma-spec-reporter": "0.0.26",
-    "superagent": "2.2.0"
+    "superagent": "2.2.0",
+    "superagent-prefix": "0.0.2",
+    "superagent-use": "0.1.0"
   }
 }
