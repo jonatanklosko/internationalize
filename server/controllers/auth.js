@@ -1,5 +1,5 @@
-const status = require('http-status'),
-      passport = require('passport');
+const status = require('http-status');
+const passport = require('passport');
 
 class AuthController {
   signIn(req, res, next) {

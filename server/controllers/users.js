@@ -1,5 +1,5 @@
-const User = require('../models/user'),
-      status = require('http-status');
+const User = require('../models/user');
+const status = require('http-status');
 
 class UsersController {
   create(req, res, next) {

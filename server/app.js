@@ -3,14 +3,14 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 require(`./config/environments/${process.env.NODE_ENV}`);
 
 /* Load dependencies. */
-const express = require('express'),
-      mongoose = require('mongoose'),
-      path = require('path'),
-      bodyParser = require('body-parser'),
-      session = require('express-session'),
-      MongoDbStore = require('connect-mongodb-session')(session),
-      passport = require('./config/passport'),
-      appRouter = require('./config/routes');
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoDbStore = require('connect-mongodb-session')(session);
+const passport = require('./config/passport');
+const appRouter = require('./config/routes');
 
 mongoose.Promise = Promise;
 

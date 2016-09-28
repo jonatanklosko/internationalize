@@ -1,6 +1,6 @@
-const Router = require('express').Router,
-      controllers = require('../controllers'),
-      status = require('http-status');
+const Router = require('express').Router;
+const controllers = require('../controllers');
+const status = require('http-status');
 
 let app = Router();
 

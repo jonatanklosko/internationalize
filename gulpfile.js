@@ -1,15 +1,15 @@
-const gulp = require('gulp'),
-      sass = require('gulp-sass'),
-      rename = require('gulp-rename'),
-      concat = require('gulp-concat'),
-      uglify = require('gulp-uglify'),
-      babel = require('gulp-babel'),
-      ngAnnotate = require('gulp-ng-annotate'),
-      nodemon = require('gulp-nodemon'),
-      eslint = require('gulp-eslint'),
-      jasmine = require('gulp-jasmine'),
-      JasmineSpecReporter = require('jasmine-spec-reporter'),
-      karma = require('karma');
+const gulp = require('gulp');
+const sass = require('gulp-sass');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+const babel = require('gulp-babel');
+const ngAnnotate = require('gulp-ng-annotate');
+const nodemon = require('gulp-nodemon');
+const eslint = require('gulp-eslint');
+const jasmine = require('gulp-jasmine');
+const JasmineSpecReporter = require('jasmine-spec-reporter');
+const karma = require('karma');
 
 /* Sass */
 
