@@ -15,15 +15,22 @@ describe('mongooseValidations directive', () => {
   beforeEach(() => {
     form = $compile(`
       <form mongoose-validations errors-source="errors">
-        <input type="text" name="name">
+        <md-input-container>
+          <input type="text" name="name">
+        </md-input-container>
       </form>
     `)($rootScope);
   });
 
+  it('inserts an error container after an input', () => {
+    let errorMessage = form.find('input[name="name"] ~ .error-message');
+    expect(errorMessage.length).toEqual(1);
+  });
+
   describe('without errors', () => {
-    it('does not show errors container', () => {
-      let errorsContainer = form.find('.form-errors');
-      expect(errorsContainer.is(':visible')).toEqual(false);
+    it('does not show error message', () => {
+      let errorMessage = form.find('.error-message');
+      expect(errorMessage.is(':visible')).toEqual(false);
     });
   });
 
@@ -37,21 +44,21 @@ describe('mongooseValidations directive', () => {
       $rootScope.$digest();
     });
 
-    it('shows errors container with error messages', () => {
-      let errorsContainer = form.find('.form-errors');
-      expect(errorsContainer.html()).toContain('Name is required');
+    it('shows the error message', () => {
+      let errorsMessage = form.find('.error-message');
+      expect(errorsMessage.html()).toContain('Name is required');
     });
 
-    it('adds "invalid" class to the input with name matching an error key', () => {
-      let input = form.find('input[name="name"]');
-      expect(input.hasClass('invalid')).toEqual(true);
+    it('adds "md-input-invalid" class to the md-input-container', () => {
+      let inputContainer = form.find('md-input-container');
+      expect(inputContainer.hasClass('md-input-invalid')).toEqual(true);
     });
 
-    it('removes "invalid" class from the input when an error disappears', () => {
+    it('removes "md-input-invalid" class from the md-input-container when an error disappears', () => {
       $rootScope.errors = {};
       $rootScope.$digest();
-      let input = form.find('input[name="name"]');
-      expect(input.hasClass('invalid')).toEqual(false);
+      let inputContainer = form.find('md-input-container');
+      expect(inputContainer.hasClass('md-input-invalid')).toEqual(false);
     });
   });
 });

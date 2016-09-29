@@ -2,25 +2,32 @@
   angular.module('app.directives')
     .directive('mongooseValidations', mongooseValidations);
 
-  function mongooseValidations() {
+  function mongooseValidations($compile) {
+    'ngInject';
+
     return {
       restrict: 'A',
-      transclude: true,
-      templateUrl: 'app/shared/directives/mongoose-validations.template.html',
       scope: {
         errors: '=errorsSource'
       },
       link: function($scope, $element) {
-        $scope.$watch('errors', (errors, oldErrors) => {
-          for(let field in Object.assign({}, errors, oldErrors)) {
-            let formElement = angular.element($element[0].querySelectorAll(`[name="${field}"]`));
-            if(errors[field]) {
-              formElement.addClass('invalid');
-            } else {
-              formElement.removeClass('invalid');
-            }
+        for(let domElement of $element[0].querySelectorAll('[name]')) {
+          let input = angular.element(domElement);
+          let name = input.attr('name');
+
+          let messageTemplate = `<div class="error-message" md-colors="{color: 'warn-A700'}" ng-show="errors.${name}">
+                                   <small>{{ errors.${name}.message }}</small>
+                                 </div>`;
+          let message = $compile(angular.element(messageTemplate))($scope);
+          input.after(message);
+
+          let mdInputContainer = input.parent();
+          if(mdInputContainer[0].tagName === 'MD-INPUT-CONTAINER') {
+            $scope.$watch(`errors.${name}`, (error) => {
+              mdInputContainer.toggleClass('md-input-invalid', !!error);
+            });
           }
-        });
+        }
       }
     };
   }

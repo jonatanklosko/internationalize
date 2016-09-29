@@ -1,19 +1,21 @@
+<span class="md-title">Sign up</span>
+
 <form mongoose-validations errors-source="errors">
-  <div class="form-group">
+  <md-input-container class="md-block">
     <label for="username">Username</label>
-    <input type="text" ng-model="user.username" class="form-control">
-  </div>
-  <div class="form-group">
+    <input type="text" name="username" ng-model="user.username">
+  </md-input-container>
+  <md-input-container class="md-block">
     <label for="name">Full name</label>
-    <input type="text" ng-model="user.name" class="form-control">
-  </div>
-  <div class="form-group">
+    <input type="text" name="name" ng-model="user.name">
+  </md-input-container>
+  <md-input-container class="md-block">
     <label for="username">Password</label>
-    <input type="password" ng-model="user.password" class="form-control">
-  </div>
-  <div class="form-group">
+    <input type="password" name="password" ng-model="user.password">
+  </md-input-container>
+  <md-input-container class="md-block">
     <label for="username">Password confirmation</label>
-    <input type="password" ng-model="user.passwordConfirmation" class="form-control">
-  </div>
-  <button type="submit" class="btn btn-primary" ng-click="signUp(user)">Sign Up</button>
+    <input type="password" name="passwordConfirmation" ng-model="user.passwordConfirmation">
+  </md-input-container>
+  <md-button type="submit" class="md-raised md-primary" ng-click="signUp(user)">Sign up</md-button>
 </form>

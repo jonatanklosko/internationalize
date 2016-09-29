@@ -1,12 +1,13 @@
-<div class="alert alert-danger" ng-show="error">{{ error }}</div>
+<span class="md-title">Sign in</span>
+
 <form>
-  <div class="form-group">
+  <md-input-container class="md-block">
     <label for="username">Username</label>
-    <input type="text" ng-model="credentials.username" class="form-control">
-  </div>
-  <div class="form-group">
+    <input type="text" name="username" ng-model="credentials.username">
+  </md-input-container>
+  <md-input-container class="md-block">
     <label for="username">Password</label>
-    <input type="password" ng-model="credentials.password" class="form-control">
-  </div>
-  <button type="submit" class="btn btn-primary" ng-click="signIn(credentials)">Sign In</button>
+    <input type="password" name="password" ng-model="credentials.password">
+  </md-input-container>
+  <md-button type="submit" class="md-raised md-primary" ng-click="signIn(credentials)">Sign in</md-button>
 </form>
