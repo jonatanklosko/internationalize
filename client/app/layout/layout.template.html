@@ -1,0 +1,16 @@
+<div layout="column" flex ng-controller="LayoutController">
+  <md-toolbar class="md-toolbar-tools md-whiteframe-2dp">
+    <a ui-sref="root">Internationalize</a>
+  </md-toolbar>
+  <div layout="row" flex>
+    <md-sidenav class="md-whiteframe-2dp" md-is-locked-open="true">
+      <md-subheader class="md-primary" ng-show="user">
+        {{ user.name }}
+      </md-subheader>
+      <md-button ui-sref="signUp" ng-hide="user">Sign up</md-button>
+      <md-button ui-sref="signIn" ng-hide="user">Sign in</md-button>
+      <md-button ng-click="signOut()" ng-show="user">Sign out</md-button>
+    </md-sidenav>
+    <md-content id="view-container" flex layout-padding ui-view></md-content>
+  </div>
+</div>

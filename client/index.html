@@ -6,17 +6,7 @@
     <link rel="stylesheet" href="build/app.min.css">
   </head>
   <body layout="column">
-    <md-toolbar class="md-toolbar-tools md-whiteframe-2dp">
-      <a ui-sref="root">Internationalize</a>
-    </md-toolbar>
-    <div layout="row" flex>
-      <md-sidenav class="md-whiteframe-2dp" md-is-locked-open="true">
-        <md-button ui-sref="signUp">Sign up</md-button>
-        <md-button ui-sref="signIn">Sign in</md-button>
-      </md-sidenav>
-      <md-content id="view-container" flex layout-padding ui-view></md-content>
-    </div>
-
+    <ng-include layout="column" flex src="'app/layout/layout.template.html'"></ng-include>
     <script type="text/javascript" src="build/app.min.js"></script>
   </body>
 </html>

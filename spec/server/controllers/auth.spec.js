@@ -16,11 +16,11 @@ describe('AuthController', () => {
     });
   });
 
-  describe('GET #signOut', () => {
+  describe('DELETE #signOut', () => {
     it('clears the session', () => {
       return factory.create('user')
         .then(helpers.signIn)
-        .then(() => request.get('/auth/signout').promisify())
+        .then(() => request.delete('/auth/signout').promisify())
         .then(response => expect(response.status).toEqual(200))
         .then(() => request.get('/auth/me').promisify())
         .then(helpers.expectUnauthorizedRequest);
