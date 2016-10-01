@@ -10,6 +10,7 @@ const eslint = require('gulp-eslint');
 const jasmine = require('gulp-jasmine');
 const JasmineSpecReporter = require('jasmine-spec-reporter');
 const karma = require('karma');
+const protractor = require('gulp-protractor').protractor
 
 /* Sass */
 
@@ -100,6 +101,13 @@ gulp.task('test:angular-unit', ['js'], done => {
     configFile: `${__dirname}/spec/angular-unit/karma.conf.js`,
     singleRun: true
   }, done).start();
+});
+
+gulp.task('test:e2e', ['js'], () => {
+  return gulp.src(['spec/e2e/support/**/*.js', 'spec/e2e/features/**/*.spec.js'])
+    .pipe(protractor({
+      configFile: 'spec/e2e/protractor.conf.js'
+    }));
 });
 
 /* Other */

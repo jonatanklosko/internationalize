@@ -29,6 +29,7 @@
     "gulp-eslint": "3.0.1",
     "gulp-jasmine": "2.4.1",
     "gulp-nodemon": "2.1.0",
+    "gulp-protractor": "3.0.0",
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.3.2",
     "gulp-uglify": "2.0.0",
@@ -40,6 +41,7 @@
     "karma-jasmine": "1.0.2",
     "karma-ng-html2js-preprocessor": "1.0.0",
     "karma-spec-reporter": "0.0.26",
+    "protractor": "4.0.9",
     "superagent": "2.2.0",
     "superagent-prefix": "0.0.2",
     "superagent-use": "0.1.0"
