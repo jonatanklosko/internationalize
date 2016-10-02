@@ -104,7 +104,7 @@ gulp.task('test:angular-unit', ['js'], done => {
 });
 
 gulp.task('test:e2e', ['js'], () => {
-  return gulp.src(['spec/e2e/support/**/*.js', 'spec/e2e/features/**/*.spec.js'])
+  return gulp.src('spec/e2e/features/**/*.spec.js')
     .pipe(protractor({
       configFile: 'spec/e2e/protractor.conf.js'
     }));

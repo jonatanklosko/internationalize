@@ -7,13 +7,11 @@ require('jasmine-promises');
 
 const app = require('app');
 const mongoose = require('mongoose');
-const factoryGirl = require('factory-girl');
 const superagent = require('superagent');
 const superagentUse = require('superagent-use');
 const superagentPrefix = require('superagent-prefix');
 
-global.factory = factoryGirl.factory;
-factory.setAdapter(new factoryGirl.MongooseAdapter());
+global.factory = require('../support/factory');
 
 global.request = superagentUse(superagent);
 request.use(superagentPrefix(process.env.BASE_URL));

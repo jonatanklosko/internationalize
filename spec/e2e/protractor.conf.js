@@ -7,6 +7,11 @@ exports.config = {
   baseUrl: process.env.BASE_URL,
 
   onPrepare: () => {
+    require('./support/matchers');
+    require('./support/locators');
+    global.factory = require('./support/factory');
+    global.helpers = require('./support/helpers');
+
     // Add jasmine spec reporter.
     const JasmineSpecReporter = require('jasmine-spec-reporter');
     jasmine.getEnv().addReporter(new JasmineSpecReporter());
