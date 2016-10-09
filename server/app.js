@@ -19,7 +19,7 @@ let app = express();
 
 /* Register the middleware used. */
 
-const staticFilesPath = path.join(`${__dirname}/../client`);
+const staticFilesPath = path.resolve(`../client/build`);
 app.use(express.static(staticFilesPath));
 app.use(bodyParser.json());
 app.use(session({

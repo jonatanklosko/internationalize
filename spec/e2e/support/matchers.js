@@ -6,7 +6,7 @@ beforeEach(() => jasmine.addMatchers({
         result.pass = actual.getText().then(content => {
           const matches = content.match(expected);
           result.message = `Expected "${content}" to ${matches ? 'not' : ''} match "${expected}".`;
-          return matches
+          return matches;
         });
         return result;
       }

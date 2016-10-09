@@ -23,7 +23,7 @@ app.use('/auth', Router()
 
 /* Serve Angular on '/' or when nothing else matches. */
 app.get('*', (req, res) => {
-  res.sendFile(require('path').join(__dirname + '/../../client/index.html'));
+  res.sendFile(require('path').join(__dirname + '/../../client/build/index.html'));
 });
 
 module.exports = app;

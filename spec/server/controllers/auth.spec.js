@@ -35,7 +35,7 @@ describe('AuthController', () => {
         .then(response => {
           expect(response.status).toEqual(200);
           ['_id', 'username', 'name'].forEach(attr => {
-            expect(response.body.user[attr]).toBeDefined()
+            expect(response.body.user[attr]).toBeDefined();
           });
         });
     });

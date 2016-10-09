@@ -1,21 +1,21 @@
 <span class="md-title">Sign up</span>
 
-<form mongoose-validations errors-source="errors">
+<form mongoose-validations errors-source="vm.errors">
   <md-input-container class="md-block">
     <label for="username">Username</label>
-    <input type="text" name="username" ng-model="user.username">
+    <input type="text" name="username" ng-model="vm.user.username">
   </md-input-container>
   <md-input-container class="md-block">
     <label for="name">Full name</label>
-    <input type="text" name="name" ng-model="user.name">
+    <input type="text" name="name" ng-model="vm.user.name">
   </md-input-container>
   <md-input-container class="md-block">
     <label for="username">Password</label>
-    <input type="password" name="password" ng-model="user.password">
+    <input type="password" name="password" ng-model="vm.user.password">
   </md-input-container>
   <md-input-container class="md-block">
     <label for="username">Password confirmation</label>
-    <input type="password" name="passwordConfirmation" ng-model="user.passwordConfirmation">
+    <input type="password" name="passwordConfirmation" ng-model="vm.user.passwordConfirmation">
   </md-input-container>
-  <md-button type="submit" class="md-raised md-primary" ng-click="signUp(user)">Sign up</md-button>
+  <md-button type="submit" class="md-raised md-primary" ng-click="vm.signUp(vm.user)">Sign up</md-button>
 </form>

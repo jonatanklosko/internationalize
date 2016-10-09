@@ -3,11 +3,11 @@
 <form>
   <md-input-container class="md-block">
     <label for="username">Username</label>
-    <input type="text" name="username" ng-model="credentials.username">
+    <input type="text" name="username" ng-model="vm.credentials.username">
   </md-input-container>
   <md-input-container class="md-block">
     <label for="username">Password</label>
-    <input type="password" name="password" ng-model="credentials.password">
+    <input type="password" name="password" ng-model="vm.credentials.password">
   </md-input-container>
-  <md-button type="submit" class="md-raised md-primary" ng-click="signIn(credentials)">Sign in</md-button>
+  <md-button type="submit" class="md-raised md-primary" ng-click="vm.signIn(vm.credentials)">Sign in</md-button>
 </form>

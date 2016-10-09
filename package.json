@@ -10,7 +10,21 @@
   ],
   "author": "Jonatan Kłosko",
   "license": "MIT",
+  "scripts": {
+    "server:dev": "NODE_ENV=development node server/server.js",
+    "server:dev:watch": "NODE_ENV=development nodemon --watch server server/server.js",
+    "build": "NODE_ENV=production webpack --progress",
+    "build:dev": "webpack --progress",
+    "wdserver": "webpack-dev-server --inline --hot --progress --open",
+    "test:server": "node spec/server/spec-runner.js"
+  },
   "dependencies": {
+    "angular": "1.5.8",
+    "angular-animate": "1.5.8",
+    "angular-aria": "1.5.8",
+    "angular-material": "1.1.1",
+    "angular-ui-router": "0.3.1",
+    "babel-polyfill": "6.16.0",
     "bcryptjs": "2.3.0",
     "body-parser": "1.15.2",
     "express": "4.14.0",
@@ -21,7 +35,12 @@
   },
   "devDependencies": {
     "app-module-path": "1.1.0",
+    "babel-core": "6.17.0",
+    "babel-loader": "6.2.5",
     "babel-preset-es2015": "6.14.0",
+    "clean-webpack-plugin": "0.1.13",
+    "css-loader": "0.25.0",
+    "extract-text-webpack-plugin": "1.0.1",
     "factory-girl": "4.0.0-beta.4",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
@@ -33,6 +52,7 @@
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.3.2",
     "gulp-uglify": "2.0.0",
+    "html-loader": "0.4.4",
     "jasmine": "2.5.0",
     "jasmine-promises": "0.4.1",
     "jasmine-spec-reporter": "2.7.0",
@@ -41,9 +61,17 @@
     "karma-jasmine": "1.0.2",
     "karma-ng-html2js-preprocessor": "1.0.0",
     "karma-spec-reporter": "0.0.26",
+    "ng-annotate-loader": "0.2.0",
+    "ngtemplate-loader": "1.3.1",
+    "node-sass": "3.10.1",
+    "nodemon": "1.11.0",
     "protractor": "4.0.9",
+    "sass-loader": "4.0.2",
+    "style-loader": "0.13.1",
     "superagent": "2.2.0",
     "superagent-prefix": "0.0.2",
-    "superagent-use": "0.1.0"
+    "superagent-use": "0.1.0",
+    "webpack": "1.13.2",
+    "webpack-dev-server": "1.16.2"
   }
 }

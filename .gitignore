@@ -1,9 +1,6 @@
 # Node dependencies
 node_modules/
 
-# Bower dependencies
-client/vendor/
-
 # Built assets
 client/build/
 

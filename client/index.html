@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html ng-app="app">
   <head>
+    <base href="/">
     <meta charset="utf-8">
     <title>Internationalize</title>
-    <link rel="stylesheet" href="build/app.min.css">
   </head>
-  <body layout="column">
-    <ng-include layout="column" flex src="'app/layout/layout.template.html'"></ng-include>
-    <script type="text/javascript" src="build/app.min.js"></script>
+  <body layout="column" ng-cloak>
+    <ng-include layout="column" flex src="'views/layout/layout.partial.html'"></ng-include>
   </body>
 </html>

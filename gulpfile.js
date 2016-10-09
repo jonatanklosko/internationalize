@@ -10,7 +10,7 @@ const eslint = require('gulp-eslint');
 const jasmine = require('gulp-jasmine');
 const JasmineSpecReporter = require('jasmine-spec-reporter');
 const karma = require('karma');
-const protractor = require('gulp-protractor').protractor
+const protractor = require('gulp-protractor').protractor;
 
 /* Sass */
 

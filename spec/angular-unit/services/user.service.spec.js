@@ -6,7 +6,7 @@ describe('userService', () => {
 
   beforeEach(inject((_$httpBackend_, _userService_) => {
     $httpBackend = _$httpBackend_;
-    userService = _userService_
+    userService = _userService_;
   }));
 
   afterEach(() => {
