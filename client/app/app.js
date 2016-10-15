@@ -2,6 +2,8 @@ import '../assets/sass/main.scss';
 
 import 'babel-polyfill';
 
+import 'jquery';
+
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import ngMaterial from 'angular-material';

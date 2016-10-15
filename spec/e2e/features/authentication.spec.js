@@ -5,7 +5,7 @@ describe('Sign in', () => {
   });
 
   it('when the credentials are invalid, shows appropriate error', () => {
-    browser.get('/#/signin');
+    browser.get('/signin');
     let form = element(by.tagName('form'));
     helpers.submitForm(form, { username: 'nonexistent', password: 'password' });
 
@@ -19,6 +19,6 @@ describe('Sign out', () => {
     element(by.clickableText('Sign out')).click();
 
     helpers.expectUserToBeSignedOut();
-    expect(browser.getCurrentUrl()).toMatch(/#\/$/);
+    expect(browser.getCurrentUrl()).toEqual(`${process.env.BASE_URL}/`);
   });
 });

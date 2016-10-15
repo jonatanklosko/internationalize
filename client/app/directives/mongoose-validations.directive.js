@@ -1,5 +1,3 @@
-import angular from 'angular';
-
 export default ($compile) => {
   'ngInject';
 
@@ -9,23 +7,23 @@ export default ($compile) => {
       errors: '=errorsSource'
     },
     link: ($scope, $element) => {
-      for(let domElement of $element[0].querySelectorAll('[name]')) {
-        let input = angular.element(domElement);
+      $element.find('[name]').each((i, element) => {
+        let input = $(element);
         let name = input.attr('name');
 
         let messageTemplate = `<div class="error-message" md-colors="{color: 'warn-A700'}" ng-show="errors.${name}">
                                  <small>{{ errors.${name}.message }}</small>
                                </div>`;
-        let message = $compile(angular.element(messageTemplate))($scope);
+        let message = $compile($(messageTemplate))($scope);
         input.after(message);
 
-        let mdInputContainer = input.parent();
-        if(mdInputContainer[0].tagName === 'MD-INPUT-CONTAINER') {
+        let mdInputContainer = input.parent('md-input-container');
+        if(mdInputContainer.length) {
           $scope.$watch(`errors.${name}`, error => {
             mdInputContainer.toggleClass('md-input-invalid', !!error);
           });
         }
-      }
+      });
     }
   };
 };

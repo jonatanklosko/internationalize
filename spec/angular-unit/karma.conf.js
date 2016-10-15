@@ -1,3 +1,6 @@
+process.env.NODE_ENV = 'test'; //tmp
+const webpackConfig = require('../../webpack.config.js');
+
 module.exports = config => {
   config.set({
     browsers: ['Chrome'],
@@ -6,23 +9,16 @@ module.exports = config => {
     plugins: [
       'karma-jasmine',
       'karma-chrome-launcher',
-      'karma-ng-html2js-preprocessor',
-      'karma-spec-reporter'
+      'karma-spec-reporter',
+      'karma-webpack'
     ],
-    basePath: '../../client',
-    files: [
-      'vendor/jquery/dist/jquery.js',
-      'build/app.min.js',
-      'vendor/angular-mocks/angular-mocks.js',
-      'app/**/*.template.html',
-      '../spec/angular-unit/**/*.spec.js'
-    ],
+    files: ['webpack.karma.context.js'],
     preprocessors: {
-      'app/**/*.template.html': ['ng-html2js']
+      'webpack.karma.context.js': ['webpack']
     },
-    ngHtml2JsPreprocessor: {
-      moduleName: 'templates',
-      stripPrefix: '.*/client/'
+    webpack: webpackConfig,
+    webpackMiddleware: {
+      stats: 'errors-only'
     }
   });
 };

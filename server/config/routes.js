@@ -1,6 +1,7 @@
 const Router = require('express').Router;
 const controllers = require('../controllers');
 const status = require('http-status');
+const path = require('path');
 
 let app = Router();
 
@@ -19,11 +20,10 @@ app.use('/auth', Router()
   .get('/me', authenticateUser, controllers.auth.me)
 );
 
-/* Application routes ('/') */
-
-/* Serve Angular on '/' or when nothing else matches. */
-app.get('*', (req, res) => {
-  res.sendFile(require('path').join(__dirname + '/../../client/build/index.html'));
+const indexHtmlPath = path.resolve(__dirname, '../../client/build/index.html');
+/* Serve the Angular app on '/*' if nothing else matches. */
+app.get('/*', (req, res) => {
+  res.sendFile(indexHtmlPath);
 });
 
 module.exports = app;

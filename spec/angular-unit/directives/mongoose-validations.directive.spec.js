@@ -1,11 +1,12 @@
+import angular from 'angular';
+
 describe('mongooseValidations directive', () => {
-  beforeEach(module('app.directives'));
-  beforeEach(module('templates'));
+  beforeEach(angular.mock.module('app.directives'));
 
   let $compile,
       $rootScope;
 
-  beforeEach(inject((_$compile_, _$rootScope_) => {
+  beforeEach(angular.mock.inject((_$compile_, _$rootScope_) => {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
   }));

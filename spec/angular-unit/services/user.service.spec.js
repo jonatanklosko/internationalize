@@ -1,12 +1,14 @@
-describe('userService', () => {
-  beforeEach(module('app.services'));
+import angular from 'angular';
+
+describe('UserService', () => {
+  beforeEach(angular.mock.module('app.services'));
 
   let $httpBackend,
-      userService;
+      UserService;
 
-  beforeEach(inject((_$httpBackend_, _userService_) => {
+  beforeEach(angular.mock.inject((_$httpBackend_, _UserService_) => {
     $httpBackend = _$httpBackend_;
-    userService = _userService_;
+    UserService = _UserService_;
   }));
 
   afterEach(() => {
@@ -20,7 +22,7 @@ describe('userService', () => {
   describe('create', () => {
     it('when the response is successful, resolves with the new user', done => {
       $httpBackend.expectPOST('/api/users', userData).respond(201, { user: userData });
-      userService.create(userData)
+      UserService.create(userData)
         .then(user => expect(user).toEqual(userData))
         .then(done, done.fail);
       $httpBackend.flush();
@@ -29,7 +31,7 @@ describe('userService', () => {
     it('when the response is unsuccessful, rejects with errors', done => {
       const errors = { name: 'Too long' };
       $httpBackend.expectPOST('/api/users').respond(422, { errors: errors });
-      userService.create({})
+      UserService.create({})
         .catch(forward)
         .then(err => expect(err).toEqual(errors))
         .then(done, done.fail);

@@ -3,9 +3,8 @@ const app = require('../../server/app');
 
 exports.config = {
   framework: 'jasmine',
-
   baseUrl: process.env.BASE_URL,
-
+  specs: ['./features/**/*.spec.js'],
   onPrepare: () => {
     require('./support/matchers');
     require('./support/locators');
@@ -23,9 +22,7 @@ exports.config = {
 
     return new Promise((resolve) => app.run(resolve));
   },
-
   onCleanUp: () => app.close(),
-
   jasmineNodeOpts: {
      print: () => {}
   }

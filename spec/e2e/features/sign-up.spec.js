@@ -2,7 +2,7 @@ describe('Sign up', () => {
   let form = element(by.tagName('form'));
 
   beforeEach(() => {
-    browser.get('/#/signup');
+    browser.get('/signup');
   });
 
   it('when the data is valid, signs the user in', () => {
