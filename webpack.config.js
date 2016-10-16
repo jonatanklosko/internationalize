@@ -22,7 +22,6 @@ let config = {
     root: sourcePath,
     extensions: ['', '.js', '.html', '.scss']
   },
-  progress: true,
   debug: !production,
   module: {
     loaders: [{

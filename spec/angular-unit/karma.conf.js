@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'test'; //tmp
+process.env.NODE_ENV = 'test';
 const webpackConfig = require('../../webpack.config.js');
 
 module.exports = config => {
