@@ -7,7 +7,7 @@ class UsersController {
       .then(user =>
         req.logIn(user, error =>
           error ? next(error)
-                : res.status(status.CREATED).json({ user: user })))
+                : res.status(status.CREATED).json({ user })))
       .catch(error => res.status(status.UNPROCESSABLE_ENTITY).json({ errors: error.errors }));
   }
 }

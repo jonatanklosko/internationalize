@@ -12,7 +12,7 @@ class AuthController {
         res.status(status.UNAUTHORIZED).json({ error: info.message });
       } else {
         req.logIn(user, error =>
-          error ? next(error) : res.status(status.OK).json({ user: user }));
+          error ? next(error) : res.status(status.OK).json({ user }));
       }
     })(req, res, next);
   }

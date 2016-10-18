@@ -48,7 +48,8 @@ let config = {
     proxy: {
       '/api/*': 'http://localhost:3000',
       '/auth/*': 'http://localhost:3000'
-    }
+    },
+    historyApiFallback: true
   }
 };
 
@@ -85,9 +86,9 @@ if(production) {
 }
 
 if(test) {
-  config.devtools = 'inline-source-map';
+  config.devtool = 'inline-source-map';
 } else if(!production) {
-  config.devtools = 'eval';
+  config.devtool = 'eval';
 }
 
 module.exports = config;

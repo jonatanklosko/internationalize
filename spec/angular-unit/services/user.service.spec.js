@@ -30,7 +30,7 @@ describe('UserService', () => {
 
     it('when the response is unsuccessful, rejects with errors', done => {
       const errors = { name: 'Too long' };
-      $httpBackend.expectPOST('/api/users').respond(422, { errors: errors });
+      $httpBackend.expectPOST('/api/users').respond(422, { errors });
       UserService.create({})
         .catch(forward)
         .then(err => expect(err).toEqual(errors))

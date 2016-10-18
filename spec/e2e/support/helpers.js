@@ -7,7 +7,7 @@ class Helpers {
   }
 
   signIn(userPromise = factory.create('user')) {
-    browser.get('/#/signin');
+    browser.get('/signin');
     let form = element(by.tagName('form'));
     userPromise.then(user => this.submitForm(form, { username: user.username, password: user.password }));
   }

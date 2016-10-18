@@ -10,11 +10,12 @@ module.exports = config => {
       'karma-jasmine',
       'karma-chrome-launcher',
       'karma-spec-reporter',
-      'karma-webpack'
+      'karma-webpack',
+      'karma-sourcemap-loader'
     ],
     files: ['webpack.karma.context.js'],
     preprocessors: {
-      'webpack.karma.context.js': ['webpack']
+      'webpack.karma.context.js': ['webpack', 'sourcemap']
     },
     webpack: webpackConfig,
     webpackMiddleware: {
