@@ -1,6 +1,5 @@
 import angular from 'angular';
 
-import './layout.partial.html';
 import LayoutController from './layout.controller';
 
 export default angular

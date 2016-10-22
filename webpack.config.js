@@ -68,7 +68,7 @@ config.module.loaders.push(styleLoader);
 if(!test) {
   config.plugins.push(
     new HtmlWebpackPlugin({
-      template: './../index.html',
+      template: './../app/views/layout/layout.html',
       inject: 'body'
     })
   );
