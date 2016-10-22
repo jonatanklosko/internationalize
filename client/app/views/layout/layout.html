@@ -7,10 +7,11 @@
   </head>
   <body layout="column" ng-controller="LayoutController as vm" ng-cloak>
     <md-toolbar class="md-toolbar-tools md-whiteframe-2dp">
+      <md-button class="menu" hide-gt-sm ng-click="vm.toggleMenu()">Menu</md-button>
       <a ui-sref="root">Internationalize</a>
     </md-toolbar>
     <div layout="row" flex>
-      <md-sidenav class="md-whiteframe-2dp" md-is-locked-open="true">
+      <md-sidenav class="md-whiteframe-2dp" md-is-locked-open="$mdMedia('gt-sm')" md-component-id="menu">
         <md-subheader class="md-primary" ng-show="vm.user">
           {{ vm.user.name }}
         </md-subheader>
