@@ -32,6 +32,10 @@ class Helpers {
     expect(element(by.clickableText('Sign in')).isDisplayed()).toBeTruthy();
     expect(element(by.clickableText('Sign out')).isDisplayed()).toBeFalsy();
   }
+
+  expectPathToEqual(path) {
+    expect(browser.getCurrentUrl()).toEqual(browser.baseUrl + path);
+  }
 }
 
 module.exports = new Helpers();

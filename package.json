@@ -20,7 +20,9 @@
     "test:server": "node spec/server/spec-runner.js",
     "test:angular-unit": "karma start spec/angular-unit/karma.conf.js --single-run",
     "test:angular-unit:watch": "karma start spec/angular-unit/karma.conf.js --auto-watch",
-    "test:e2e": "protractor spec/e2e/protractor.conf.js"
+    "test:e2e": "protractor spec/e2e/protractor.conf.js",
+    "pre:test:e2e": "SERVER_URL=http://localhost:3001 webpack-dev-server --host localhost --port 3002",
+    "webdriver:update": "webdriver-manager update"
   },
   "dependencies": {
     "angular": "^1.5.8",

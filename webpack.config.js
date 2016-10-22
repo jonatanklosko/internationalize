@@ -11,6 +11,8 @@ const destinationPath = path.resolve(__dirname, 'client/build');
 const production = process.env.NODE_ENV === 'production';
 const test = process.env.NODE_ENV === 'test';
 
+const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
+
 let config = {
   context: sourcePath,
   entry: test ? '' : './app.js',
@@ -46,8 +48,8 @@ let config = {
   devServer: {
     contentBase: destinationPath,
     proxy: {
-      '/api/*': 'http://localhost:3000',
-      '/auth/*': 'http://localhost:3000'
+      '/api/*': serverUrl,
+      '/auth/*': serverUrl
     },
     historyApiFallback: true
   }

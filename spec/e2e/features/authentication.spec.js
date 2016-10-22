@@ -19,6 +19,6 @@ describe('Sign out', () => {
     element(by.clickableText('Sign out')).click();
 
     helpers.expectUserToBeSignedOut();
-    expect(browser.getCurrentUrl()).toEqual(`${process.env.BASE_URL}/`);
+    helpers.expectPathToEqual('/');
   });
 });

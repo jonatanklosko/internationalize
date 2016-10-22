@@ -3,7 +3,7 @@ const app = require('../../server/app');
 
 exports.config = {
   framework: 'jasmine',
-  baseUrl: process.env.BASE_URL,
+  baseUrl: 'http://localhost:3002', // The URL where webpack-dev-server runs (`npm run pre:test:e2e`).
   specs: ['./features/**/*.spec.js'],
   onPrepare: () => {
     require('./support/matchers');
@@ -13,6 +13,7 @@ exports.config = {
 
     // Add jasmine spec reporter.
     const JasmineSpecReporter = require('jasmine-spec-reporter');
+    jasmine.getEnv().clearReporters();
     jasmine.getEnv().addReporter(new JasmineSpecReporter());
 
     // Set up cleaning database before each spec.
@@ -22,8 +23,5 @@ exports.config = {
 
     return new Promise((resolve) => app.run(resolve));
   },
-  onCleanUp: () => app.close(),
-  jasmineNodeOpts: {
-     print: () => {}
-  }
+  onCleanUp: () => app.close()
 };
