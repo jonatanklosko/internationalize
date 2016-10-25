@@ -16,7 +16,11 @@ const schema = new mongoose.Schema({
   passwordDigest: {
     type: String,
     default: ''
-  }
+  },
+  translations: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Translation'
+  }]
 });
 
 schema.plugin(uniquenessValidator, {

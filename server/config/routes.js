@@ -11,6 +11,7 @@ const authenticateUser = (req, res, next) =>
 /* API routes ('/api') */
 app.use('/api', Router()
   .post('/users', controllers.users.create)
+  .post('/translations', authenticateUser, controllers.translations.create)
 );
 
 /* Authentication routes ('/auth') */

@@ -13,5 +13,6 @@ jasmine.loadConfig({
     'support/**/*.js'
   ]
 });
+jasmine.env.clearReporters();
 jasmine.addReporter(new JasmineSpecReporter());
 jasmine.execute();

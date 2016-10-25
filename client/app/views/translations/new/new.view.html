@@ -1,0 +1,13 @@
+<span class="md-title">New translation</span>
+
+<form mongoose-validations errors-source="vm.errors">
+  <md-input-container class="md-block">
+    <label for="locale">Locale</label>
+    <input type="text" name="locale" ng-model="vm.translation.locale">
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label for="sourceUrl">Source URL</label>
+    <input type="text" name="sourceUrl" ng-model="vm.translation.sourceUrl">
+  </md-input-container>
+  <md-button type="submit" class="md-raised md-primary" ng-click="vm.create(vm.translation)">Create</md-button>
+</form>

@@ -18,6 +18,7 @@
     "wdserver": "webpack-dev-server --inline --hot --open",
     "lint": "eslint . --ignore-path .gitignore",
     "test:server": "node spec/server/spec-runner.js",
+    "test:server:watch": "nodemon --watch server --watch spec/server spec/server/spec-runner.js",
     "test:angular-unit": "karma start spec/angular-unit/karma.conf.js --single-run",
     "test:angular-unit:watch": "karma start spec/angular-unit/karma.conf.js --auto-watch",
     "test:e2e": "protractor spec/e2e/protractor.conf.js",
