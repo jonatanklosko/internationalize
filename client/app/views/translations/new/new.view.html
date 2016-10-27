@@ -2,6 +2,10 @@
 
 <form mongoose-validations errors-source="vm.errors">
   <md-input-container class="md-block">
+    <label for="name">Name</label>
+    <input type="text" name="name" ng-model="vm.translation.name">
+  </md-input-container>
+  <md-input-container class="md-block">
     <label for="locale">Locale</label>
     <input type="text" name="locale" ng-model="vm.translation.locale">
   </md-input-container>

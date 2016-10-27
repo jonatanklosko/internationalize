@@ -5,13 +5,23 @@ const path = require('path');
 
 let app = Router();
 
-const authenticateUser = (req, res, next) =>
-  req.isAuthenticated() ? next() : res.status(status.UNAUTHORIZED).json({ error: 'Unauthorized request.' });
+const respondWithUnauthorizedRequest = res => res.status(status.UNAUTHORIZED).json({ error: 'Unauthorized request.' });
+
+const authenticateUser = (req, res, next) => {
+  req.isAuthenticated() ? next() : respondWithUnauthorizedRequest(res);
+};
+
+const correctUser = (req, res, next) => {
+  authenticateUser(req, res, () => {
+    req.params.userId === req.user.id ? next() : respondWithUnauthorizedRequest(res);
+  });
+};
 
 /* API routes ('/api') */
 app.use('/api', Router()
   .post('/users', controllers.users.create)
-  .post('/translations', authenticateUser, controllers.translations.create)
+  .post('/users/:userId/translations', correctUser, controllers.translations.create)
+  .get('/users/:userId/translations', correctUser, controllers.translations.index)
 );
 
 /* Authentication routes ('/auth') */
