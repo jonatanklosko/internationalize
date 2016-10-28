@@ -22,6 +22,7 @@ app.use('/api', Router()
   .post('/users', controllers.users.create)
   .post('/users/:userId/translations', correctUser, controllers.translations.create)
   .get('/users/:userId/translations', correctUser, controllers.translations.index)
+  .get('/users/:userId/translations/:translationId', correctUser, controllers.translations.show)
 );
 
 /* Authentication routes ('/auth') */

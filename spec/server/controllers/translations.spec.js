@@ -40,4 +40,33 @@ describe('TranslationsController', () => {
       });
     });
   });
+
+  describe('GET #show', () => {
+    let translation;
+    beforeEach(() => factory.create('translation', { user: user.id }).then(created => translation = created));
+
+    describe('when signed in as the owner', () => {
+      beforeEach(() => helpers.signIn(user));
+
+      it('responds with the translation', () => {
+        return request.get(`/api/users/${user.id}/translations/${translation.id}`)
+          .then(response => {
+            expect(response.status).toEqual(200);
+            expect(response.body.translation).toBeDefined();
+          });
+      });
+    });
+
+    describe('when signed in as another user', () => {
+      beforeEach(() => factory.create('user').then(helpers.signIn));
+
+      it('responds with authorization error', () => {
+        return request.get(`/api/users/${user.id}/translations/${translation.id}`).promisify()
+          .then(response => {
+            expect(response.status).toEqual(401);
+            expect(response.body.error).toMatch('Unauthorized request');
+          });
+      });
+    });
+  });
 });

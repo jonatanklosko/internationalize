@@ -1,10 +1,10 @@
 <span class="md-title">My translations</span>
 
 <md-list>
-  <md-list-item ng-repeat="translation in vm.translations">
-    <!-- TMP -->
-    {{ translation.name }}
-    {{ translation.locale }}
-    {{ translation.sourceUrl }}
+  <md-list-item ng-repeat="translation in vm.translations" ng-click="undefined">
+    <p>{{ translation.locale }}</p>
+    <p>{{ translation.name }}</p>
+    <md-icon class="md-secondary" ng-click="undefined">edit</md-icon>
+    <md-icon class="md-secondary" ng-click="undefined">delete</md-icon>
   </md-list-item>
 </md-list>

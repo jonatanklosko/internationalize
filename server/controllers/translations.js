@@ -11,10 +11,16 @@ class TranslationsController {
       .catch(error => res.status(status.UNPROCESSABLE_ENTITY).json({ errors: error.errors }));
   }
 
-  index(req, res) {
+  index(req, res, next) {
     User.findById(req.params.userId).populate('translations')
       .then(user => res.status(status.OK).json({ translations: user.translations }))
-      .catch(error => res.status(status.INTERNAL_SERVER_ERROR).json({ error }));
+      .catch(next);
+  }
+
+  show(req, res, next) {
+    Translation.findById(req.params.translationId)
+      .then(translation => res.status(status.OK).json({ translation }))
+      .catch(next);
   }
 }
 
