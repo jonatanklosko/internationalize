@@ -23,6 +23,7 @@ app.use('/api', Router()
   .post('/users/:userId/translations', correctUser, controllers.translations.create)
   .get('/users/:userId/translations', correctUser, controllers.translations.index)
   .get('/users/:userId/translations/:translationId', correctUser, controllers.translations.show)
+  .delete('/users/:userId/translations/:translationId', correctUser, controllers.translations.destroy)
 );
 
 /* Authentication routes ('/auth') */

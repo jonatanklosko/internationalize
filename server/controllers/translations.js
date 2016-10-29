@@ -22,6 +22,13 @@ class TranslationsController {
       .then(translation => res.status(status.OK).json({ translation }))
       .catch(next);
   }
+
+  destroy(req, res, next) {
+    Translation.findById(req.params.translationId)
+      .then(translation => translation.remove())
+      .then(() => res.status(status.NO_CONTENT).end())
+      .catch(next);
+  }
 }
 
 module.exports = new TranslationsController();
