@@ -21,12 +21,24 @@ export default ($stateProvider) => {
       url: '/list',
       template: translationsListTemplate,
       controller: 'TranslationsListController',
-      controllerAs: 'vm'
+      controllerAs: 'vm',
+      resolve: {
+        translations: (TranslationService) => {
+          'ngInject';
+          return TranslationService.getAll();
+        }
+      }
     })
     .state('translations.translate', {
       url: '/:translationId',
       template: translationsTranslateTemplate,
       controller: 'TranslationsTranslateController',
-      controllerAs: 'vm'
+      controllerAs: 'vm',
+      resolve: {
+        translation: (TranslationService, $stateParams) => {
+          'ngInject';
+          return TranslationService.getTranslation($stateParams.translationId);
+        }
+      }
     });
 };

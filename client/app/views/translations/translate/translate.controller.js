@@ -1,5 +1,7 @@
 export default class TranslationsTranslateController {
-  constructor() {
+  constructor(translation) {
     'ngInject';
+
+    this.translation = translation;
   }
 }

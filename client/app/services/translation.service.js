@@ -24,12 +24,21 @@ export default class TranslationService {
   getAll() {
     return this.AuthService.currentUser()
       .then(user => this.$http.get(`/api/users/${user._id}/translations`))
-      .then(res => res.data.translations)
-      .catch(res => this.$q.reject(res.data.error));
+      .then(res => res.data.translations);
   }
 
   /**
-   * @param {String} Id of the translation to be deleted.
+   * @param {String} Id of the translation to load.
+   * @return {Promise} Resolved with the translation data.
+   */
+  getTranslation(translationId) {
+    return this.AuthService.currentUser()
+      .then(user => this.$http.get(`/api/users/${user._id}/translations/${translationId}`))
+      .then(res => res.data.translation);
+  }
+
+  /**
+   * @param {String} Id of the translation to delete.
    * @return {Promise} Resolved when the translation is deleted.
    */
   delete(translationId) {

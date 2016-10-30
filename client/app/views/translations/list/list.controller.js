@@ -1,12 +1,11 @@
 export default class TranslationsListController {
-  constructor(TranslationService, $mdDialog) {
+  constructor(translations, TranslationService, $mdDialog) {
     'ngInject';
 
     this.TranslationService = TranslationService;
     this.$mdDialog = $mdDialog;
 
-    this.TranslationService.getAll()
-      .then(translations => this.translations = translations);
+    this.translations = translations;
   }
 
   delete(translation, index, event) {
