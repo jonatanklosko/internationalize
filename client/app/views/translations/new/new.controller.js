@@ -1,4 +1,4 @@
-export default class NewTranslationController {
+export default class TranslationsNewController {
   constructor(TranslationService, $state) {
     'ngInject';
 
@@ -8,7 +8,7 @@ export default class NewTranslationController {
 
   create(translation) {
     this.TranslationService.create(translation)
-      .then(() => this.$state.go('translationsList'))
+      .then(() => this.$state.go('translations.list'))
       .catch(errors => this.errors = errors);
   }
 }

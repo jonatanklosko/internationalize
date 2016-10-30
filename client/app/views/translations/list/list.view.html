@@ -1,7 +1,8 @@
 <span class="md-title">My translations</span>
 
 <md-list>
-  <md-list-item class="md-2-line" ng-repeat="translation in vm.translations" ng-click="undefined">
+  <md-list-item class="md-2-line" ng-repeat="translation in vm.translations"
+                ui-sref="translations.translate({ translationId: translation._id })">
     <div class="md-list-item-text">
       <h3>{{ translation.name }}</h3>
       <p>{{ translation.locale }}</p>
