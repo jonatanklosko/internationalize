@@ -19,6 +19,9 @@ const schema = new mongoose.Schema({
   sourceUrl: {
     type: String,
     required: [true, 'Source URL is required.']
+  },
+  data: {
+    type: Object
   }
 });
 

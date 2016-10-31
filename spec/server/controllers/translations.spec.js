@@ -88,4 +88,24 @@ describe('TranslationsController', () => {
       });
     });
   });
+
+  describe('POST #updateKey', () => {
+    let translation;
+    beforeEach(() => {
+      return factory.create('translation', { user: user.id, data: { en: { common: { name: 'Name' } } } })
+        .then(created => translation = created);
+    });
+
+    describe('when signed in as the owner', () => {
+      beforeEach(() => helpers.signIn(user));
+
+      it('updates the specified key', () => {
+        return request.post(`/api/users/${user.id}/translations/${translation.id}/keys/en.common.name`)
+          .send({ value: 'Nom' }).promisify()
+          .then(response => expect(response.status).toEqual(204))
+          .then(() => Translation.findById(translation))
+          .then(translation => expect(translation.data.en.common.name).toEqual('Nom'));
+      });
+    });
+  });
 });

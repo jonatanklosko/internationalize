@@ -29,6 +29,12 @@ class TranslationsController {
       .then(() => res.status(status.NO_CONTENT).end())
       .catch(next);
   }
+
+  updateKey(req, res, next) {
+    Translation.findByIdAndUpdate(req.params.translationId, { [`data.${req.params.keyId}`]: req.body.value })
+      .then(() => res.status(status.NO_CONTENT).end())
+      .catch(next);
+  }
 }
 
 module.exports = new TranslationsController();

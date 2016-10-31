@@ -45,4 +45,15 @@ export default class TranslationService {
     return this.AuthService.currentUser()
       .then(user => this.$http.delete(`/api/users/${user._id}/translations/${translationId}`));
   }
+
+  /**
+   * @param {String} Id of the translation.
+   * @param {String} Id of of the key to be updated.
+   * @param {String} The new value of the key.
+   * @return {Promise} Resolved when the key is updated.
+   */
+  updateKey(translationId, keyId, value) {
+    return this.AuthService.currentUser()
+      .then(user => this.$http.post(`/api/users/${user._id}/translations/${translationId}/keys/${keyId}`, { value }));
+  }
 }
