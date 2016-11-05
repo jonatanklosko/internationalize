@@ -7,15 +7,23 @@ export default class TranslationsTranslateController {
 
     this.statistics = TranslationUtils.statistics(translation.data);
     this.untranslatedKeys = TranslationUtils.untranslatedKeysGenerator(translation.data);
-    this.current = this.untranslatedKeys.next().value;
+    this.next();
   }
 
   done() {
-    let currentKeyId = this.current.chain.join('.');
-    this.TranslationService.updateKey(this.translation._id, `${currentKeyId}._translated`, this.current.key._translated)
+    let keyId = this.chain.join('.');
+    this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.key._translated)
       .then(() => {
         this.statistics.translatedCount++;
-        this.current = this.untranslatedKeys.next().value;
+        this.next();
       });
+  }
+
+  next() {
+    let generated = this.untranslatedKeys.next();
+    let { key = null, chain = null } = generated.value || {};
+    this.key = key;
+    this.chain = chain;
+    this.finished = generated.done;
   }
 }

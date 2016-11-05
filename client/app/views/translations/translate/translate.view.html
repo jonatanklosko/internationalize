@@ -4,19 +4,24 @@
   {{ vm.statistics.translatedCount }}/{{ vm.statistics.overallCount }}
 </div>
 
-<div>
-  <span ng-repeat="parent in vm.current.chain">
-    {{ parent }}
-    <md-icon ng-if="!$last">navigate_next</md-icon>
-  </span>
+<div ng-if="vm.finished">
+  Everything trenslated <md-icon>done</md-icon>
 </div>
-<div>
-  Original: {{ vm.current.key._original }}
+
+<div ng-if="!vm.finished">
+  <div>
+    <span ng-repeat="parent in vm.chain">
+      {{ parent }} <md-icon ng-if="!$last">navigate_next</md-icon>
+    </span>
+  </div>
+  <div>
+    Original: {{ vm.key._original }}
+  </div>
+  <form>
+    <md-input-container class="md-block">
+      <label for="translated">Translate</label>
+      <input type="text" name="translated" ng-model="vm.key._translated">
+    </md-input-container>
+    <md-button type="submit" class="md-raised md-primary" ng-click="vm.done()">Done</md-button>
+  </form>
 </div>
-<form>
-  <md-input-container class="md-block">
-    <label for="translated">Translate</label>
-    <input type="text" name="translated" ng-model="vm.current.key._translated">
-  </md-input-container>
-  <md-button type="submit" class="md-raised md-primary" ng-click="vm.done()">Done</md-button>
-</form>
