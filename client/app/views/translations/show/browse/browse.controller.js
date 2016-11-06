@@ -5,16 +5,24 @@ export default class TranslationsBrowseController {
     this.TranslationUtils = TranslationUtils;
     this.TranslationService = TranslationService;
 
-    this.currentData = this.translation.data;
-    this.previousData = [];
+    this.data = this.translation.data;
+    this.chain = [];
+    this.chain.push({ name: 'Root', data: this.data });
   }
 
-  choose(child) {
-    this.previousData.push(this.currentData);
-    this.currentData = child;
+  choose(key, child) {
+    this.chain.push({ name: key, data: child });
+    this.data = child;
   }
 
-  previous() {
-    this.currentData = this.previousData.pop();
+  moveTo(index) {
+    this.data = this.chain[index].data;
+    this.chain = this.chain.slice(0, index + 1);
+  }
+
+  save() {
+    /* Slice the 'Root' element. */
+    let keyId = this.chain.slice(1).map(parent => parent.name).join('.');
+    this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.data._translated);
   }
 }
