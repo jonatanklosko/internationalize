@@ -1,0 +1,27 @@
+<div>
+  <div layout="row" flex>
+    <md-nav-bar md-selected-nav-item="vm.currentState" nav-bar-aria-label="Translation menu" flex>
+      <md-nav-item ng-repeat="item in vm.navItems" name="{{ item.state}} " md-nav-sref="{{ item.state }}">
+        {{ item.text }}
+      </md-nav-item>
+    </md-nav-bar>
+    <md-menu>
+      <md-button aria-label="Open translation interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+        <md-icon>more_vert</md-icon>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="vm.showRaw($event)">
+            <md-icon>remove_red_eye</md-icon> Show raw
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button ng-click="vm.download()">
+            <md-icon>file_download</md-icon> Download
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+  </div>
+  <ui-view></ui-view>
+</div>

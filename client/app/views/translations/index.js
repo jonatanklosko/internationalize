@@ -7,6 +7,7 @@ import routing from './translations.routes';
 
 import TranslationsNewController from './new/new.controller';
 import TranslationsListController from './list/list.controller';
+import TranslationsShowController from './show/show.controller';
 import TranslationsTranslateController from './show/translate/translate.controller';
 import TranslationsBrowseController from './show/browse/browse.controller';
 
@@ -17,4 +18,5 @@ export default angular
   .controller('TranslationsListController', TranslationsListController)
   .controller('TranslationsTranslateController', TranslationsTranslateController)
   .controller('TranslationsBrowseController', TranslationsBrowseController)
+  .controller('TranslationsShowController', TranslationsShowController)
   .name;

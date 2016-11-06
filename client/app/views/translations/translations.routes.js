@@ -1,5 +1,6 @@
 import translationsNewTemplate from './new/new.view.html';
 import translationsListTemplate from './list/list.view.html';
+import translationsShowTemplate from './show/show.view.html';
 import translationsTranslateTemplate from './show/translate/translate.view.html';
 import translationsBrowseTemplate from './show/browse/browse.view.html';
 
@@ -33,54 +34,26 @@ export default ($stateProvider) => {
     .state('translations.show', {
       url: '/:translationId',
       abstract: true,
-      template: `
-        <div>
-          <md-nav-bar md-selected-nav-item="vm.currentState" nav-bar-aria-label="Translation menu">
-            <md-nav-item ng-repeat="item in vm.navItems" name="{{ item.state}} " md-nav-sref="{{ item.state }}">
-              {{ item.text }}
-            </md-nav-item>
-          </md-nav-bar>
-          <ui-view></ui-view>
-        </div>
-      `,
-      controller: class TranslationsShowController {
-        constructor($state) {
+      template: translationsShowTemplate,
+      controller: 'TranslationsShowController',
+      controllerAs: 'vm',
+      resolve: {
+        translation: (TranslationService, $stateParams) => {
           'ngInject';
-
-          this.currentState = $state.current.name;
-          this.navItems = [{
-            state: 'translations.show.translate',
-            text: 'Translate'
-          }, {
-            state: 'translations.show.browse',
-            text: 'Browse'
-          }];
+          return TranslationService.getTranslation($stateParams.translationId);
         }
-      },
-      controllerAs: 'vm'
+      }
     })
     .state('translations.show.translate', {
       url: '/translate',
       template: translationsTranslateTemplate,
       controller: 'TranslationsTranslateController',
-      controllerAs: 'vm',
-      resolve: {
-        translation: (TranslationService, $stateParams) => {
-          'ngInject';
-          return TranslationService.getTranslation($stateParams.translationId);
-        }
-      }
+      controllerAs: 'vm'
     })
     .state('translations.show.browse', {
       url: '/browse',
       template: translationsBrowseTemplate,
       controller: 'TranslationsBrowseController',
-      controllerAs: 'vm',
-      resolve: {
-        translation: (TranslationService, $stateParams) => {
-          'ngInject';
-          return TranslationService.getTranslation($stateParams.translationId);
-        }
-      }
+      controllerAs: 'vm'
     });
 };
