@@ -1,0 +1,12 @@
+<md-list>
+  <md-button class="md-raised" ng-hide="vm.previousData.length === 0" ng-click="vm.previous()">Previous</md-button>
+  <md-list-item ng-if="!vm.currentData.hasOwnProperty('_translated')" ng-repeat="(key, child) in vm.currentData" ng-click="vm.choose(child)">
+    <div class="md-list-item-text">
+      {{ key }}
+    </div>
+  </md-list-item>
+  <div ng-if="vm.currentData.hasOwnProperty('_translated')" >
+    Original: {{ vm.currentData._original }}
+    Translated: {{ vm.currentData._translated }}
+  </div>
+</md-list>

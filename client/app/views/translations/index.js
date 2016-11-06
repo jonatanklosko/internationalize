@@ -7,7 +7,8 @@ import routing from './translations.routes';
 
 import TranslationsNewController from './new/new.controller';
 import TranslationsListController from './list/list.controller';
-import TranslationsTranslateController from './translate/translate.controller';
+import TranslationsTranslateController from './show/translate/translate.controller';
+import TranslationsBrowseController from './show/browse/browse.controller';
 
 export default angular
   .module('app.views.translations', [uiRouter, highlightJs, ngClipboard.name])
@@ -15,4 +16,5 @@ export default angular
   .controller('TranslationsNewController', TranslationsNewController)
   .controller('TranslationsListController', TranslationsListController)
   .controller('TranslationsTranslateController', TranslationsTranslateController)
+  .controller('TranslationsBrowseController', TranslationsBrowseController)
   .name;
