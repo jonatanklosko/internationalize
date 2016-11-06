@@ -111,6 +111,10 @@ export default class TranslationUtils {
     return rawData;
   }
 
+  processedDataToYaml(processedData) {
+    return yaml.safeDump(this.processedDataToRaw(processedData));
+  }
+
   statistics(data) {
     let overallCount = 0;
     let translatedCount = 0;

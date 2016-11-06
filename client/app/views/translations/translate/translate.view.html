@@ -17,11 +17,17 @@
   <div>
     Original: {{ vm.key._original }}
   </div>
-  <form>
+  <form ng-submit="vm.done()">
     <md-input-container class="md-block">
       <label for="translated">Translate</label>
       <input type="text" name="translated" ng-model="vm.key._translated">
     </md-input-container>
-    <md-button type="submit" class="md-raised md-primary" ng-click="vm.done()">Done</md-button>
   </form>
 </div>
+
+<md-button class="md-raised md-primary" ng-click="vm.showRaw($event)">
+  <md-icon>remove_red_eye</md-icon> Show raw
+</md-button>
+<md-button class="md-raised md-primary" ng-click="vm.download()">
+  <md-icon>file_download</md-icon> Download
+</md-button>
