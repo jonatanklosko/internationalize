@@ -32,7 +32,7 @@ export default class TranslationsShowController {
         clickOutsideToClose: true,
         parent: angular.element('body'),
         template: showRawDialogTemplate,
-        controllerAs: 'dialog',
+        controllerAs: 'vm',
         controller: ShowRawDialogController,
         locals: { yamlData }
       });
@@ -56,7 +56,7 @@ export default class TranslationsShowController {
             clickOutsideToClose: true,
             parent: angular.element('body'),
             template: synchronizeDialogTemplate,
-            controllerAs: 'dialog',
+            controllerAs: 'vm',
             controller: SynchronizeDialogController,
             locals: { translation: this.translation, newData, newUntranslatedKeysCount, unusedTranslatedKeysCount }
           });

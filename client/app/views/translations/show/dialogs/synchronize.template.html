@@ -1,32 +1,32 @@
-<md-dialog flex>
+<md-dialog flex aria-label="Synchronize with the remote dialog">
   <md-toolbar>
     <div class="md-toolbar-tools">
       <h2>Synchronize with the remote</h2>
       <span flex></span>
-      <md-button class="md-icon-button" aria-label="Close dialog" ng-click="dialog.close()">
+      <md-button class="md-icon-button" aria-label="Close dialog" ng-click="vm.close()">
         <md-icon>close</md-icon>
       </md-button>
     </div>
   </md-toolbar>
   <md-dialog-content class="md-dialog-content">
-    <div ng-hide="dialog.upToDate">
+    <div ng-hide="vm.upToDate">
       <span class="md-title">Changes which will be applied</span>
       <md-list>
-        <md-list-item ng-show="dialog.newUntranslatedKeysCount !== 0">
+        <md-list-item ng-show="vm.newUntranslatedKeysCount !== 0">
           <md-icon>add</md-icon>
-          <p>{{ dialog.newUntranslatedKeysCount }} new keys need to be translated</p>
+          <p>{{ vm.newUntranslatedKeysCount }} new keys need to be translated</p>
         </md-list-item>
-        <md-list-item ng-show="dialog.unusedTranslatedKeysCount !== 0">
+        <md-list-item ng-show="vm.unusedTranslatedKeysCount !== 0">
           <md-icon>remove</md-icon>
-          <p>{{ dialog.unusedTranslatedKeysCount }} translated keys are unused and will be removed</p>
+          <p>{{ vm.unusedTranslatedKeysCount }} translated keys are unused and will be removed</p>
         </md-list-item>
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button ng-click="dialog.synchronize()">Sychronize</md-button>
+      <md-button ng-click="vm.synchronize()">Sychronize</md-button>
     </md-dialog-actions>
   </div>
-  <div ng-show="dialog.upToDate">
+  <div ng-show="vm.upToDate">
     <md-icon>check</md-icon> Everything is up to date
   </div>
 </md-dialog>
