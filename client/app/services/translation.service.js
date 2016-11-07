@@ -47,6 +47,17 @@ export default class TranslationService {
   }
 
   /**
+   * @param {String} Id of the translation to be updated.
+   * @param {Object} Updated translation data.
+   * @return {Promise} Resolved when the key is updated.
+   */
+  update(translationId, translationData) {
+    return this.AuthService.currentUser()
+      .then(user => this.$http.post(`/api/users/${user._id}/translations/${translationId}`, translationData))
+      .catch(res => this.$q.reject(res.data.errors));
+  }
+
+  /**
    * @param {String} Id of the translation.
    * @param {String} Id of of the key to be updated.
    * @param {String} The new value of the key.

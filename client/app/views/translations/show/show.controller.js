@@ -73,4 +73,77 @@ export default class TranslationsShowController {
       angular.element('body').append(downloadLink);
       downloadLink[0].click().remove();
     }
+
+    synchronizeWithRemote(event) {
+      let translation = this.translation;
+      this.TranslationUtils.pullRemoteData(this.translation.sourceUrl, this.translation.data)
+        .then(({ newData, newUntranslatedKeysCount, unusedTranslatedKeysCount }) => {
+          this.$mdDialog.show({
+            tergetEvent: event,
+            clickOutsideToClose: true,
+            parent: angular.element('body'),
+            template: `
+              <md-dialog flex>
+                <md-toolbar>
+                  <div class="md-toolbar-tools">
+                    <h2>Synchronize with the remote</h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" aria-label="Close dialog" ng-click="dialog.close()">
+                      <md-icon>close</md-icon>
+                    </md-button>
+                  </div>
+                </md-toolbar>
+                <md-dialog-content class="md-dialog-content">
+                  <div ng-hide="dialog.upToDate">
+                    <span class="md-title">Changes which will be applied</span>
+                    <md-list>
+                      <md-list-item ng-show="dialog.newUntranslatedKeysCount !== 0">
+                        <md-icon>add</md-icon>
+                        <p>{{ dialog.newUntranslatedKeysCount }} new keys need to be translated</p>
+                      </md-list-item>
+                      <md-list-item ng-show="dialog.unusedTranslatedKeysCount !== 0">
+                        <md-icon>remove</md-icon>
+                        <p>{{ dialog.unusedTranslatedKeysCount }} translated keys are unused and will be removed</p>
+                      </md-list-item>
+                    </md-list>
+                  </md-dialog-content>
+                  <md-dialog-actions>
+                    <md-button ng-click="dialog.synchronize()">Sychronize</md-button>
+                  </md-dialog-actions>
+                </div>
+                <div ng-show="dialog.upToDate">
+                  <md-icon>check</md-icon> Everything is up to date
+                </div
+              </md-dialog>
+            `,
+            controllerAs: 'dialog',
+            controller: class DialogController {
+              constructor($mdDialog, TranslationService, $state) {
+                'ngInject';
+
+                this.$mdDialog = $mdDialog;
+                this.TranslationService = TranslationService;
+                this.$state = $state;
+
+                this.unusedTranslatedKeysCount = unusedTranslatedKeysCount;
+                this.newUntranslatedKeysCount = newUntranslatedKeysCount;
+                this.upToDate = (newUntranslatedKeysCount === 0 && unusedTranslatedKeysCount === 0);
+              }
+
+              close() {
+                this.$mdDialog.hide();
+              }
+
+              synchronize() {
+                translation.data = newData;
+                this.TranslationService.update(translation._id, translation)
+                  .then(() => {
+                    this.close();
+                    this.$state.reload();
+                  });
+              }
+            }
+          });
+        });
+    }
 }

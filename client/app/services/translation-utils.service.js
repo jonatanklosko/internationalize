@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 
 /**
  * Wording:
- *  - (raw) data refers to translation.data (YAML parsed to JSON)
+ *  - raw data refers to translation.data (YAML parsed to JSON)
  *  - processed data refers to translation.data in the form used across the app
  *    (it's the data with inner keys replaced with an object of the form
  *    { _original: 'Original text', _translation: 'Translated text' })
@@ -17,28 +17,36 @@ export default class TranslationUtils {
     this.$q = $q;
   }
 
-  pullRemoteData(url, data) {
+  /**
+   * Fetches a translation data from the given URL.
+   *
+   * @param {Object} url The URL to pull the data from.
+   * @param {Object} [data] A processed data to pre-fill the new data when possible
+                            and to be used in statistics computatinon.
+   * @return {Promise}
+   */
+  pullRemoteData(url, data = {}) {
     if(!url) return this.$q.reject('You must provide a URL.');
     return this.$http.get(url)
       .then(response => {
         let remoteData = yaml.safeLoad(response.data);
         let { newData, newUntranslatedKeysCount } = this.buildNewData(data, remoteData);
-        let unusedKeysCount = this.unusedKeysCount(data, remoteData);
+        let unusedTranslatedKeysCount = this.unusedTranslatedKeysCount(data, newData);
         return {
           newData,
           newUntranslatedKeysCount,
-          unusedKeysCount
+          unusedTranslatedKeysCount
         };
       });
   }
 
   /**
    * Builds a new translation processed data from the *latestData* given.
-   * Takes translations from the *data* if only they are present.
+   * Takes translations from the processed *data* if only they are present.
    * Results in a new object with inner keys of the form
    * { _original: <from *latestData*>, _translated: <optionally from *data*> }
    *
-   * @param {Object} data raw/unprocessed data
+   * @param {Object} data A processed data
    * @param {Object} latestData raw/unprocessed data (directly parsed from YAML)
    * @return {Object} With two properties:
    *                  - newData (the actual result of the computation)
@@ -56,11 +64,13 @@ export default class TranslationUtils {
         } else {
           newData[key] = {
             _original: latestData[key],
-            _translated: data[key] || null
+            _translated: null
           };
           if(latestData[key] === '') {
             newData[key]._translated = ''; // Don't bother with translating empty strings.
-          } else if(!data.hasOwnProperty(key)) {
+          } else if(data.hasOwnProperty(key)) {
+            newData[key]._translated = data[key]._translated;
+          } else {
             newUntranslatedKeysCount++;
           }
         }
@@ -72,31 +82,34 @@ export default class TranslationUtils {
   }
 
   /**
-   * Counts the inner keys (having '_original' property) that are present
+   * Counts the inner translated keys (having '_translated' property) that are present
    * in the first object but are not in the second one.
    *
    * @param {Object} data The processed data to be compared.
-   * @param {Object} latestData The data to compare with (either raw or processed).
+   * @param {Object} latestData The processed data to compare with.
    * @return {Number}
    */
-  unusedKeysCount(data, latestData) {
+  unusedTranslatedKeysCount(data, latestData) {
     if(!data) return 0;
 
-    let unusedKeysCount = 0;
-    let unusedKeysCountRecursive = (data, latestData) => {
+    let unusedTranslatedKeysCount = 0;
+    let unusedTranslatedKeysCountRecursive = (data, latestData) => {
       for(let key in data) {
-        if(data[key].hasOwnProperty('_original')) {
-          if(latestData[key] === null) {
-            unusedKeysCount++;
-          }
+        if(data.hasOwnProperty('_translated')) continue;
+
+        if(latestData.hasOwnProperty(key)) {
+          unusedTranslatedKeysCountRecursive(data[key], latestData[key]);
         } else {
-          unusedKeysCountRecursive(data[key], latestData[key]);
+           /* Note: a bigger part of the object could have been removed.
+              The following works in that case as well as when just one key is removed. */
+          let { translatedCount: unusedInnerTranslatedKeysCount } = this.statistics({ [key]: data[key] });
+          unusedTranslatedKeysCount += unusedInnerTranslatedKeysCount;
         }
       }
     };
-    unusedKeysCountRecursive(data, latestData);
+    unusedTranslatedKeysCountRecursive(data, latestData);
 
-    return unusedKeysCount;
+    return unusedTranslatedKeysCount;
   }
 
   processedDataToRaw(processedData) {
