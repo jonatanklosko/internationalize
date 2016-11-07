@@ -1,6 +1,6 @@
 <div>
   <span ng-repeat="parent in vm.chain">
-    <md-button class="md-raised" ng-click="vm.moveTo($index)">{{ parent.name }}</md-button>
+    <md-button class="md-raised" ng-click="vm.moveTo($index)">{{ parent.key }}</md-button>
     <md-icon ng-if="!$last">navigate_next</md-icon>
   </span>
 </div>
@@ -8,16 +8,16 @@
   <md-list-item ng-if="!vm.data.hasOwnProperty('_translated')" ng-repeat="(key, child) in vm.data" ng-click="vm.choose(key, child)">
     <div class="md-list-item-text">{{ key }}</div>
   </md-list-item>
-  <div ng-if="vm.data.hasOwnProperty('_translated')" >
-    <div>
-      Original: {{ vm.data._original }}
-    </div>
-    <form ng-submit="vm.save()">
-      <md-input-container class="md-block">
-        <label for="translated">Translation</label>
-        <input type="text" name="translated" ng-model="vm.data._translated">
-      </md-input-container>
-      <md-button type="submit" class="md-raised md-primary">Save</md-button>
-    </form>
-  </div>
 </md-list>
+<div ng-if="vm.data.hasOwnProperty('_translated')" >
+  <div>
+    Original: {{ vm.data._original }}
+  </div>
+  <form ng-submit="vm.save()">
+    <md-input-container class="md-block">
+      <label for="translated">Translation</label>
+      <input type="text" name="translated" ng-model="vm.data._translated">
+    </md-input-container>
+    <md-button type="submit" class="md-raised md-primary">Save</md-button>
+  </form>
+</div>

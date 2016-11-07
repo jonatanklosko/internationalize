@@ -7,11 +7,11 @@ export default class TranslationsBrowseController {
 
     this.data = this.translation.data;
     this.chain = [];
-    this.chain.push({ name: 'Root', data: this.data });
+    this.chain.push({ key: 'Root', data: this.data });
   }
 
   choose(key, child) {
-    this.chain.push({ name: key, data: child });
+    this.chain.push({ key, data: child });
     this.data = child;
   }
 
@@ -22,7 +22,7 @@ export default class TranslationsBrowseController {
 
   save() {
     /* Slice the 'Root' element. */
-    let keyId = this.chain.slice(1).map(parent => parent.name).join('.');
+    let keyId = this.chain.slice(1).map(parent => parent.key).join('.');
     this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.data._translated);
   }
 }
