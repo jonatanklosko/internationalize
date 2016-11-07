@@ -89,6 +89,38 @@ describe('TranslationsController', () => {
     });
   });
 
+  describe('POST #update', () => {
+    let translation;
+    beforeEach(() => {
+      return factory.create('translation', { user: user.id, locale: 'en', data: { key: 'value' } })
+        .then(created => translation = created);
+    });
+
+    describe('when signed in as the owner', () => {
+      beforeEach(() => helpers.signIn(user));
+
+      it('when the data is valid updates the translation', () => {
+        return request.post(`/api/users/${user.id}/translations/${translation.id}`)
+          .send({ locale: 'fr', data: { newKey: 'new value' } }).promisify()
+          .then(response => expect(response.status).toEqual(204))
+          .then(() => Translation.findById(translation))
+          .then(translation => {
+            expect(translation.data).toEqual({ newKey: 'new value' });
+            expect(translation.locale).toEqual('fr');
+          });
+      });
+
+      it('when the data is invalid responds with validation errors', () => {
+        return request.post(`/api/users/${user.id}/translations/${translation.id}`)
+          .send({ locale: '' }).promisify()
+          .then(response => {
+            expect(response.status).toEqual(422);
+            expect(response.body.errors.locale.message).toMatch('Locale is required');
+          });
+      });
+    });
+  });
+
   describe('POST #updateKey', () => {
     let translation;
     beforeEach(() => {

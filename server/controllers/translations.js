@@ -30,6 +30,13 @@ class TranslationsController {
       .catch(next);
   }
 
+  update(req, res) {
+    Translation.findById(req.params.translationId)
+      .then(translation => translation.update(req.body, { runValidators: true }))
+      .then(() => res.status(status.NO_CONTENT).end())
+      .catch(error => res.status(status.UNPROCESSABLE_ENTITY).json({ errors: error.errors }));
+  }
+
   updateKey(req, res, next) {
     Translation.findByIdAndUpdate(req.params.translationId, { [`data.${req.params.keyId}`]: req.body.value })
       .then(() => res.status(status.NO_CONTENT).end())
