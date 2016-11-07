@@ -17,7 +17,7 @@ export default class SignInController {
           this.$mdToast.simple()
             .textContent(error)
             .position('top right')
-            .parent(angular.element(document.getElementById('view-container')))
+            .parent(angular.element('#view-container'))
           );
       });
   }

@@ -1,4 +1,5 @@
 import translationsNewTemplate from './new/new.view.html';
+import translationsEditTemplate from './edit/edit.view.html';
 import translationsListTemplate from './list/list.view.html';
 import translationsShowTemplate from './show/show.view.html';
 import translationsTranslateTemplate from './show/translate/translate.view.html';
@@ -18,6 +19,18 @@ export default ($stateProvider) => {
       template: translationsNewTemplate,
       controller: 'TranslationsNewController',
       controllerAs: 'vm'
+    })
+    .state('translations.edit', {
+      url: '/:translationId/edit',
+      template: translationsEditTemplate,
+      controller: 'TranslationsEditController',
+      controllerAs: 'vm',
+      resolve: {
+        translation: (TranslationService, $stateParams) => {
+          'ngInject';
+          return TranslationService.getTranslation($stateParams.translationId);
+        }
+      }
     })
     .state('translations.list', {
       url: '/list',
