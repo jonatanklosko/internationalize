@@ -1,0 +1,17 @@
+<md-dialog flex>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Raw data</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" aria-label="Close dialog" ng-click="dialog.close()">
+        <md-icon>close</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content layout="row" class="md-dialog-content">
+    <md-content flex hljs hljs-language="yaml" hljs-source="dialog.yamlData"></md-content>
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button ng-click="dialog.copyToClipboard()"><md-icon>content_copy</md-icon> Copy to clipboard</md-button>
+  </md-dialog-actions>
+</md-dialog>
