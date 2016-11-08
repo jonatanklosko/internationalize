@@ -50,7 +50,7 @@ describe('TranslationsController', () => {
       beforeEach(() => helpers.signIn(user));
 
       it('responds with the translation', () => {
-        return request.get(`/api/users/${user.id}/translations/${translation.id}`)
+        return request.get(`/api/users/${user.id}/translations/${translation.id}`).promisify()
           .then(response => {
             expect(response.status).toEqual(200);
             expect(response.body.translation).toBeDefined();
