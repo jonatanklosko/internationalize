@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('./user');
+const request = require('superagent');
+const yaml = require('js-yaml');
 
 const schema = new mongoose.Schema({
   user: {
@@ -9,7 +11,7 @@ const schema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: [true, 'Name is required.'],
+    required: [true, 'Name is required.']
   },
   locale: {
     type: String,
@@ -18,7 +20,16 @@ const schema = new mongoose.Schema({
   },
   sourceUrl: {
     type: String,
-    required: [true, 'Source URL is required.']
+    required: [true, 'Source URL is required.'],
+    validate: {
+      validator: (url, valid) => {
+        request.get(url)
+          .then(response => yaml.safeLoad(response.text))
+          .then(() => valid(true))
+          .catch(() => valid(false));
+      },
+      message: 'Source URL must lead to a valid YAML document.'
+    }
   },
   data: {
     type: Object

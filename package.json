@@ -45,7 +45,8 @@
     "mongoose": "^4.6.0",
     "mongoose-unique-validator": "^1.0.2",
     "passport": "^0.3.2",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "superagent": "^2.2.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.5.8",
@@ -76,7 +77,6 @@
     "protractor": "^4.0.9",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
-    "superagent": "^2.2.0",
     "superagent-prefix": "^0.0.2",
     "superagent-use": "^0.1.0",
     "webpack": "^1.13.2",

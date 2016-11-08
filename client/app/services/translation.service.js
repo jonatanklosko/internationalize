@@ -1,10 +1,11 @@
 export default class TranslationService {
-  constructor($http, $q, AuthService) {
+  constructor($http, $q, AuthService, TranslationUtils) {
     'ngInject';
 
     this.$http = $http;
     this.$q = $q;
     this.AuthService = AuthService;
+    this.TranslationUtils = TranslationUtils;
   }
 
   /**
@@ -12,9 +13,13 @@ export default class TranslationService {
    * @return {Promise} Resolved with the translation or rejected with validation errors.
    */
   create(translationData) {
+    let translation;
     return this.AuthService.currentUser()
       .then(user => this.$http.post(`/api/users/${user._id}/translations`, translationData))
-      .then(res => res.data.translation)
+      .then(res => translation = res.data.translation)
+      .then(() => this.TranslationUtils.pullRemoteData(translationData.sourceUrl))
+      .then(({ newData }) => this.update(translation._id, Object.assign(translation, { data: newData })))
+      .then(() => translation)
       .catch(res => this.$q.reject(res.data.errors));
   }
 

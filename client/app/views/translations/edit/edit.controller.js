@@ -12,6 +12,7 @@ export default class TranslationsEditController {
   update(translation) {
     this.TranslationService.update(translation._id, translation)
       .then(() => {
+        this.errors = {};
         this.$mdToast.show(
           this.$mdToast.simple()
             .textContent('Translation updated.')

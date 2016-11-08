@@ -11,10 +11,7 @@ export default class TranslationsNewController {
   }
 
   create(translation) {
-    this.TranslationUtils.pullRemoteData(translation.sourceUrl)
-      .then(object => translation.data = object.newData)
-      .catch(() => this.$q.reject({ sourceUrl: { message: 'Source URL must lead to a valid YAML document.' } }))
-      .then(() => this.TranslationService.create(translation))
+    this.TranslationService.create(translation)
       .then(() => this.$state.go('translations.list'))
       .catch(errors => this.errors = errors);
   }
