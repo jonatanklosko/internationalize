@@ -1,14 +1,23 @@
 import yaml from 'js-yaml';
 
-/**
- * Wording:
- *  - raw data refers to translation.data (YAML parsed to JSON)
- *  - processed data refers to translation.data in the form used across the app
- *    (it's the data with inner keys replaced with an object of the form
- *    { _original: 'Original text', _translation: 'Translated text' })
- */
+ /**
+  * Introduction & Wording
+  *
+  * Across the app we use so called *processed data*, which is computed from a *raw* one (parsed from YAML to JSON).
+  * It has its most inner keys changed from the original form to an object:
+  *
+  * {
+  *   _original: 'Original value',
+  *   _translated: 'Translated value'
+  * }
+  *
+  * In most cases a *key* apart from the standart meaning, refers to the most inner key of a translation data.
+  * For example en.common.here with a value of { _original: 'Here', _translated: 'Ici' }.
+  */
 
-/* Class meant for translation data manipulation. */
+/**
+ * A class meant for a translation data manipulation.
+ */
 export default class TranslationUtils {
   constructor($http, $q) {
     'ngInject';
@@ -20,10 +29,15 @@ export default class TranslationUtils {
   /**
    * Fetches a translation data from the given URL.
    *
-   * @param {Object} url The URL to pull the data from.
-   * @param {Object} [data] A processed data to pre-fill the new data when possible
-                            and to be used in statistics computatinon.
-   * @return {Promise}
+   * @param {Object} url A URL to pull the data from.
+   * @param {Object} [data] A processed data to supplement the fetched data when possible
+                            and to be used in statistics computation.
+   * @return {Promise} Resolves to an object with these properties:
+   *                  - newData (the fetched data spplemented with the given one)
+   *                  - newUntranslatedKeysCount (a count of the keys that are in the fetched data
+   *                                              but are not present in the given one)
+   *                  - unusedTranslatedKeysCount (a count of the keys that are translated in the given data
+   *                                               but are not present in the fetched one)
    */
   pullRemoteData(url, data = {}) {
     if(!url) return this.$q.reject('You must provide a URL.');
@@ -41,16 +55,16 @@ export default class TranslationUtils {
   }
 
   /**
-   * Builds a new translation processed data from the *latestData* given.
-   * Takes translations from the processed *data* if only they are present.
+   * Builds a new translation processed data from the provided raw *latestData*.
+   * Takes translations from the processed *data* if they are present.
    * Results in a new object with inner keys of the form
    * { _original: <from *latestData*>, _translated: <optionally from *data*> }
    *
-   * @param {Object} data A processed data
-   * @param {Object} latestData raw/unprocessed data (directly parsed from YAML)
+   * @param {Object} data A processed data.
+   * @param {Object} latestData A raw data.
    * @return {Object} With two properties:
-   *                  - newData (the actual result of the computation)
-   *                  - newUntranslatedKeysCount (the count of the inner keys that are in the *latestData* and are not in the *data*)
+   *                  - newData (the *latestData* spplemented with the given *data*)
+   *                  - newUntranslatedKeysCount (a count of the inner keys that are in the *latestData* and are not in the *data*)
    */
   buildNewData(data, latestData) {
     let newData = {};
@@ -82,11 +96,10 @@ export default class TranslationUtils {
   }
 
   /**
-   * Counts the inner translated keys (having '_translated' property) that are present
-   * in the first object but are not in the second one.
+   * Counts the translated keys that are present in the first object but are not in the second one.
    *
-   * @param {Object} data The processed data to be compared.
-   * @param {Object} latestData The processed data to compare with.
+   * @param {Object} data A processed data to be compared.
+   * @param {Object} latestData A processed data to compare with.
    * @return {Number}
    */
   unusedTranslatedKeysCount(data, latestData) {
@@ -112,6 +125,12 @@ export default class TranslationUtils {
     return unusedTranslatedKeysCount;
   }
 
+  /**
+   * Returns a new data that is the raw representation of the given processed data.
+   *
+   * @param {Object} processedData.
+   * @return {Object}
+   */
   processedDataToRaw(processedData) {
     let rawData = {};
     for(let key in processedData) {
@@ -124,10 +143,24 @@ export default class TranslationUtils {
     return rawData;
   }
 
+  /**
+   * Returns the YAML representation of the given processed data.
+   *
+   * @param {Object} processedData
+   * @return {String} A YAML document.
+   */
   processedDataToYaml(processedData) {
     return yaml.safeDump(this.processedDataToRaw(processedData));
   }
 
+  /**
+   * Computes the number of keys that are translated as well as the overall count.
+   *
+   * @param {Object} data A processed data.
+   * @return {Object} With two properties:
+   *                  - translatedCount
+   *                  - overallCount
+   */
   statistics(data) {
     let overallCount = 0;
     let translatedCount = 0;
@@ -156,6 +189,16 @@ export default class TranslationUtils {
     };
   }
 
+  /**
+   * A generator function that iterates over the given data
+   * and yields only those keys that haven't been translated yet.
+   *
+   * Yields objects with two properties:
+   *  - key (an actual translation key)
+   *  - chain (an array with the object keys hierarchy)
+   *
+   * @param {Object} data A processed data.
+   */
   *untranslatedKeysGenerator(data, _chain = []) {
     for(let key in data) {
       let child = data[key];
