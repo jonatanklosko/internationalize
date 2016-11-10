@@ -28,6 +28,7 @@ export default class TranslationUtils {
 
   /**
    * Fetches a translation data from the given URL.
+   * The URL should lead to a YAML document.
    *
    * @param {Object} url A URL to pull the data from.
    * @param {Object} [data] A processed data to supplement the fetched data when possible
@@ -127,6 +128,7 @@ export default class TranslationUtils {
 
   /**
    * Returns a new data that is the raw representation of the given processed data.
+   * Maps each key with its translation.
    *
    * @param {Object} processedData.
    * @return {Object}
