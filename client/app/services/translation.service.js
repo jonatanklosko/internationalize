@@ -9,15 +9,18 @@ export default class TranslationService {
   }
 
   /**
-   * @param {Object} A new translation data.
+   * Creates a new translation.
+   * Processes and saves a data fetched from its translationUrl.
+   *
+   * @param {Object} translationAttributes New translation attributes.
    * @return {Promise} Resolved with the translation or rejected with validation errors.
    */
-  create(translationData) {
+  create(translationAttributes) {
     let translation;
     return this.AuthService.currentUser()
-      .then(user => this.$http.post(`/api/users/${user._id}/translations`, translationData))
+      .then(user => this.$http.post(`/api/users/${user._id}/translations`, translationAttributes))
       .then(res => translation = res.data.translation)
-      .then(() => this.TranslationUtils.pullRemoteData(translationData.sourceUrl))
+      .then(() => this.TranslationUtils.pullRemoteData(translationAttributes.sourceUrl))
       .then(({ newData }) => this.update(translation._id, Object.assign(translation, { data: newData })))
       .then(() => translation)
       .catch(res => this.$q.reject(res.data.errors));
@@ -33,7 +36,7 @@ export default class TranslationService {
   }
 
   /**
-   * @param {String} Id of the translation to load.
+   * @param {String} translationId Id of the translation to load.
    * @return {Promise} Resolved with the translation data.
    */
   getTranslation(translationId) {
@@ -43,7 +46,7 @@ export default class TranslationService {
   }
 
   /**
-   * @param {String} Id of the translation to delete.
+   * @param {String} translationId Id of the translation to delete.
    * @return {Promise} Resolved when the translation is deleted.
    */
   delete(translationId) {
@@ -52,24 +55,24 @@ export default class TranslationService {
   }
 
   /**
-   * @param {String} Id of the translation to be updated.
-   * @param {Object} Updated translation data.
-   * @return {Promise} Resolved when the key is updated.
+   * @param {String} translationId Id of the translation to be updated.
+   * @param {Object} translationAttributes Updated translation attributes.
+   * @return {Promise} Resolved when the translation is updated.
    */
-  update(translationId, translationData) {
+  update(translationId, translationAttributes) {
     return this.AuthService.currentUser()
-      .then(user => this.$http.post(`/api/users/${user._id}/translations/${translationId}`, translationData))
+      .then(user => this.$http.patch(`/api/users/${user._id}/translations/${translationId}`, translationAttributes))
       .catch(res => this.$q.reject(res.data.errors));
   }
 
   /**
-   * @param {String} Id of the translation.
-   * @param {String} Id of of the key to be updated.
-   * @param {String} The new value of the key.
+   * @param {String} translationId An id of a translation.
+   * @param {String} keyId An id of of the key to be updated.
+   * @param {String} value A new value of the key.
    * @return {Promise} Resolved when the key is updated.
    */
   updateKey(translationId, keyId, value) {
     return this.AuthService.currentUser()
-      .then(user => this.$http.post(`/api/users/${user._id}/translations/${translationId}/keys/${keyId}`, { value }));
+      .then(user => this.$http.patch(`/api/users/${user._id}/translations/${translationId}/keys/${keyId}`, { value }));
   }
 }

@@ -24,8 +24,8 @@ app.use('/api', Router()
   .get('/users/:userId/translations', correctUser, controllers.translations.index)
   .get('/users/:userId/translations/:translationId', correctUser, controllers.translations.show)
   .delete('/users/:userId/translations/:translationId', correctUser, controllers.translations.destroy)
-  .post('/users/:userId/translations/:translationId', correctUser, controllers.translations.update)
-  .post('/users/:userId/translations/:translationId/keys/:keyId', correctUser, controllers.translations.updateKey)
+  .patch('/users/:userId/translations/:translationId', correctUser, controllers.translations.update)
+  .patch('/users/:userId/translations/:translationId/keys/:keyId', correctUser, controllers.translations.updateKey)
 );
 
 /* Authentication routes ('/auth') */

@@ -89,7 +89,7 @@ describe('TranslationsController', () => {
     });
   });
 
-  describe('POST #update', () => {
+  describe('PATCH #update', () => {
     let translation;
     beforeEach(() => {
       return factory.create('translation', { user: user.id, locale: 'en', data: { key: 'value' } })
@@ -100,7 +100,7 @@ describe('TranslationsController', () => {
       beforeEach(() => helpers.signIn(user));
 
       it('when the data is valid updates the translation', () => {
-        return request.post(`/api/users/${user.id}/translations/${translation.id}`)
+        return request.patch(`/api/users/${user.id}/translations/${translation.id}`)
           .send({ locale: 'fr', data: { newKey: 'new value' } }).promisify()
           .then(response => expect(response.status).toEqual(204))
           .then(() => Translation.findById(translation))
@@ -111,7 +111,7 @@ describe('TranslationsController', () => {
       });
 
       it('when the data is invalid responds with validation errors', () => {
-        return request.post(`/api/users/${user.id}/translations/${translation.id}`)
+        return request.patch(`/api/users/${user.id}/translations/${translation.id}`)
           .send({ locale: '' }).promisify()
           .then(response => {
             expect(response.status).toEqual(422);
@@ -121,7 +121,7 @@ describe('TranslationsController', () => {
     });
   });
 
-  describe('POST #updateKey', () => {
+  describe('PATCH #updateKey', () => {
     let translation;
     beforeEach(() => {
       return factory.create('translation', { user: user.id, data: { en: { common: { name: 'Name' } } } })
@@ -132,7 +132,7 @@ describe('TranslationsController', () => {
       beforeEach(() => helpers.signIn(user));
 
       it('updates the specified key', () => {
-        return request.post(`/api/users/${user.id}/translations/${translation.id}/keys/en.common.name`)
+        return request.patch(`/api/users/${user.id}/translations/${translation.id}/keys/en.common.name`)
           .send({ value: 'Nom' }).promisify()
           .then(response => expect(response.status).toEqual(204))
           .then(() => Translation.findById(translation))
