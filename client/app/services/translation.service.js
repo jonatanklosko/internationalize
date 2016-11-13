@@ -17,9 +17,10 @@ export default class TranslationService {
    */
   create(translationAttributes) {
     let translation;
-    return this.AuthService.currentUser()
-      .then(user => this.$http.post(`/api/users/${user._id}/translations`, translationAttributes))
+    return this.currentUserTranslationsRequest('post', '', translationAttributes)
       .then(res => translation = res.data.translation)
+      /* When the translation is saved, thus has a valid sourceUrl,
+         fetch the remote data, process it and update the translation. */
       .then(() => this.TranslationUtils.pullRemoteData(translationAttributes.sourceUrl))
       .then(({ newData }) => this.update(translation._id, Object.assign(translation, { data: newData })))
       .then(() => translation)
@@ -30,8 +31,7 @@ export default class TranslationService {
    * @return {Promise} Resolved with all translations which belong to the current user.
    */
   getAll() {
-    return this.AuthService.currentUser()
-      .then(user => this.$http.get(`/api/users/${user._id}/translations`))
+    return this.currentUserTranslationsRequest('get')
       .then(res => res.data.translations);
   }
 
@@ -40,8 +40,7 @@ export default class TranslationService {
    * @return {Promise} Resolved with the translation data.
    */
   getTranslation(translationId) {
-    return this.AuthService.currentUser()
-      .then(user => this.$http.get(`/api/users/${user._id}/translations/${translationId}`))
+    return this.currentUserTranslationsRequest('get', `/${translationId}`)
       .then(res => res.data.translation);
   }
 
@@ -50,8 +49,7 @@ export default class TranslationService {
    * @return {Promise} Resolved when the translation is deleted.
    */
   delete(translationId) {
-    return this.AuthService.currentUser()
-      .then(user => this.$http.delete(`/api/users/${user._id}/translations/${translationId}`));
+    return this.currentUserTranslationsRequest('delete', `/${translationId}`);
   }
 
   /**
@@ -60,19 +58,22 @@ export default class TranslationService {
    * @return {Promise} Resolved when the translation is updated.
    */
   update(translationId, translationAttributes) {
-    return this.AuthService.currentUser()
-      .then(user => this.$http.patch(`/api/users/${user._id}/translations/${translationId}`, translationAttributes))
+    return this.currentUserTranslationsRequest('patch', `/${translationId}`, translationAttributes)
       .catch(res => this.$q.reject(res.data.errors));
   }
 
   /**
    * @param {String} translationId An id of a translation.
-   * @param {String} keyId An id of of the key to be updated.
+   * @param {String} keyId An id of the key to be updated.
    * @param {String} value A new value of the key.
    * @return {Promise} Resolved when the key is updated.
    */
   updateKey(translationId, keyId, value) {
+    return this.currentUserTranslationsRequest('patch', `/${translationId}/keys/${keyId}`, { value });
+  }
+
+  currentUserTranslationsRequest(method, path = '', data = {}) {
     return this.AuthService.currentUser()
-      .then(user => this.$http.patch(`/api/users/${user._id}/translations/${translationId}/keys/${keyId}`, { value }));
+      .then(user => this.$http({ method, url: `/api/users/${user._id}/translations${path}`, data }));
   }
 }
