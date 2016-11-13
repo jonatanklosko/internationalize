@@ -4,7 +4,7 @@ import yaml from 'js-yaml';
   * Introduction & Wording
   *
   * Across the app we use so called *processed data*, which is computed from a *raw* one (parsed from YAML to JSON).
-  * It has its most inner keys changed from the original form to an object:
+  * It has its innermost keys changed from the original form to an object:
   *
   * {
   *   _original: 'Original value',
@@ -81,8 +81,8 @@ export default class TranslationUtils {
             _original: latestData[key],
             _translated: null
           };
-          if(latestData[key] === '') {
-            newData[key]._translated = ''; // Don't bother with translating empty strings.
+          if(this.isIgnoredValue(latestData[key])) {
+            newData[key]._translated = latestData[key]; // Don't bother with translating ignored values (e.g. an empty string).
           } else if(data.hasOwnProperty(key)) {
             newData[key]._translated = data[key]._translated;
           } else {
@@ -109,7 +109,7 @@ export default class TranslationUtils {
     let unusedTranslatedKeysCount = 0;
     let unusedTranslatedKeysCountRecursive = (data, latestData) => {
       for(let key in data) {
-        if(data.hasOwnProperty('_translated')) continue;
+        if(this.isInnermostProcessedObject(data)) continue;
 
         if(latestData.hasOwnProperty(key)) {
           unusedTranslatedKeysCountRecursive(data[key], latestData[key]);
@@ -137,7 +137,7 @@ export default class TranslationUtils {
     let rawData = {};
     for(let key in processedData) {
       let child = processedData[key];
-      rawData[key] = child.hasOwnProperty('_translated')
+      rawData[key] = this.isInnermostProcessedObject(child)
                    ? child._translated
                    : this.processedDataToRaw(child);
     }
@@ -170,11 +170,11 @@ export default class TranslationUtils {
     let statisticsRecursive = (data) => {
       for(let key in data) {
         let child = data[key];
-        if(child.hasOwnProperty('_translated')) {
-          /* Skip translations of empty strings, which are added automatically. */
-          if(child._translated !== '') {
+        if(this.isInnermostProcessedObject(child)) {
+          /* Skip translations of ignored values, which are added automatically. */
+          if(!this.isIgnoredValue(child._translated)) {
             overallCount++;
-            if(child._translated !== null) {
+            if(this.isTranslated(child)) {
               translatedCount++;
             }
           }
@@ -205,13 +205,25 @@ export default class TranslationUtils {
     for(let key in data) {
       let child = data[key];
       let chain = [..._chain, key];
-      if(child.hasOwnProperty('_translated')) {
-        if(child._translated === null) {
+      if(this.isInnermostProcessedObject(child)) {
+        if(!this.isTranslated(child)) {
           yield { key: child, chain };
         }
       } else {
         yield *this.untranslatedKeysGenerator(child, chain);
       }
     }
+  }
+
+  isInnermostProcessedObject(object) {
+    return object.hasOwnProperty('_translated');
+  }
+
+  isIgnoredValue(string) {
+    return string === '';
+  }
+
+  isTranslated(processedObject) {
+    return processedObject._translated !== null;
   }
 }

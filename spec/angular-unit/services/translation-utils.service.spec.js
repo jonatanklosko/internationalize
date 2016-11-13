@@ -153,7 +153,7 @@ describe('TranslationUtils', () => {
       expect(translations).toEqual([null, null, null]);
     });
 
-    it('includes object keys chain in the yielded value', () => {
+    it('includes object keys chain in a yielded value', () => {
       let chains = values.map(value => value.chain);
       expect(chains).toEqual([['day'], ['common', 'you'], ['common', 'he']]);
     });
