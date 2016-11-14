@@ -11,6 +11,8 @@ exports.config = {
     global.factory = require('./support/factory');
     global.helpers = require('./support/helpers');
 
+    require('../support/file-server');
+
     // Add jasmine spec reporter.
     const JasmineSpecReporter = require('jasmine-spec-reporter');
     jasmine.getEnv().clearReporters();

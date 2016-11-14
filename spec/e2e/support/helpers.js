@@ -1,15 +1,14 @@
 class Helpers {
-  submitForm(form, data) {
-    for(const name in data) {
-      form.element(by.name(name)).sendKeys(data[name]);
-    }
+  submitForm(form, fields, data) {
+    fields.forEach(field => form.element(by.name(field)).sendKeys(data[field]));
     form.element(by.css('button[type="submit"]')).click();
   }
 
   signIn(userPromise = factory.create('user')) {
     browser.get('/signin');
     let form = element(by.tagName('form'));
-    userPromise.then(user => this.submitForm(form, { username: user.username, password: user.password }));
+    userPromise.then(user => this.submitForm(form, ['username', 'password'], user));
+    browser.waitForAngular(); /* Wait for an http response with the user data. */
   }
 
   expectToastToContain(message) {

@@ -10,8 +10,6 @@ const mongoose = require('mongoose');
 const superagent = require('superagent');
 const superagentUse = require('superagent-use');
 const superagentPrefix = require('superagent-prefix');
-const express = require('express');
-const path = require('path');
 
 global.factory = require('../support/factory');
 
@@ -48,17 +46,7 @@ request.Request.prototype.promisify = function() {
 /* Clean cookies before each test. */
 beforeEach(() => cookie = null);
 
-/* Set up the server serving *external* files. */
-
-let fileServer = express();
-const filesPath = path.resolve(__dirname, `support/files`);
-
-beforeAll(done => {
-  fileServer.use('/files', express.static(filesPath));
-  fileServer.listen(process.env.EXTERNAL_FILES_PORT, done);
-});
-
-afterAll(done => fileServer.close(done));
+require('../support/file-server');
 
 /* Set up the app. */
 

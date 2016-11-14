@@ -7,7 +7,7 @@ describe('Sign in', () => {
   it('when the credentials are invalid, shows appropriate error', () => {
     browser.get('/signin');
     let form = element(by.tagName('form'));
-    helpers.submitForm(form, { username: 'nonexistent', password: 'password' });
+    helpers.submitForm(form, ['username', 'password'], { username: 'nonexistent', password: 'password' });
 
     helpers.expectToastToContain('Incorrect username');
   });
