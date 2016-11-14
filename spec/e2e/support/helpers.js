@@ -7,7 +7,9 @@ class Helpers {
   signIn(userPromise = factory.create('user')) {
     browser.get('/signin');
     let form = element(by.tagName('form'));
-    userPromise.then(user => this.submitForm(form, ['username', 'password'], user));
+    userPromise
+      .then(user => this.currentUser = user)
+      .then(user => this.submitForm(form, ['username', 'password'], user));
     browser.waitForAngular(); /* Wait for an http response with the user data. */
   }
 
