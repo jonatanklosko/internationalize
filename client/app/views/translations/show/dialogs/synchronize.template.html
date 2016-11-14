@@ -14,16 +14,26 @@
       <md-list>
         <md-list-item ng-show="vm.newUntranslatedKeysCount !== 0">
           <md-icon>add</md-icon>
-          <p>{{ vm.newUntranslatedKeysCount }} new keys need to be translated</p>
+          <p>
+            <ng-pluralize count="vm.newUntranslatedKeysCount"
+                          when="{ 'one':   '{} new key needs to be translated',
+                                  'other': '{} new keys need to be translated' }">
+            </ng-pluralize>
+          </p>
         </md-list-item>
         <md-list-item ng-show="vm.unusedTranslatedKeysCount !== 0">
           <md-icon>remove</md-icon>
-          <p>{{ vm.unusedTranslatedKeysCount }} translated keys are unused and will be removed</p>
+          <p>
+            <ng-pluralize count="vm.unusedTranslatedKeysCount"
+                          when="{ 'one':   '{} translated key is unused and will be removed',
+                                  'other': '{} translated keys are unused and will be removed' }">
+            </ng-pluralize>
+          </p>
         </md-list-item>
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button ng-click="vm.synchronize()">Sychronize</md-button>
+      <md-button ng-click="vm.synchronize()">Synchronize</md-button>
     </md-dialog-actions>
   </div>
   <div ng-show="vm.upToDate">
