@@ -1,12 +1,20 @@
 let page = element(by.tagName('html'));
 let form = element(by.tagName('form'));
 let dialog = element(by.tagName('md-dialog'));
+let translationMenu = element(by.css('[aria-label="Open translation interactions menu"]'));
+
+let createTranslation = () => {
+  browser.get('/translations/new');
+  factory.attrs('translation', { name: 'My translation' })
+    .then(translation => helpers.submitForm(form, ['name', 'locale', 'sourceUrl'], translation));
+  browser.waitForAngular(); /* Wait until the remote data is fetched, processed and pushed to the server. */
+  browser.get('/translations/list');
+  element(by.cssContainingText('md-list-item', 'My translation')).click();
+};
 
 beforeEach(() => helpers.signIn());
 
 describe('Creating a new translation', () => {
-  let form = element(by.tagName('form'));
-
   describe('a user goes to the new translation page and fills the form', () => {
     beforeEach(() => browser.get('/translations/new'));
 
@@ -40,15 +48,6 @@ describe('Deleting a new translation', () => {
   });
 });
 
-let createTranslation = () => {
-  browser.get('/translations/new');
-  factory.attrs('translation', { name: 'My translation' })
-    .then(translation => helpers.submitForm(form, ['name', 'locale', 'sourceUrl'], translation));
-  browser.waitForAngular(); /* Wait until the remote data is fetched and pushed to the server. */
-  browser.get('/translations/list');
-  element(by.cssContainingText('md-list-item', 'My translation')).click();
-};
-
 describe('Translating a translation', () => {
   it('a user goes to his translation page and translates the given phrases', () => {
     createTranslation();
@@ -63,7 +62,7 @@ describe('Translating a translation', () => {
 
     expect(page).toHaveContent('Everything translated');
 
-    element(by.css('[aria-label="Open translation interactions menu"]')).click();
+    translationMenu.click();
     element(by.partialButtonText('Show raw')).click();
     expect(dialog).toHaveContent('First translation');
     expect(dialog).toHaveContent('Second translation');
@@ -81,8 +80,39 @@ describe('Browsing a translation', () => {
     form.element(by.name('translated')).sendKeys('Nom');
     form.submit();
 
-    element(by.css('[aria-label="Open translation interactions menu"]')).click();
+    translationMenu.click();
     element(by.clickableText('Show raw')).click();
     expect(dialog).toHaveContent('name: Nom');
+  });
+});
+
+describe('Synchronizing with a remote', () => {
+  it('a user goes to his translation page and synchronizes with the remote', () => {
+    createTranslation();
+
+    /* Simulate a change in the remote file by changing the sourceUrl. */
+    translationMenu.click();
+    element(by.clickableText('Edit')).click();
+    form.element(by.name('sourceUrl')).clear().sendKeys(`${process.env.EXTERNAL_FILES_URL}/en-updated.yml`);
+    form.element(by.clickableText('Save')).click();
+
+    /* Translate two keys. */
+    form.element(by.name('translated')).sendKeys('First translation');
+    form.submit();
+    form.element(by.name('translated')).sendKeys('Second translation');
+    form.submit();
+
+    translationMenu.click();
+    element(by.clickableText('Synchronize with the remote')).click();
+
+    expect(dialog).toHaveContent('1 new key needs to be translated');
+    expect(dialog).toHaveContent('1 translated key is unused and will be removed');
+
+    dialog.element(by.clickableText('Synchronize')).click();
+
+    translationMenu.click();
+    element(by.clickableText('Show raw')).click();
+    expect(dialog).not.toHaveContent('here:');
+    expect(dialog).toHaveContent('day:');
   });
 });
