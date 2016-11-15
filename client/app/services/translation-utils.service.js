@@ -215,6 +215,26 @@ export default class TranslationUtils {
     }
   }
 
+  /**
+   * Validates the given translation object.
+   *
+   * @param {Object} key A processed translation object.
+   * @return {String} An error message if there's any and null otherwise.
+   */
+  translationError(key) {
+    if(!key._translated) {
+      return 'Translation must not be empty.';
+    }
+    let variables = key._original.match(/%{.+?}/g) || [];
+    for(let variable of variables) {
+      if(!key._translated.match(variable)) {
+        return `Translation must include all variables from the original phrase (${variable}).`;
+      }
+    }
+
+    return null;
+  }
+
   isInnermostProcessedObject(object) {
     return object.hasOwnProperty('_translated');
   }
