@@ -1,0 +1,10 @@
+<div>
+  Original: {{ vm.original }}
+</div>
+<form ng-submit="vm.submit()" mongoose-validations errors-source="vm.errors">
+  <md-input-container class="md-block">
+    <label for="translated">Translation</label>
+    <input type="text" name="translated" ng-model="vm.translated">
+  </md-input-container>
+  <md-button type="submit" class="md-raised md-primary">Save</md-button>
+</form>

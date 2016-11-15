@@ -14,13 +14,5 @@
       {{ parent }} <md-icon ng-if="!$last">navigate_next</md-icon>
     </span>
   </div>
-  <div>
-    Original: {{ vm.key._original }}
-  </div>
-  <form ng-submit="vm.done()">
-    <md-input-container class="md-block">
-      <label for="translated">Translation</label>
-      <input type="text" name="translated" ng-model="vm.key._translated">
-    </md-input-container>
-  </form>
+  <translation-box processed-object="vm.key" on-submit="vm.done()"></translation-box>
 </div>

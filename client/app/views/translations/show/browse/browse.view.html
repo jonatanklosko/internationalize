@@ -10,14 +10,5 @@
   </md-list-item>
 </md-list>
 <div ng-if="vm.data.hasOwnProperty('_translated')" >
-  <div>
-    Original: {{ vm.data._original }}
-  </div>
-  <form ng-submit="vm.save()">
-    <md-input-container class="md-block">
-      <label for="translated">Translation</label>
-      <input type="text" name="translated" ng-model="vm.data._translated">
-    </md-input-container>
-    <md-button type="submit" class="md-raised md-primary">Save</md-button>
-  </form>
+  <translation-box processed-object="vm.data" on-submit="vm.save()"></translation-box>
 </div>
