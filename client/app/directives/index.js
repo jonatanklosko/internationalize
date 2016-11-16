@@ -1,10 +1,11 @@
 import angular from 'angular';
+import ngMaterial from 'angular-material';
 
 import mongooseValidations from './mongoose-validations.directive';
 import translationBox from './translation-box.directive';
 
 export default angular
-  .module('app.directives', [])
+  .module('app.directives', [ngMaterial])
   .directive('mongooseValidations', mongooseValidations)
   .directive('translationBox', translationBox)
   .name;
