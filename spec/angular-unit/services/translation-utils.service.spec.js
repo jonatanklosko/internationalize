@@ -158,4 +158,29 @@ describe('TranslationUtils', () => {
       expect(chains).toEqual([['day'], ['common', 'you'], ['common', 'he']]);
     });
   });
+
+  describe('translationError', () => {
+    it('returns null if there are no errors', () => {
+      expect(TranslationUtils.translationError({
+        _original: 'he',
+        _translated: 'il'
+      })).toBe(null);
+    });
+
+    it('validates translation presence', () => {
+      ['', null].forEach(blank => {
+        expect(TranslationUtils.translationError({
+          _original: 'whatever',
+          _translated: blank
+        })).toMatch('must not be empty');
+      });
+    });
+
+    it('validates translation variables', () => {
+      expect(TranslationUtils.translationError({
+        _original: 'There are %{count} apples',
+        _translated: 'Il y a %{nombre} pommes.'
+      })).toMatch('%{count}');
+    });
+  });
 });
