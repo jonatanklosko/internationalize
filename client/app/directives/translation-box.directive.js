@@ -33,7 +33,7 @@ export default () => {
       }
 
       submit() {
-        let error = this.TranslationUtils.translationError({ _original: this.original, _translated: this.translated });
+        let error = this.TranslationUtils.translationError(this.original, this.translated);
         if(error) {
           /* Add mongoose-like validation errors in order to reuse mongoose-validations directive. */
           this.errors = { translated: { message: error } };

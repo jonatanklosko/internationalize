@@ -216,18 +216,19 @@ export default class TranslationUtils {
   }
 
   /**
-   * Validates the given translation object.
+   * Validates the given translation string.
    *
-   * @param {Object} key A processed translation object.
+   * @param {String} original An orginal phrase.
+   * @param {String} translated A translation of the phrase.
    * @return {String} An error message if there's any and null otherwise.
    */
-  translationError(key) {
-    if(!key._translated) {
+  translationError(original, translated) {
+    if(!translated) {
       return 'Translation must not be empty.';
     }
-    let variables = key._original.match(/%{.+?}/g) || [];
+    let variables = original.match(/%{.+?}/g) || [];
     for(let variable of variables) {
-      if(!key._translated.match(variable)) {
+      if(!translated.match(variable)) {
         return `Translation must include all variables from the original phrase (${variable}).`;
       }
     }

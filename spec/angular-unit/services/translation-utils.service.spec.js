@@ -161,26 +161,17 @@ describe('TranslationUtils', () => {
 
   describe('translationError', () => {
     it('returns null if there are no errors', () => {
-      expect(TranslationUtils.translationError({
-        _original: 'he',
-        _translated: 'il'
-      })).toBe(null);
+      expect(TranslationUtils.translationError('he', 'il')).toBe(null);
     });
 
     it('validates translation presence', () => {
       ['', null].forEach(blank => {
-        expect(TranslationUtils.translationError({
-          _original: 'whatever',
-          _translated: blank
-        })).toMatch('must not be empty');
+        expect(TranslationUtils.translationError('whatever', blank)).toMatch('must not be empty');
       });
     });
 
     it('validates translation variables', () => {
-      expect(TranslationUtils.translationError({
-        _original: 'There are %{count} apples',
-        _translated: 'Il y a %{nombre} pommes.'
-      })).toMatch('%{count}');
+      expect(TranslationUtils.translationError('There are %{count} apples', 'Il y a %{nombre} pommes.')).toMatch('%{count}');
     });
   });
 });
