@@ -13,7 +13,7 @@ global.helpers = Object.assign(global.helpers || {}, {
    * getUserAsync()
    *   .then(signIn);
    *
-   * @param {Object} Should contain a username and a password.
+   * @param {Object} user Should contain a username and a password.
    * @return {Promise} Resolved when the request is finished.
    */
   signIn: user =>
@@ -26,8 +26,8 @@ global.helpers = Object.assign(global.helpers || {}, {
    * makeRequestAsync()
    *   .then(expectUnauthorizedRequest);
    *
-   * @param {Object} A response.
-   * @return {Object} The response.
+   * @param {Object} response
+   * @return {Object} The given response.
    */
   expectUnauthorizedRequest: response => {
     expect(response.status).toEqual(401);

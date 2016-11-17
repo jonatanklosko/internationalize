@@ -8,7 +8,7 @@ global.helpers = Object.assign(global.helpers || {}, {
    * getDocumentAsync()
    *   .then(helpers.expectValidationErrorToMatch('isRequired'));
    *
-   * @param {String|RegExp}
+   * @param {String|RegExp} pattern
    * @return {Function} A function taking a document and returning a promise,
    *                    expecting a validation error to match the pattern.
    */

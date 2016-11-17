@@ -9,7 +9,7 @@ export default class AuthService {
   }
 
   /**
-   * @param {Object} User credentials (username and password).
+   * @param {Object} credentials A user credentials (username and password).
    * @return {Promise} Resolved with the user or rejected with an error.
    */
   signIn(credentials) {
@@ -27,7 +27,7 @@ export default class AuthService {
   }
 
   /**
-   * @param {Object} A user data.
+   * @param {Object} user A user data.
    * @return {Object} The user data.
    */
   setCurrentUser(user) {
@@ -56,7 +56,7 @@ export default class AuthService {
   /**
    * Adds listeners for the user data change.
    *
-   * @param {Function} A function called with the current user immediately and whenever it changes.
+   * @param {Function} fn A function called with the current user immediately and whenever it changes.
    * @return {Promise} Resolved when the given function is called for the first time.
    */
   watchUser(fn) {

@@ -61,8 +61,8 @@ schema.methods = {
   /**
    * Checks if the given password matches the hashed one.
    *
-   * @param {String} Plain password
-   * @param {Function} Callback receiving the error, if any, otherwise a boolean
+   * @param {String} plainPassword A plain, uncoded password.
+   * @param {Function} done A callback receiving the error, if any, otherwise a boolean.
    */
   authenticate: function(plainPassword, done) {
     bcrypt.compare(plainPassword, this.passwordDigest, done);
