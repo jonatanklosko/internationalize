@@ -2,7 +2,7 @@ import angular from 'angular';
 
 describe('TranslationService', () => {
 
-  let translationAttributes = { name: 'Super project', locale: 'fr' };
+  let translationAttributes = { name: 'Super project', targetLocale: 'fr' };
   let translation = Object.assign({}, translationAttributes, { _id: 1 });
   let processedData = { hello: { _original: 'hello', _translated: 'salut' } };
   let translationWithData = Object.assign({}, translation, { data: processedData });

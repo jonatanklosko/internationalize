@@ -13,10 +13,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: [true, 'Name is required.']
   },
-  locale: {
+  targetLocale: {
     type: String,
-    required: [true, 'Locale is required.'],
-    match: [/^\w+$/, 'Locale constains invalid characters.']
+    required: [true, 'Target locale is required.'],
+    match: [/^\w+$/, 'Target locale constains invalid characters.']
   },
   sourceUrl: {
     type: String,

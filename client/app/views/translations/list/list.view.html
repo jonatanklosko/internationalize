@@ -5,7 +5,7 @@
                 ui-sref="translations.show.translate({ translationId: translation._id })">
     <div class="md-list-item-text">
       <h3>{{ translation.name }}</h3>
-      <p>{{ translation.locale }}</p>
+      <p>{{ translation.targetLocale }}</p>
     </div>
     <md-icon class="md-secondary" aria-label="Edit" ui-sref="translations.edit({ translationId: translation._id })" ng-click>edit</md-icon>
     <md-icon class="md-secondary" aria-label="Delete" ng-click="vm.delete(translation, $index, $event)">delete</md-icon>

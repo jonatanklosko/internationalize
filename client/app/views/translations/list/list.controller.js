@@ -12,7 +12,7 @@ export default class TranslationsListController {
     let confirmation = this.$mdDialog.confirm()
       .targetEvent(event)
       .title('Are you sure you want to delete this translation?')
-      .textContent(`${translation.name} - ${translation.locale}`)
+      .textContent(`${translation.name} - ${translation.targetLocale}`)
       .ok('Yes')
       .cancel('No');
 

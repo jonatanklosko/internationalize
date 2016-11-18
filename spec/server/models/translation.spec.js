@@ -26,7 +26,7 @@ describe('Translation', () => {
     });
 
     it('when a translation is updated, his translations count doesn\'t change', () => {
-      translation.locale = 'fr';
+      translation.targetLocale = 'fr';
       return translation.save()
         .then(translation => User.findById(translation.user))
         .then(user => expect(user.translations.length).toEqual(1));

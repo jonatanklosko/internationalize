@@ -17,11 +17,11 @@ describe('TranslationsController', () => {
       });
 
       it('when the data is invalid responds with validation errors', () => {
-        return factory.attrs('translation', { locale: '' })
+        return factory.attrs('translation', { targetLocale: '' })
           .then(attributes => request.post(`/api/users/${user.id}/translations`).send(attributes).promisify())
           .then(response => {
             expect(response.status).toEqual(422);
-            expect(response.body.errors.locale.message).toMatch('Locale is required');
+            expect(response.body.errors.targetLocale.message).toMatch('Target locale is required');
           });
       });
     });
@@ -92,7 +92,7 @@ describe('TranslationsController', () => {
   describe('PATCH #update', () => {
     let translation;
     beforeEach(() => {
-      return factory.create('translation', { user: user.id, locale: 'en', data: { key: 'value' } })
+      return factory.create('translation', { user: user.id, targetLocale: 'en', data: { key: 'value' } })
         .then(created => translation = created);
     });
 
@@ -101,21 +101,21 @@ describe('TranslationsController', () => {
 
       it('when the data is valid updates the translation', () => {
         return request.patch(`/api/users/${user.id}/translations/${translation.id}`)
-          .send({ locale: 'fr', data: { newKey: 'new value' } }).promisify()
+          .send({ targetLocale: 'fr', data: { newKey: 'new value' } }).promisify()
           .then(response => expect(response.status).toEqual(204))
           .then(() => Translation.findById(translation))
           .then(translation => {
             expect(translation.data).toEqual({ newKey: 'new value' });
-            expect(translation.locale).toEqual('fr');
+            expect(translation.targetLocale).toEqual('fr');
           });
       });
 
       it('when the data is invalid responds with validation errors', () => {
         return request.patch(`/api/users/${user.id}/translations/${translation.id}`)
-          .send({ locale: '' }).promisify()
+          .send({ targetLocale: '' }).promisify()
           .then(response => {
             expect(response.status).toEqual(422);
-            expect(response.body.errors.locale.message).toMatch('Locale is required');
+            expect(response.body.errors.targetLocale.message).toMatch('Target locale is required');
           });
       });
     });

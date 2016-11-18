@@ -43,7 +43,7 @@ export default class TranslationsShowController {
       let blob = new Blob([yamlData], { type: 'text/yaml' });
       let downloadLink = angular.element('<a></a>')
                         .attr('href', window.URL.createObjectURL(blob))
-                        .attr('download', `${this.translation.locale}.yml`);
+                        .attr('download', `${this.translation.targetLocale}.yml`);
       angular.element('body').append(downloadLink);
       downloadLink[0].click().remove();
     }
