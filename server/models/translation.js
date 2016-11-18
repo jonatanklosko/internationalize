@@ -13,6 +13,11 @@ const schema = new mongoose.Schema({
     type: String,
     required: [true, 'Name is required.']
   },
+  baseLocale: {
+    type: String,
+    required: [true, 'Base locale is required.'],
+    match: [/^\w+$/, 'Base locale constains invalid characters.']
+  },
   targetLocale: {
     type: String,
     required: [true, 'Target locale is required.'],

@@ -2,7 +2,8 @@ const Translation = require('../../../server/models/translation');
 
 factory.define('translation', Translation, {
   name: 'Website i18n',
-  targetLocale: 'en',
+  baseLocale: 'en',
+  targetLocale: 'fr',
   sourceUrl: `${process.env.EXTERNAL_FILES_URL}/en.yml`,
   user: factory.assoc('user', 'id'),
   data: { en: { name: 'Name' } }
