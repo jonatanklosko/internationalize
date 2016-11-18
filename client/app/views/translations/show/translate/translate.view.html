@@ -10,8 +10,9 @@
 
 <div ng-if="!vm.finished">
   <div>
+    <span>{{ vm.translation.targetLocale }}</span>
     <span ng-repeat="parent in vm.chain">
-      {{ parent }} <md-icon ng-if="!$last">navigate_next</md-icon>
+      <md-icon>navigate_next</md-icon> {{ parent }}
     </span>
   </div>
   <translation-box processed-object="vm.key" on-submit="vm.done()"></translation-box>

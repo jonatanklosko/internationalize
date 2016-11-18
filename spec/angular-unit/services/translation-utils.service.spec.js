@@ -31,15 +31,16 @@ describe('TranslationUtils', () => {
   describe('pullRemoteData', () => {
     it('returns statistics and a built data fetched from the given url supplied with the given processed data', done => {
       $httpBackend.expectGET('/external/yaml/file.yml').respond(200, `
-        hello: hello
-        day: day
-        month: month
-        common:
-          here: here
-          there: there
+        en:
+          hello: hello
+          day: day
+          month: month
+          common:
+            here: here
+            there: there
       `);
 
-      TranslationUtils.pullRemoteData('/external/yaml/file.yml', processedData)
+      TranslationUtils.pullRemoteData('/external/yaml/file.yml', 'en', processedData)
         .then(({ newData, newUntranslatedKeysCount, unusedTranslatedKeysCount }) => {
           expect(newData).toEqual({
             hello: { _original: 'hello', _translated: 'salut' },

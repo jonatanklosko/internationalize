@@ -11,8 +11,10 @@ import yaml from 'js-yaml';
   *   _translated: 'Translated value'
   * }
   *
-  * In most cases a *key* apart from the standart meaning, refers to the most inner key of a translation data.
+  * In most cases a *key* apart from the standart meaning, refers to the innermost key of a translation data.
   * For example en.common.here with a value of { _original: 'Here', _translated: 'Ici' }.
+  *
+  * Note: we don't store a root key such as `en` or `fr` in a processed data in order to simplify many things.
   */
 
 /**
@@ -31,7 +33,8 @@ export default class TranslationUtils {
    * The URL should lead to a YAML document.
    *
    * @param {Object} url A URL to pull the data from.
-   * @param {Object} [data] A processed data to supplement the fetched data when possible
+   * @param {String} urlLocale A locale corresponding to the fetched document, should equal its root key.
+   * @param {Object} [data] A processed data to supplement the fetched data translations when possible
                             and to be used in statistics computation.
    * @return {Promise} Resolves to an object with these properties:
    *                  - newData (the fetched data spplemented with the given one)
@@ -40,12 +43,14 @@ export default class TranslationUtils {
    *                  - unusedTranslatedKeysCount (a count of the keys that are translated in the given data
    *                                               but are not present in the fetched one)
    */
-  pullRemoteData(url, data = {}) {
+  pullRemoteData(url, urlLocale, data = {}) {
     if(!url) return this.$q.reject('You must provide a URL.');
     return this.$http.get(url)
       .then(response => {
         let remoteData = yaml.safeLoad(response.data);
-        let { newData, newUntranslatedKeysCount } = this.buildNewData(data, remoteData);
+        /* A root object refers to a value of a root key (such as `en` or `fr`). */
+        let remoteDataRootObject = remoteData[urlLocale];
+        let { newData, newUntranslatedKeysCount } = this.buildNewData(data, remoteDataRootObject);
         let unusedTranslatedKeysCount = this.unusedTranslatedKeysCount(data, newData);
         return {
           newData,
@@ -149,10 +154,11 @@ export default class TranslationUtils {
    * Returns the YAML representation of the given processed data.
    *
    * @param {Object} processedData
+   * @param {String} locale A locale to be used as the root key.
    * @return {String} A YAML document.
    */
-  processedDataToYaml(processedData) {
-    return yaml.safeDump(this.processedDataToRaw(processedData));
+  processedDataToYaml(processedData, locale) {
+    return yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
   }
 
   /**

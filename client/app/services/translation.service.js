@@ -21,7 +21,7 @@ export default class TranslationService {
       .then(res => translation = res.data.translation)
       /* When the translation is saved, thus has a valid sourceUrl,
          fetch the remote data, process it and update the translation. */
-      .then(() => this.TranslationUtils.pullRemoteData(translationAttributes.sourceUrl))
+      .then(() => this.TranslationUtils.pullRemoteData(translationAttributes.sourceUrl, translationAttributes.baseLocale))
       .then(({ newData }) => this.update(translation._id, Object.assign(translation, { data: newData })))
       .then(() => translation)
       .catch(res => this.$q.reject(res.data.errors));

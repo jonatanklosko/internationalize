@@ -7,7 +7,7 @@ export default class TranslationsBrowseController {
 
     this.data = this.translation.data;
     this.chain = [];
-    this.chain.push({ key: 'Root', data: this.data });
+    this.chain.push({ key: this.translation.targetLocale, data: this.data });
   }
 
   choose(key, child) {
@@ -21,7 +21,7 @@ export default class TranslationsBrowseController {
   }
 
   save() {
-    /* Slice the 'Root' element. */
+    /* Slice the initial targetLocale element. */
     let keyId = this.chain.slice(1).map(parent => parent.key).join('.');
     this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.data._translated);
   }

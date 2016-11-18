@@ -2,11 +2,12 @@ let page = element(by.tagName('html'));
 let form = element(by.tagName('form'));
 let dialog = element(by.tagName('md-dialog'));
 let translationMenu = element(by.css('[aria-label="Open translation interactions menu"]'));
+let formAttributes = ['name', 'baseLocale', 'targetLocale', 'sourceUrl'];
 
 let createTranslation = () => {
   browser.get('/translations/new');
   factory.attrs('translation', { name: 'My translation' })
-    .then(translation => helpers.submitForm(form, ['name', 'targetLocale', 'sourceUrl'], translation));
+    .then(translation => helpers.submitForm(form, formAttributes, translation));
   browser.waitForAngular(); /* Wait until the remote data is fetched, processed and pushed to the server. */
   browser.get('/translations/list');
   element(by.cssContainingText('md-list-item', 'My translation')).click();
@@ -20,7 +21,7 @@ describe('Creating a new translation', () => {
 
     it('with valid informations', () => {
       factory.attrs('translation', { name: 'My new translation' })
-        .then(translation => helpers.submitForm(form, ['name', 'targetLocale', 'sourceUrl'], translation));
+        .then(translation => helpers.submitForm(form, formAttributes, translation));
 
       helpers.expectPathToEqual('/translations/list');
       expect(page).toHaveContent('My new translation');
@@ -29,7 +30,7 @@ describe('Creating a new translation', () => {
 
     it('with invalid informations', () => {
       factory.attrs('translation', { name: '', sourceUrl: 'invalid' })
-        .then(translation => helpers.submitForm(form, ['name', 'targetLocale', 'sourceUrl'], translation));
+        .then(translation => helpers.submitForm(form, formAttributes, translation));
 
       expect(form).toHaveContent('Name is required');
       expect(form).toHaveContent('Source URL must lead to a valid YAML document');
@@ -74,7 +75,6 @@ describe('Browsing a translation', () => {
     createTranslation();
 
     element(by.clickableText('Browse')).click();
-    element(by.cssContainingText('md-list-item', 'en')).click();
     element(by.cssContainingText('md-list-item', 'common')).click();
     element(by.cssContainingText('md-list-item', 'name')).click();
     form.element(by.name('translated')).sendKeys('Nom');

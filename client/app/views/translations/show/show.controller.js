@@ -26,7 +26,7 @@ export default class TranslationsShowController {
   }
 
     showRaw(event) {
-      let yamlData = this.TranslationUtils.processedDataToYaml(this.translation.data);
+      let yamlData = this.TranslationUtils.processedDataToYaml(this.translation.data, this.translation.targetLocale);
       this.$mdDialog.show({
         tergetEvent: event,
         clickOutsideToClose: true,
@@ -39,7 +39,7 @@ export default class TranslationsShowController {
     }
 
     download() {
-      let yamlData = this.TranslationUtils.processedDataToYaml(this.translation.data);
+      let yamlData = this.TranslationUtils.processedDataToYaml(this.translation.data, this.translation.targetLocale);
       let blob = new Blob([yamlData], { type: 'text/yaml' });
       let downloadLink = angular.element('<a></a>')
                         .attr('href', window.URL.createObjectURL(blob))
@@ -49,7 +49,7 @@ export default class TranslationsShowController {
     }
 
     synchronizeWithRemote(event) {
-      this.TranslationUtils.pullRemoteData(this.translation.sourceUrl, this.translation.data)
+      this.TranslationUtils.pullRemoteData(this.translation.sourceUrl, this.translation.baseLocale, this.translation.data)
         .then(({ newData, newUntranslatedKeysCount, unusedTranslatedKeysCount }) => {
           this.$mdDialog.show({
             tergetEvent: event,
