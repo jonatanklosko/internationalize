@@ -49,7 +49,7 @@ export default class TranslationsShowController {
     }
 
     synchronizeWithRemote(event) {
-      this.TranslationUtils.pullRemoteData(this.translation.sourceUrl, this.translation.baseLocale, this.translation.data)
+      this.TranslationUtils.pullRemoteData(this.translation.baseUrl, this.translation.baseLocale, this.translation.data)
         .then(({ newData, newUntranslatedKeysCount, unusedTranslatedKeysCount }) => {
           this.$mdDialog.show({
             tergetEvent: event,

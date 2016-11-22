@@ -19,9 +19,9 @@ export default class TranslationService {
     let translation;
     return this.currentUserTranslationsRequest('post', '', translationAttributes)
       .then(res => translation = res.data.translation)
-      /* When the translation is saved, thus has a valid sourceUrl,
+      /* When the translation is saved, thus has a valid baseUrl,
          fetch the remote data, process it and update the translation. */
-      .then(() => this.TranslationUtils.pullRemoteData(translationAttributes.sourceUrl, translationAttributes.baseLocale))
+      .then(() => this.TranslationUtils.pullRemoteData(translationAttributes.baseUrl, translationAttributes.baseLocale))
       .then(({ newData }) => this.update(translation._id, Object.assign(translation, { data: newData })))
       .then(() => translation)
       .catch(res => this.$q.reject(res.data.errors));

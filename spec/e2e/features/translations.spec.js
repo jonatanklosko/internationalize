@@ -2,7 +2,7 @@ let page = element(by.tagName('html'));
 let form = element(by.tagName('form'));
 let dialog = element(by.tagName('md-dialog'));
 let translationMenu = element(by.css('[aria-label="Open translation interactions menu"]'));
-let formAttributes = ['name', 'baseLocale', 'targetLocale', 'sourceUrl'];
+let formAttributes = ['name', 'baseLocale', 'targetLocale', 'baseUrl'];
 
 let createTranslation = () => {
   browser.get('/translations/new');
@@ -29,11 +29,11 @@ describe('Creating a new translation', () => {
     });
 
     it('with invalid informations', () => {
-      factory.attrs('translation', { name: '', sourceUrl: 'invalid' })
+      factory.attrs('translation', { name: '', baseUrl: 'invalid' })
         .then(translation => helpers.submitForm(form, formAttributes, translation));
 
       expect(form).toHaveContent('Name is required');
-      expect(form).toHaveContent('Source URL must lead to a valid YAML document');
+      expect(form).toHaveContent('Base URL must lead to a valid YAML document');
     });
   });
 });
@@ -90,10 +90,10 @@ describe('Synchronizing with a remote', () => {
   it('a user goes to his translation page and synchronizes with the remote', () => {
     createTranslation();
 
-    /* Simulate a change in the remote file by changing the sourceUrl. */
+    /* Simulate a change in the remote file by changing the baseUrl. */
     translationMenu.click();
     element(by.clickableText('Edit')).click();
-    form.element(by.name('sourceUrl')).clear().sendKeys(`${process.env.EXTERNAL_FILES_URL}/en-updated.yml`);
+    form.element(by.name('baseUrl')).clear().sendKeys(`${process.env.EXTERNAL_FILES_URL}/en-updated.yml`);
     form.element(by.clickableText('Save')).click();
 
     /* Translate two keys. */

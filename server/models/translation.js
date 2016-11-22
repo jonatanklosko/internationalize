@@ -23,9 +23,9 @@ const schema = new mongoose.Schema({
     required: [true, 'Target locale is required.'],
     match: [/^\w+$/, 'Target locale constains invalid characters.']
   },
-  sourceUrl: {
+  baseUrl: {
     type: String,
-    required: [true, 'Source URL is required.'],
+    required: [true, 'Base URL is required.'],
     validate: {
       validator: (url, valid) => {
         request.get(url)
@@ -33,7 +33,7 @@ const schema = new mongoose.Schema({
           .then(() => valid(true))
           .catch(() => valid(false));
       },
-      message: 'Source URL must lead to a valid YAML document.'
+      message: 'Base URL must lead to a valid YAML document.'
     }
   },
   data: {
