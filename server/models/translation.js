@@ -3,6 +3,13 @@ const User = require('./user');
 const request = require('superagent');
 const yaml = require('js-yaml');
 
+let yamlUrlValidator = (url, valid) => {
+  request.get(url)
+    .then(response => yaml.safeLoad(response.text))
+    .then(() => valid(true))
+    .catch(() => valid(false));
+};
+
 const schema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,13 +34,15 @@ const schema = new mongoose.Schema({
     type: String,
     required: [true, 'Base URL is required.'],
     validate: {
-      validator: (url, valid) => {
-        request.get(url)
-          .then(response => yaml.safeLoad(response.text))
-          .then(() => valid(true))
-          .catch(() => valid(false));
-      },
+      validator: yamlUrlValidator,
       message: 'Base URL must lead to a valid YAML document.'
+    }
+  },
+  targetUrl: {
+    type: String,
+    validate: {
+      validator: (url, valid) => url ? yamlUrlValidator(url, valid) : valid(true),
+      message: 'Base URL must either be blank or lead to a valid YAML document.'
     }
   },
   data: {

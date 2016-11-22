@@ -17,5 +17,9 @@
     <label for="baseUrl">Base URL</label>
     <input type="text" name="baseUrl" ng-model="vm.translation.baseUrl">
   </md-input-container>
+  <md-input-container class="md-block">
+    <label for="targetUrl">Target URL</label>
+    <input type="text" name="targetUrl" ng-model="vm.translation.targetUrl">
+  </md-input-container>
   <md-button type="submit" class="md-raised md-primary" ng-click="vm.create(vm.translation)">Create</md-button>
 </form>
