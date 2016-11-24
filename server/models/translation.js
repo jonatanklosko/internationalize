@@ -48,6 +48,8 @@ const schema = new mongoose.Schema({
   data: {
     type: Object
   }
+}, {
+  retainKeyOrder: true
 });
 
 schema.pre('save', function(next) {
