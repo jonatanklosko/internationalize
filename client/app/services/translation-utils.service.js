@@ -28,77 +28,62 @@ export default class TranslationUtils {
     this.$q = $q;
   }
 
-  /**
-   * Fetches a translation data from the given URL.
-   * The URL should lead to a YAML document.
-   *
-   * @param {Object} url A URL to pull the data from.
-   * @param {String} urlLocale A locale corresponding to the fetched document, should equal its root key.
-   * @param {Object} [data] A processed data to supplement the fetched data translations when possible
-                            and to be used in statistics computation.
-   * @return {Promise} Resolves to an object with these properties:
-   *                  - newData (the fetched data spplemented with the given one)
-   *                  - newUntranslatedKeysCount (a count of the keys that are in the fetched data
-   *                                              but are not present in the given one)
-   *                  - unusedTranslatedKeysCount (a count of the keys that are translated in the given data
-   *                                               but are not present in the fetched one)
-   */
-  pullRemoteData(url, urlLocale, data = {}) {
+  computeDataForTranslation(translation) {
+    let rawOriginal, rawTranslated;
+    return this.fetchData(translation.baseUrl, translation.baseLocale)
+      .then(data => rawOriginal = data)
+      .then(() => {
+        if(translation.targetUrl) {
+          return this.fetchData(translation.targetUrl, translation.targetLocale);
+        } else {
+          return this.$q.resolve({});
+        }
+      })
+      .then(data => rawTranslated = data)
+      .then(() => this.buildNewData(rawOriginal, translation.data, rawTranslated));
+  }
+
+  fetchData(url, urlLocale) {
     if(!url) return this.$q.reject('You must provide a URL.');
     return this.$http.get(url)
       .then(response => {
         let remoteData = yaml.safeLoad(response.data);
-        /* A root object refers to a value of a root key (such as `en` or `fr`). */
-        let remoteDataRootObject = remoteData[urlLocale];
-        let { newData, newUntranslatedKeysCount } = this.buildNewData(data, remoteDataRootObject);
-        let unusedTranslatedKeysCount = this.unusedTranslatedKeysCount(data, newData);
-        return {
-          newData,
-          newUntranslatedKeysCount,
-          unusedTranslatedKeysCount
-        };
+        /* Return a root object - a value of a root key (such as `en` or `fr`). */
+        return remoteData[urlLocale];
       });
   }
 
-  /**
-   * Builds a new translation processed data from the provided raw *latestData*.
-   * Takes translations from the processed *data* if they are present.
-   * Results in a new object with inner keys of the form
-   * { _original: <from *latestData*>, _translated: <optionally from *data*> }
-   *
-   * @param {Object} data A processed data.
-   * @param {Object} latestData A raw data.
-   * @return {Object} With two properties:
-   *                  - newData (the *latestData* spplemented with the given *data*)
-   *                  - newUntranslatedKeysCount (a count of the inner keys that are in the *latestData* and are not in the *data*)
-   */
-  buildNewData(data, latestData) {
+  buildNewData(rawOriginal, processedData = {}, rawTranslated = {}) {
     let newData = {};
     let newUntranslatedKeysCount = 0;
 
-    let buildNewDataRecursive = (newData, data, latestData) => {
-      for(let key in latestData) {
-        if(typeof latestData[key] === 'object') {
+    let buildNewDataRecursive = (newData, rawOriginal, processedData, rawTranslated) => {
+      for(let key in rawOriginal) {
+        if(typeof rawOriginal[key] === 'object') {
           newData[key] = {};
-          buildNewDataRecursive(newData[key], data[key] || {}, latestData[key]);
+          buildNewDataRecursive(newData[key], rawOriginal[key], processedData[key] || {}, rawTranslated[key] || {});
         } else {
           newData[key] = {
-            _original: latestData[key],
-            _translated: null
+            _original: rawOriginal[key]
           };
-          if(this.isIgnoredValue(latestData[key])) {
-            newData[key]._translated = latestData[key]; // Don't bother with translating ignored values (e.g. an empty string).
-          } else if(data.hasOwnProperty(key)) {
-            newData[key]._translated = data[key]._translated;
+          if(this.isIgnoredValue(rawOriginal[key])) {
+            newData[key]._translated = rawOriginal[key]; // Don't bother with translating ignored values (e.g. an empty string).
+          } else if(rawTranslated.hasOwnProperty(key)) {
+            newData[key]._translated = rawTranslated[key];
+          } else if(processedData.hasOwnProperty(key)) {
+            newData[key]._translated = processedData[key]._translated;
           } else {
+            newData[key]._translated = null;
             newUntranslatedKeysCount++;
           }
         }
       }
     };
-    buildNewDataRecursive(newData, data || {}, latestData);
+    buildNewDataRecursive(newData, rawOriginal, processedData, rawTranslated);
 
-    return { newData, newUntranslatedKeysCount };
+    let unusedTranslatedKeysCount = this.unusedTranslatedKeysCount(processedData, newData);
+
+    return { newData, newUntranslatedKeysCount, unusedTranslatedKeysCount };
   }
 
   /**
