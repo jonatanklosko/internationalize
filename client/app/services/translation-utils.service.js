@@ -56,6 +56,7 @@ export default class TranslationUtils {
   buildNewData(rawOriginal, processedData = {}, rawTranslated = {}) {
     let newData = {};
     let newUntranslatedKeysCount = 0;
+    let currentKeysTranslatedRemotelyCount = 0;
 
     let buildNewDataRecursive = (newData, rawOriginal, processedData, rawTranslated) => {
       for(let key in rawOriginal) {
@@ -70,6 +71,10 @@ export default class TranslationUtils {
             newData[key]._translated = rawOriginal[key]; // Don't bother with translating ignored values (e.g. an empty string).
           } else if(rawTranslated.hasOwnProperty(key)) {
             newData[key]._translated = rawTranslated[key];
+            if(processedData.hasOwnProperty(key) && processedData[key]._translated === null) {
+              /* Increase the number of untranslated keys from processedData that have been translated remotely. */
+              currentKeysTranslatedRemotelyCount++;
+            }
           } else if(processedData.hasOwnProperty(key)) {
             newData[key]._translated = processedData[key]._translated;
           } else {
@@ -83,7 +88,7 @@ export default class TranslationUtils {
 
     let unusedTranslatedKeysCount = this.unusedTranslatedKeysCount(processedData, newData);
 
-    return { newData, newUntranslatedKeysCount, unusedTranslatedKeysCount };
+    return { newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, currentKeysTranslatedRemotelyCount };
   }
 
   /**

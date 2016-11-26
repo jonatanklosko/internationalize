@@ -30,6 +30,15 @@
             </ng-pluralize>
           </p>
         </md-list-item>
+        <md-list-item ng-show="vm.currentKeysTranslatedRemotelyCount !== 0">
+          <md-icon>done</md-icon>
+          <p>
+            <ng-pluralize count="vm.currentKeysTranslatedRemotelyCount"
+                          when="{ 'one':   '{} key has been translated for you remotely',
+                                  'other': '{} keys have been translated for you remotely' }">
+            </ng-pluralize>
+          </p>
+        </md-list-item>
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>

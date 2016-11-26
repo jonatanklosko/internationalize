@@ -1,5 +1,5 @@
 export default class SynchronizeDialogController {
-  constructor($mdDialog, translation, newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, TranslationService, $state) {
+  constructor($mdDialog, translation, newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, currentKeysTranslatedRemotelyCount, TranslationService, $state) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
@@ -10,7 +10,8 @@ export default class SynchronizeDialogController {
     this.newData = newData;
     this.unusedTranslatedKeysCount = unusedTranslatedKeysCount;
     this.newUntranslatedKeysCount = newUntranslatedKeysCount;
-    this.upToDate = (newUntranslatedKeysCount === 0 && unusedTranslatedKeysCount === 0);
+    this.currentKeysTranslatedRemotelyCount = currentKeysTranslatedRemotelyCount;
+    this.upToDate = (newUntranslatedKeysCount === 0 && unusedTranslatedKeysCount === 0 && currentKeysTranslatedRemotelyCount === 0);
   }
 
   close() {
