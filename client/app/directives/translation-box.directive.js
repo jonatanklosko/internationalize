@@ -15,7 +15,8 @@ export default () => {
     template: template,
     scope: {
       processedObject: '=',
-      onSubmit: '&'
+      onSubmit: '&',
+      showOriginal: '='
     },
     controllerAs: 'vm',
     controller: class TranslationBoxController {
@@ -30,6 +31,7 @@ export default () => {
           this.translated = processedObject._translated;
         });
         this.onSubmit = $scope.onSubmit;
+        this.showOriginal = $scope.showOriginal !== false;
       }
 
       submit() {

@@ -55,8 +55,8 @@ export default class TranslationUtils {
 
   buildNewData(rawOriginal, processedData = {}, rawTranslated = {}) {
     let newData = {};
-    let newUntranslatedKeysCount = 0;
-    let currentKeysTranslatedRemotelyCount = 0;
+    let conflicts = [];
+    let upToDate = true;
 
     let buildNewDataRecursive = (newData, rawOriginal, processedData, rawTranslated) => {
       for(let key in rawOriginal) {
@@ -64,32 +64,46 @@ export default class TranslationUtils {
           newData[key] = {};
           buildNewDataRecursive(newData[key], rawOriginal[key], processedData[key] || {}, rawTranslated[key] || {});
         } else {
-          newData[key] = {
-            _original: rawOriginal[key]
-          };
-          if(this.isIgnoredValue(rawOriginal[key])) {
-            newData[key]._translated = rawOriginal[key]; // Don't bother with translating ignored values (e.g. an empty string).
-          } else if(rawTranslated.hasOwnProperty(key)) {
-            newData[key]._translated = rawTranslated[key];
-            if(processedData.hasOwnProperty(key) && processedData[key]._translated === null) {
-              /* Increase the number of untranslated keys from processedData that have been translated remotely. */
-              currentKeysTranslatedRemotelyCount++;
-            }
-          } else if(processedData.hasOwnProperty(key)) {
-            newData[key]._translated = processedData[key]._translated;
+          let original = rawOriginal[key];
+          let processed = processedData[key] || {};
+          let translated = rawTranslated[key];
+
+          newData[key] = { _original: original };
+
+          if(this.isIgnoredValue(original)) {
+            /* Scenario: adds a key with ignored text. */
+            newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
+          } else if(processed._translated && original !== processed._original) {
+            /* Scenario: conflict - different original text. */
+            conflicts.push({
+              newOriginal: rawOriginal[key],
+              currentOriginal: processedData[key]._original,
+              currentTranslated: processedData[key]._translated,
+              resolve: translated => newData[key]._translated = translated
+            });
           } else {
-            newData[key]._translated = null;
-            newUntranslatedKeysCount++;
+            /* Scenario: adds translation for an untranslated key.*/
+            /* Scenario: conflict - different translated text. -> the user's version takes priority over the remote one. */
+            /* Scenario: adds a key with translation, a new key as well as its translation. */
+            /* Scenario: keeps the user's translation - didn't change. */
+            /* Scenario: adds a key to be translated. */
+            newData[key]._translated = processed._translated || translated || null;
           }
+          upToDate = upToDate && newData[key]._translated === processed._translated
+                              && newData[key]._original === processed._original;
         }
       }
     };
     buildNewDataRecursive(newData, rawOriginal, processedData, rawTranslated);
 
-    let unusedTranslatedKeysCount = this.unusedTranslatedKeysCount(processedData, newData);
+    /* Scenario: if the `unusedTranslatedKeysCount` is not equal 0, then some translated keys are removed. */
+    let { unusedTranslatedKeysCount, unusedKeysCount } = this.unusedKeysCount(processedData, newData);
 
-    return { newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, currentKeysTranslatedRemotelyCount };
+    upToDate = upToDate && unusedKeysCount === 0;
+
+    return { newData, unusedTranslatedKeysCount, conflicts, upToDate };
   }
+
 
   /**
    * Counts the translated keys that are present in the first object but are not in the second one.
@@ -98,10 +112,11 @@ export default class TranslationUtils {
    * @param {Object} latestData A processed data to compare with.
    * @return {Number}
    */
-  unusedTranslatedKeysCount(data, latestData) {
+  unusedKeysCount(data, latestData) {
     if(!data) return 0;
 
     let unusedTranslatedKeysCount = 0;
+    let unusedKeysCount = 0;
     let unusedTranslatedKeysCountRecursive = (data, latestData) => {
       for(let key in data) {
         if(this.isInnermostProcessedObject(data)) continue;
@@ -111,14 +126,18 @@ export default class TranslationUtils {
         } else {
            /* Note: a bigger part of the object could have been removed.
               The following works in that case as well as when just one key is removed. */
-          let { translatedCount: unusedInnerTranslatedKeysCount } = this.statistics({ [key]: data[key] });
+          let {
+            translatedCount: unusedInnerTranslatedKeysCount,
+            overall: unusedInnerKeysCount
+          } = this.statistics({ [key]: data[key] });
           unusedTranslatedKeysCount += unusedInnerTranslatedKeysCount;
+          unusedKeysCount += unusedInnerKeysCount;
         }
       }
     };
     unusedTranslatedKeysCountRecursive(data, latestData);
 
-    return unusedTranslatedKeysCount;
+    return { unusedTranslatedKeysCount, unusedKeysCount };
   }
 
   /**

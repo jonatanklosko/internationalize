@@ -1,4 +1,4 @@
-<div>
+<div ng-show="vm.showOriginal">
   Original: {{ vm.original }}
 </div>
 <form ng-submit="vm.submit()" mongoose-validations errors-source="vm.errors">

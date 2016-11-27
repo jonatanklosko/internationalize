@@ -1,5 +1,5 @@
 export default class SynchronizeDialogController {
-  constructor($mdDialog, translation, newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, currentKeysTranslatedRemotelyCount, TranslationService, $state) {
+  constructor($mdDialog, translation, computationResult, TranslationService, $state) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
@@ -7,11 +7,31 @@ export default class SynchronizeDialogController {
     this.$state = $state;
 
     this.translation = translation;
-    this.newData = newData;
-    this.unusedTranslatedKeysCount = unusedTranslatedKeysCount;
-    this.newUntranslatedKeysCount = newUntranslatedKeysCount;
-    this.currentKeysTranslatedRemotelyCount = currentKeysTranslatedRemotelyCount;
-    this.upToDate = (newUntranslatedKeysCount === 0 && unusedTranslatedKeysCount === 0 && currentKeysTranslatedRemotelyCount === 0);
+    this.newData = computationResult.newData;
+    this.conflicts = computationResult.conflicts;
+    this.upToDate = computationResult.upToDate;
+    this.unusedTranslatedKeysCount = computationResult.unusedTranslatedKeysCount;
+    this.straightforward = !this.upToDate && this.unusedTranslatedKeysCount === 0 && this.conflicts.length === 0;
+    this.resolvedConflictsCount = 0;
+    this.nextConflict();
+  }
+
+  resolveConflict() {
+    this.currentConflict.resolve(this.currentKey._translated);
+    this.resolvedConflictsCount++;
+    this.nextConflict();
+  }
+
+  nextConflict() {
+    this.conflictsIterator = this.conflictsIterator || this.conflicts[Symbol.iterator]();
+
+    let { value, done } = this.conflictsIterator.next();
+    this.currentConflict = value;
+    this.isConflict = !done;
+    this.currentKey = done ? {} : {
+      _original: value.newOriginal,
+      _translated: value.currentTranslated
+    };
   }
 
   close() {

@@ -9,43 +9,38 @@
     </div>
   </md-toolbar>
   <md-dialog-content class="md-dialog-content">
-    <div ng-hide="vm.upToDate">
-      <span class="md-title">Changes which will be applied</span>
-      <md-list>
-        <md-list-item ng-show="vm.newUntranslatedKeysCount !== 0">
-          <md-icon>add</md-icon>
-          <p>
-            <ng-pluralize count="vm.newUntranslatedKeysCount"
-                          when="{ 'one':   '{} new key needs to be translated',
-                                  'other': '{} new keys need to be translated' }">
-            </ng-pluralize>
-          </p>
-        </md-list-item>
-        <md-list-item ng-show="vm.unusedTranslatedKeysCount !== 0">
-          <md-icon>remove</md-icon>
-          <p>
-            <ng-pluralize count="vm.unusedTranslatedKeysCount"
-                          when="{ 'one':   '{} translated key is unused and will be removed',
-                                  'other': '{} translated keys are unused and will be removed' }">
-            </ng-pluralize>
-          </p>
-        </md-list-item>
-        <md-list-item ng-show="vm.currentKeysTranslatedRemotelyCount !== 0">
-          <md-icon>done</md-icon>
-          <p>
-            <ng-pluralize count="vm.currentKeysTranslatedRemotelyCount"
-                          when="{ 'one':   '{} key has been translated for you remotely',
-                                  'other': '{} keys have been translated for you remotely' }">
-            </ng-pluralize>
-          </p>
-        </md-list-item>
-      </md-list>
-    </md-dialog-content>
-    <md-dialog-actions>
-      <md-button ng-click="vm.synchronize()">Synchronize</md-button>
-    </md-dialog-actions>
-  </div>
-  <div ng-show="vm.upToDate">
-    <md-icon>check</md-icon> Everything is up to date
-  </div>
+    <h3 class="md-headline">Summary</h3>
+    <md-list>
+      <md-list-item ng-show="vm.upToDate">
+        <md-icon>check</md-icon><span flex>Everything is up to date.</span>
+      </md-list-item>
+      <md-list-item ng-show="vm.straightforward">
+        <md-icon>cloud_done</md-icon><span flex>The synchronization is straightforward, your work won't be affected.</span>
+      </md-list-item>
+      <md-list-item ng-show="vm.unusedTranslatedKeysCount !== 0">
+        <md-icon>delete_forever</md-icon>
+        <ng-pluralize flex count="vm.unusedTranslatedKeysCount"
+                      when="{ 'one':   '{} translated key is unused and will be removed',
+                              'other': '{} translated keys are unused and will be removed' }">
+        </ng-pluralize>
+      </md-list-item>
+      <md-list-item ng-show="vm.resolvedConflictsCount !== 0">
+        <md-icon>sync_problem</md-icon>
+        <ng-pluralize flex count="vm.resolvedConflictsCount"
+                      when="{ 'one':   '{} conflict has been resolved',
+                              'other': '{} conflicts have been resolved' }">
+        </ng-pluralize>
+      </md-list-item>
+    </md-list>
+    <div ng-show="vm.isConflict">
+      <h3 class="md-headline">Resolve conflicts ({{ vm.resolvedConflictsCount + 1 }} of {{ vm.conflicts.length }})</h3>
+      <p>Some original texts have been changed, please ensure that they are still translated correctly.</p>
+      <div>The version you've translated: {{ vm.currentConflict.currentOriginal }}</div>
+      <div>The new version: {{ vm.currentConflict.newOriginal }}</div>
+      <translation-box processed-object="vm.currentKey" on-submit="vm.resolveConflict()" show-original="false"></translation-box>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions ng-hide="vm.upToDate || vm.isConflict">
+    <md-button ng-click="vm.synchronize()">Synchronize</md-button>
+  </md-dialog-actions>
 </md-dialog>

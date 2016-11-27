@@ -50,7 +50,7 @@ export default class TranslationsShowController {
 
     synchronizeWithRemote(event) {
       this.TranslationUtils.computeDataForTranslation(this.translation)
-        .then(({ newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, currentKeysTranslatedRemotelyCount }) => {
+        .then((computationResult) => {
           this.$mdDialog.show({
             tergetEvent: event,
             clickOutsideToClose: true,
@@ -58,7 +58,7 @@ export default class TranslationsShowController {
             template: synchronizeDialogTemplate,
             controllerAs: 'vm',
             controller: SynchronizeDialogController,
-            locals: { translation: this.translation, newData, newUntranslatedKeysCount, unusedTranslatedKeysCount, currentKeysTranslatedRemotelyCount }
+            locals: { translation: this.translation, computationResult }
           });
         });
     }
