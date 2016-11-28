@@ -60,6 +60,23 @@ describe('TranslationUtils', () => {
     });
   });
 
+  describe('fetchData', () => {
+    it('fetches a data from the given url and returns an object corresponding to the given locale', done => {
+      $httpBackend.expectGET('/external/yaml/file.yml').respond(200, `
+        en:
+          hello: hello
+          common:
+            here: here
+      `);
+
+      TranslationUtils.fetchData('/external/yaml/file.yml', 'en')
+        .then(data => expect(data).toEqual({ hello: 'hello', common: { here: 'here' } }))
+        .then(done, done.fail);
+
+      $httpBackend.flush();
+    });
+  });
+
   describe('buildNewData', () => {
     let rawData  = {
       hello: 'hello',

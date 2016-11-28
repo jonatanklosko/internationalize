@@ -43,6 +43,13 @@ export default class TranslationUtils {
       .then(() => this.buildNewData(rawOriginal, translation.data, rawTranslated));
   }
 
+  /**
+   * Fetches a data from the given url and extracts an object corresponding to the given locale.
+   *
+   * @param {String} url A url to fetch a data from.
+   * @param {String} locale A locale corresponding to the root key of the fetched data.
+   * @return {Promise}
+   */
   fetchData(url, urlLocale) {
     if(!url) return this.$q.reject('You must provide a URL.');
     return this.$http.get(url)
