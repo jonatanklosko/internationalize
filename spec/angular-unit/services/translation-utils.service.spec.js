@@ -102,14 +102,18 @@ describe('TranslationUtils', () => {
           here: { _original: 'here', _translated: 'ici' },
         }
       };
-      expect(TranslationUtils.unusedTranslatedKeysCount(processedData, latestData)).toEqual(3);
+      let { unusedTranslatedKeysCount, unusedKeysCount } = TranslationUtils.unusedKeysCount(processedData, latestData);
+      expect(unusedTranslatedKeysCount).toEqual(3);
+      expect(unusedKeysCount).toEqual(6);
     });
 
     it('counts inner keys of a missing object', () => {
       let latestData = {
         hello: { _original: 'hello', _translated: 'salut' },
       };
-      expect(TranslationUtils.unusedTranslatedKeysCount(processedData, latestData)).toEqual(4);
+      let { unusedTranslatedKeysCount, unusedKeysCount } = TranslationUtils.unusedKeysCount(processedData, latestData);
+      expect(unusedTranslatedKeysCount).toEqual(4);
+      expect(unusedKeysCount).toEqual(7);
     });
   });
 

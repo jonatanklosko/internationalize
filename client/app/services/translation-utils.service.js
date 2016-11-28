@@ -106,11 +106,13 @@ export default class TranslationUtils {
 
 
   /**
-   * Counts the translated keys that are present in the first object but are not in the second one.
+   * Counts keys that are present in the first object but are not in the second one.
    *
    * @param {Object} data A processed data to be compared.
    * @param {Object} latestData A processed data to compare with.
-   * @return {Number}
+   * @return {Object} With two properties:
+   *                  - unusedTranslatedKeysCount
+   *                  - unusedKeysCount
    */
   unusedKeysCount(data, latestData) {
     if(!data) return 0;
@@ -128,7 +130,7 @@ export default class TranslationUtils {
               The following works in that case as well as when just one key is removed. */
           let {
             translatedCount: unusedInnerTranslatedKeysCount,
-            overall: unusedInnerKeysCount
+            overallCount: unusedInnerKeysCount
           } = this.statistics({ [key]: data[key] });
           unusedTranslatedKeysCount += unusedInnerTranslatedKeysCount;
           unusedKeysCount += unusedInnerKeysCount;
