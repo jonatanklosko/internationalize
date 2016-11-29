@@ -78,10 +78,10 @@ export default class TranslationUtils {
           newData[key] = { _original: original };
 
           if(this.isIgnoredValue(original)) {
-            /* Scenario: adds a key with ignored text. */
+            /* Scenario: a key with the original text classified as an ignored one. */
             newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
           } else if(processed._translated && original !== processed._original) {
-            /* Scenario: conflict - different original text. */
+            /* Scenario: a conflict - the existing original text and the new one differ. */
             conflicts.push({
               newOriginal: rawOriginal[key],
               currentOriginal: processedData[key]._original,
@@ -89,11 +89,12 @@ export default class TranslationUtils {
               resolve: translated => newData[key]._translated = translated
             });
           } else {
-            /* Scenario: adds translation for an untranslated key.*/
-            /* Scenario: conflict - different translated text. -> the user's version takes priority over the remote one. */
-            /* Scenario: adds a key with translation, a new key as well as its translation. */
-            /* Scenario: keeps the user's translation - didn't change. */
-            /* Scenario: adds a key to be translated. */
+            /* Scenario: a translation for an untranslated key has been added.*/
+            /* Scenario: conflict - the existing translated text and the new one differ.
+                         -> The existing version takes priority over the remote one. */
+            /* Scenario: a key with translation, a new key as well as its translation has been added. */
+            /* Scenario: keeps an existing translation. */
+            /* Scenario: a new key to be translated has been added. */
             newData[key]._translated = processed._translated || translated || null;
           }
           upToDate = upToDate && newData[key]._translated === processed._translated
