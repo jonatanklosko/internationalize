@@ -60,6 +60,25 @@ export default class TranslationUtils {
       });
   }
 
+  /**
+   * Computes a new processed data from a raw original and translated data as well as a processed one.
+   *
+   * In case of any conflicts between an original text in the rawOriginal and processedData
+   * the result will include an array of conflict objects with the following properties:
+   *  - newOriginal - the new version of an original text
+   *  - currentOriginal - the current version of the original text
+   *  - currentTranslated - the current translation of the original text
+   *  - resolve - a function taking the final translation, it updates the computed newData accordingly
+   *
+   * @param {Object} rawOriginal A raw original data.
+   * @param {Object} [processedData] An already processed data.
+   * @param {Object} [rawTranslated] A raw translated data.
+   * @return {Object} With these properties:
+   *                  - newData - a processed data, the actual reslut of the computation
+   *                  - unusedTranslatedKeysCount - the count of translated keys that are present in the processedData but are not in the rawOriginal
+   *                  - conflicts - an array of the conflicts as describe above
+   *                  - upToDate - a boolean indicating whether the resulting newData does not differ from the given processedData
+   */
   buildNewData(rawOriginal, processedData = {}, rawTranslated = {}) {
     let newData = {};
     let conflicts = [];
@@ -92,8 +111,8 @@ export default class TranslationUtils {
             /* Scenario: a translation for an untranslated key has been added.*/
             /* Scenario: conflict - the existing translated text and the new one differ.
                          -> The existing version takes priority over the remote one. */
-            /* Scenario: a key with translation, a new key as well as its translation has been added. */
-            /* Scenario: keeps an existing translation. */
+            /* Scenario: a new key as well as its translation has been added. */
+            /* Scenario: nothing has changed - keep the existing translation. */
             /* Scenario: a new key to be translated has been added. */
             newData[key]._translated = processed._translated || translated || null;
           }
