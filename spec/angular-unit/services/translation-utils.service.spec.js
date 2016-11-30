@@ -28,31 +28,35 @@ describe('TranslationUtils', () => {
     };
   });
 
-  describe('pullRemoteData', () => {
-    it('returns statistics and a built data fetched from the given url supplied with the given processed data', done => {
-      $httpBackend.expectGET('/external/yaml/file.yml').respond(200, `
+  describe('computeDataForTranslation', () => {
+    it('fetches a remote data and calls the buildNewData method', done => {
+      let translation = {
+        baseUrl: '/external/yaml/original.yml',
+        baseLocale: 'en',
+        targetUrl: '/external/yaml/translated.yml',
+        targetLocale : 'fr',
+        data: { hello: { _original: 'hello', _translated: null } }
+      };
+
+      $httpBackend.expectGET(translation.baseUrl).respond(200, `
         en:
           hello: hello
-          day: day
           month: month
-          common:
-            here: here
-            there: there
+      `);
+      $httpBackend.expectGET(translation.targetUrl).respond(200, `
+        fr:
+          hello: salut
       `);
 
-      TranslationUtils.pullRemoteData('/external/yaml/file.yml', 'en', processedData)
-        .then(({ newData, newUntranslatedKeysCount, unusedTranslatedKeysCount }) => {
-          expect(newData).toEqual({
-            hello: { _original: 'hello', _translated: 'salut' },
-            day: { _original: 'day', _translated: null },
-            month: { _original: 'month', _translated: null },
-            common: {
-              here: { _original: 'here', _translated: 'ici' },
-              there: { _original: 'there', _translated: null }
-            }
-          });
-          expect(newUntranslatedKeysCount).toEqual(2);
-          expect(unusedTranslatedKeysCount).toEqual(3);
+      TranslationUtils.buildNewData = jasmine.createSpy('buildNewData');
+
+      TranslationUtils.computeDataForTranslation(translation)
+        .then(() => {
+          expect(TranslationUtils.buildNewData).toHaveBeenCalledWith(
+            { hello: 'hello', month: 'month' },
+            translation.data,
+            { hello: 'salut' }
+          );
         })
         .then(done, done.fail);
 

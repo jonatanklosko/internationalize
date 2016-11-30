@@ -28,6 +28,14 @@ export default class TranslationUtils {
     this.$q = $q;
   }
 
+  /**
+   * Takes care of computing a translation data for the given translation.
+   * It expects the given object to have these properties: baseUrl, baseLocale.
+   * These are optional: (targetUrl, targetLocale), data.
+   *
+   * @param {Object} translation A translation attributes.
+   * @return {Promise} Resolved with the appropriate result of the buildNewData method.
+   */
   computeDataForTranslation(translation) {
     let rawOriginal, rawTranslated;
     return this.fetchData(translation.baseUrl, translation.baseLocale)
