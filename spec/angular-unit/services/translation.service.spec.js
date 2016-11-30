@@ -19,7 +19,7 @@ describe('TranslationService', () => {
     });
     $provide.factory('TranslationUtils', ($q) => {
       return {
-        pullRemoteData: () => $q.resolve({ newData: processedData })
+        computeDataForTranslation: () => $q.resolve({ newData: processedData })
       };
     });
   }));

@@ -1,4 +1,5 @@
 en:
   common:
-    here: "Here"
     name: "Name"
+    hello: "Hello"
+    here: "Here"
