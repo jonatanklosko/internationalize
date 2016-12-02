@@ -3,12 +3,15 @@
   <head>
     <base href="/">
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
     <title>Internationalize</title>
   </head>
   <body layout="column" ng-controller="LayoutController as vm" ng-cloak>
     <md-toolbar class="md-toolbar-tools md-whiteframe-2dp">
       <md-button hide-gt-sm ng-click="vm.toggleMenu()"><md-icon>menu</md-icon></md-button>
-      <a ui-sref="root">Internationalize</a>
+      <div flex layout-align="center center" layout="row">
+        <a ui-sref="root"><md-icon>translate</md-icon> Internationalize</a>
+      </div>
     </md-toolbar>
     <div layout="row" flex>
       <md-sidenav class="md-whiteframe-2dp" md-is-locked-open="$mdMedia('gt-sm')" md-component-id="menu">
