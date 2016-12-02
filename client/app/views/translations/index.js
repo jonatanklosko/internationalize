@@ -12,6 +12,8 @@ import TranslationsShowController from './show/show.controller';
 import TranslationsTranslateController from './show/translate/translate.controller';
 import TranslationsBrowseController from './show/browse/browse.controller';
 
+import './partials/translation-form-fields.partial.html';
+
 export default angular
   .module('app.views.translations', [uiRouter, highlightJs, ngClipboard.name])
   .config(routing)

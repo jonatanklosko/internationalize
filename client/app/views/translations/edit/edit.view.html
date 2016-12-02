@@ -1,25 +1,6 @@
 <span class="md-title">Edit translation</span>
 
-<form mongoose-validations errors-source="vm.errors">
-  <md-input-container class="md-block">
-    <label for="name">Name</label>
-    <input type="text" name="name" ng-model="vm.translation.name">
-  </md-input-container>
-  <md-input-container class="md-block">
-    <label for="baseLocale">Base locale</label>
-    <input type="text" name="baseLocale" ng-model="vm.translation.baseLocale">
-  </md-input-container>
-  <md-input-container class="md-block">
-    <label for="targetLocale">Target locale</label>
-    <input type="text" name="targetLocale" ng-model="vm.translation.targetLocale">
-  </md-input-container>
-  <md-input-container class="md-block">
-    <label for="baseUrl">Base URL</label>
-    <input type="text" name="baseUrl" ng-model="vm.translation.baseUrl">
-  </md-input-container>
-  <md-input-container class="md-block">
-    <label for="targetUrl">Target URL</label>
-    <input type="text" name="targetUrl" ng-model="vm.translation.targetUrl">
-  </md-input-container>
+<form>
+  <ng-include src="'views/translations/partials/translation-form-fields.partial.html'"></ng-include>
   <md-button type="submit" class="md-raised md-primary" ng-click="vm.update(vm.translation)">Save</md-button>
 </form>
