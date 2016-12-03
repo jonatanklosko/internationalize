@@ -4,6 +4,7 @@ const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const sourcePath = path.resolve(__dirname, 'client/app');
 const destinationPath = path.resolve(__dirname, 'client/build');
@@ -68,7 +69,7 @@ config.module.loaders.push(styleLoader);
 if(!test) {
   config.plugins.push(
     new HtmlWebpackPlugin({
-      template: './../app/views/layout/layout.html',
+      template: 'views/layout/layout.html',
       inject: 'body'
     })
   );
@@ -83,7 +84,8 @@ if(production) {
       compress: {
         warnings: false
       }
-    })
+    }),
+    new FaviconsWebpackPlugin('../assets/icons/favicon.svg')
   );
 }
 

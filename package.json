@@ -61,6 +61,7 @@
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "factory-girl": "^4.0.0-beta.5",
+    "favicons-webpack-plugin": "0.0.7",
     "html-loader": "^0.4.4",
     "html-webpack-plugin": "^2.24.1",
     "jasmine": "^2.5.0",
