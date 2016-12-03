@@ -6,7 +6,8 @@
 </div>
 <md-list>
   <md-list-item ng-if="!vm.data.hasOwnProperty('_translated')" ng-repeat="(key, child) in vm.data" ng-click="vm.choose(key, child)">
-    <div class="md-list-item-text">{{ key }}</div>
+    <md-icon>{{ child.hasOwnProperty('_translated') ? 'edit' : 'folder' }}</md-icon>
+    <p class="md-list-item-text">{{ key }}</p>
   </md-list-item>
 </md-list>
 <div ng-if="vm.data.hasOwnProperty('_translated')" >
