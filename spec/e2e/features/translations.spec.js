@@ -10,7 +10,7 @@ let createTranslation = () => {
     .then(translation => helpers.submitForm(form, formAttributes, translation));
   browser.waitForAngular(); /* Wait until the remote data is fetched, processed and pushed to the server. */
   browser.get('/translations/list');
-  element(by.cssContainingText('md-list-item', 'My translation')).click();
+  element(by.cssContainingText('#view-container md-list-item', 'My translation')).click();
 };
 
 beforeEach(() => helpers.signIn());
