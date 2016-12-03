@@ -1,13 +1,11 @@
 <div>
   <md-progress-linear md-mode="determinate" value="{{ vm.statistics.translatedCount / vm.statistics.overallCount * 100 }}">
   </md-progress-linear>
-  {{ vm.statistics.translatedCount }}/{{ vm.statistics.overallCount }}
+  <span>{{ vm.statistics.translatedCount }}/{{ vm.statistics.overallCount }}</span>
 </div>
-
 <div ng-if="vm.finished">
-  Everything translated <md-icon>done</md-icon>
+  <md-icon>done</md-icon> <span>Everything translated</span>
 </div>
-
 <div ng-if="!vm.finished">
   <div>
     <span>{{ vm.translation.targetLocale }}</span>
