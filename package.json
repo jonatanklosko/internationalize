@@ -2,7 +2,7 @@
   "name": "internationalize",
   "version": "1.0.0",
   "description": "A web application simplifying translation of locale files from one language to another.",
-  "main": "server/server.js",
+  "homepage": "http://internationalize.herokuapp.com",
   "keywords": [
     "i18n",
     "internationalization",
@@ -10,13 +10,17 @@
   ],
   "author": "Jonatan Kłosko",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonatanklosko/internationalize.git"
+  },
+  "bugs": "https://github.com/jonatanklosko/internationalize/issues",
   "scripts": {
-    "start": "node server/server.js",
-    "postinstall": "webpack",
-    "server:dev": "NODE_ENV=development node server/server.js",
-    "server:dev:watch": "NODE_ENV=development nodemon --watch server server/server.js",
-    "build": "NODE_ENV=production webpack --progress",
-    "build:dev": "webpack --progress",
+    "start": "npm run server",
+    "postinstall": "npm run build",
+    "server": "node server/server.js",
+    "server:watch": "nodemon --watch server server/server.js",
+    "build": "webpack --progress",
     "wdserver": "webpack-dev-server --inline --hot --open",
     "lint": "eslint . --ignore-path .gitignore",
     "test:server": "node spec/server/spec-runner.js",
@@ -26,6 +30,9 @@
     "test:e2e": "protractor spec/e2e/protractor.conf.js",
     "pre:test:e2e": "SERVER_URL=http://localhost:3001 webpack-dev-server --host localhost --port 3002",
     "webdriver:update": "webdriver-manager update"
+  },
+  "engines": {
+    "node": "6.7.0"
   },
   "dependencies": {
     "angular": "^1.5.8",
@@ -85,8 +92,5 @@
     "superagent-use": "^0.1.0",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.2"
-  },
-  "engines": {
-    "node": "6.7.0"
   }
 }
