@@ -6,17 +6,30 @@
   <md-input-container class="md-block">
     <label for="baseLocale">Base locale</label>
     <input type="text" name="baseLocale" ng-model="vm.translation.baseLocale">
+    <div class="hint">A locale corresponding to the root key of the data fetched from the base URL (e.g. en).</div>
   </md-input-container>
   <md-input-container class="md-block">
     <label for="targetLocale">Target locale</label>
     <input type="text" name="targetLocale" ng-model="vm.translation.targetLocale">
+    <div class="hint">
+      Note: If the target URL is present, the locale should correspond
+      to the root key of the data fetched from the URL (e.g. fr).
+    </div>
   </md-input-container>
   <md-input-container class="md-block">
     <label for="baseUrl">Base URL</label>
     <input type="text" name="baseUrl" ng-model="vm.translation.baseUrl">
+    <div class="hint">
+      A URL address of the original YAML file.
+      When the file changes you will be able to update the translation accordingly.
+    </div>
   </md-input-container>
   <md-input-container class="md-block">
     <label for="targetUrl">Target URL</label>
     <input type="text" name="targetUrl" ng-model="vm.translation.targetUrl">
+    <div class="hint">
+      A URL address of the translated YAML file.
+      It will be used to pre-populate the translation and keep it in sync with any changes to the file.
+    </div>
   </md-input-container>
 </div>
