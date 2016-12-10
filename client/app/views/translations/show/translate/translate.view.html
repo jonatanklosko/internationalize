@@ -7,11 +7,19 @@
   <md-icon>done</md-icon> <span>Everything translated</span>
 </div>
 <div ng-if="!vm.finished">
-  <div>
-    <span>{{ vm.translation.targetLocale }}</span>
-    <span ng-repeat="parent in vm.chain">
-      <md-icon>navigate_next</md-icon> {{ parent }}
-    </span>
-  </div>
+  <md-toolbar layout="row" class="md-hue-3">
+    <div class="md-toolbar-tools">
+      <span>{{ vm.translation.targetLocale }}</span>
+      <span ng-repeat="parent in vm.chain">
+        <md-icon>navigate_next</md-icon> {{ parent.key }}
+      </span>
+    </div>
+  </md-toolbar>
+  <md-list ng-if="vm.commentChain.length > 0">
+    <md-list-item ng-repeat="comment in vm.commentChain">
+      {{ comment }}
+    </md-list-item>
+    <md-divider ></md-divider>
+  </md-list>
   <translation-box processed-object="vm.key" on-submit="vm.done()"></translation-box>
 </div>

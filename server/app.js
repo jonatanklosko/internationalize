@@ -1,3 +1,4 @@
+'use strict';
 /* Load environment variables. */
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 require(`./config/environments/${process.env.NODE_ENV}`);

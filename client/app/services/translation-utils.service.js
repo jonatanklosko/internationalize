@@ -104,7 +104,7 @@ export default class TranslationUtils {
 
           newData[key] = { _original: original };
 
-          if(this.isIgnoredValue(original)) {
+          if(this.isIgnoredValue(original) || this.isIgnoredKey(key)) {
             /* Scenario: a key with the original text classified as an ignored one. */
             newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
           } else if(processed._translated && original !== processed._original) {
@@ -224,7 +224,7 @@ export default class TranslationUtils {
         let child = data[key];
         if(this.isInnermostProcessedObject(child)) {
           /* Skip translations of ignored values, which are added automatically. */
-          if(!this.isIgnoredValue(child._translated)) {
+          if(!this.isIgnoredValue(child._translated) && !this.isIgnoredKey(key)) {
             overallCount++;
             if(this.isTranslated(child)) {
               translatedCount++;
@@ -256,9 +256,10 @@ export default class TranslationUtils {
   *untranslatedKeysGenerator(data, _chain = []) {
     for(let key in data) {
       let child = data[key];
-      let chain = [..._chain, key];
+      let comment = data._comment ? data._comment._original : null;
+      let chain = [..._chain, {key, comment:comment}];
       if(this.isInnermostProcessedObject(child)) {
-        if(!this.isTranslated(child)) {
+        if(!this.isTranslated(child) && !this.isIgnoredKey(key)) {
           yield { key: child, chain };
         }
       } else {
@@ -288,12 +289,34 @@ export default class TranslationUtils {
     return null;
   }
 
+  /**
+   * Gets the list of available comment for a given chain.
+   *
+   * @param {Object} chain A stack of (key, data, comment)
+   * @return {Object} A stack of comments
+   *
+   */
+  getCommentListFromChain(chain) {
+    chain = chain || [];
+    var result = [];
+    for (let item of chain) {
+      if (item.comment) {
+        result.push(item.comment);
+      }
+    }
+    return result;
+  }
+
   isInnermostProcessedObject(object) {
     return object.hasOwnProperty('_translated');
   }
 
   isIgnoredValue(string) {
     return string === '';
+  }
+
+  isIgnoredKey(key) {
+    return key === '_comment';
   }
 
   isTranslated(processedObject) {
