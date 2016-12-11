@@ -13,13 +13,14 @@ export default class TranslationsTranslateController {
   next() {
     let generated = this.untranslatedKeys.next();
     let { key = null, chain = null } = generated.value || {};
+    this.commentChain = this.TranslationUtils.getCommentListFromChain(chain);
     this.key = key;
     this.chain = chain;
     this.finished = generated.done;
   }
 
   done() {
-    let keyId = this.chain.join('.');
+    let keyId = this.chain.map(parent => parent.key).join('.');
     this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.key._translated)
       .then(() => {
         this.statistics.translatedCount++;

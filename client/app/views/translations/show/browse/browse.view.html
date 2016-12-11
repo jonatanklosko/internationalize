@@ -4,8 +4,14 @@
     <md-icon ng-if="!$last">navigate_next</md-icon>
   </span>
 </div>
+<md-list ng-if="vm.commentChain.length > 0">
+  <md-list-item ng-repeat="comment in vm.commentChain">
+    {{ comment }}
+  </md-list-item>
+  <md-divider ></md-divider>
+</md-list>
 <md-list>
-  <md-list-item ng-if="!vm.data.hasOwnProperty('_translated')" ng-repeat="(key, child) in vm.data" ng-click="vm.choose(key, child)">
+  <md-list-item ng-if="!vm.data.hasOwnProperty('_translated') && key !== '_comment'" ng-repeat="(key, child) in vm.data" ng-click="vm.choose(key, child)">
     <md-icon>{{ child.hasOwnProperty('_translated') ? 'edit' : 'folder' }}</md-icon>
     <p class="md-list-item-text">{{ key }}</p>
   </md-list-item>
