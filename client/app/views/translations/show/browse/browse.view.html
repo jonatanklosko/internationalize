@@ -4,12 +4,14 @@
     <md-icon ng-if="!$last">navigate_next</md-icon>
   </span>
 </div>
-<md-list>
-  <md-list-item ng-if="!vm.data.hasOwnProperty('_translated')" ng-repeat="(key, child) in vm.data" ng-click="vm.choose(key, child)">
-    <md-icon>{{ child.hasOwnProperty('_translated') ? 'edit' : 'folder' }}</md-icon>
+<md-list ng-if="!vm.isEditMode()">
+  <md-list-item ng-if="!vm.TranslationUtils.isPrivateKey(key)"
+                ng-repeat="(key, child) in vm.data" ng-click="vm.choose(key, child)">
+    <md-icon>{{ vm.TranslationUtils.isInnermostProcessedObject(child) ? 'edit' : 'folder' }}</md-icon>
     <p class="md-list-item-text">{{ key }}</p>
   </md-list-item>
 </md-list>
-<div ng-if="vm.data.hasOwnProperty('_translated')" >
+<div ng-if="vm.isEditMode()">
+  <translation-context chain="vm.chain"></translation-context>
   <translation-box processed-object="vm.data" on-submit="vm.save()"></translation-box>
 </div>

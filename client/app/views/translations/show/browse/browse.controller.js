@@ -25,4 +25,8 @@ export default class TranslationsBrowseController {
     let keyId = this.chain.slice(1).map(parent => parent.key).join('.');
     this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.data._translated);
   }
+
+  isEditMode() {
+    return this.TranslationUtils.isInnermostProcessedObject(this.data);
+  }
 }

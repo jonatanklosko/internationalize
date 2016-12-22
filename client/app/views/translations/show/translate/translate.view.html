@@ -10,8 +10,9 @@
   <div>
     <span>{{ vm.translation.targetLocale }}</span>
     <span ng-repeat="parent in vm.chain">
-      <md-icon>navigate_next</md-icon> {{ parent }}
+      <md-icon>navigate_next</md-icon> {{ parent.key }}
     </span>
   </div>
+  <translation-context chain="vm.chain"></translation-context>
   <translation-box processed-object="vm.key" on-submit="vm.done()"></translation-box>
 </div>

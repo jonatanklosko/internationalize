@@ -1,0 +1,10 @@
+<md-list class="context-list" ng-if="vm.context.length > 0">
+  <span>Context</span>
+  <md-list-item ng-repeat="parent in vm.context">
+    <md-icon>
+      <md-tooltip md-direction="top">{{ parent.key }}</md-tooltip>
+      subdirectory_arrow_right
+    </md-icon>
+    <span flex>{{ parent.data._context }}</span>
+  </md-list-item>
+</md-list>

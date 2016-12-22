@@ -37,9 +37,9 @@ export default class TranslationUtils {
    * @return {Promise} Resolved with the appropriate result of the buildNewData method.
    */
   computeDataForTranslation(translation) {
-    let rawOriginal, rawTranslated;
+    let original, translated;
     return this.fetchData(translation.baseUrl, translation.baseLocale)
-      .then(data => rawOriginal = data)
+      .then(data => original = data)
       .then(() => {
         if(translation.targetUrl) {
           return this.fetchData(translation.targetUrl, translation.targetLocale);
@@ -47,8 +47,12 @@ export default class TranslationUtils {
           return this.$q.resolve({});
         }
       })
-      .then(data => rawTranslated = data)
-      .then(() => this.buildNewData(rawOriginal, translation.data, rawTranslated));
+      .then(data => translated = data)
+      .then(() => this.buildNewData(original.parsedData, translation.data, translated.parsedData))
+      .then(result => {
+        this.parseComments(original.yamlText, result.newData);
+        return result;
+      });
   }
 
   /**
@@ -62,9 +66,10 @@ export default class TranslationUtils {
     if(!url) return this.$q.reject('You must provide a URL.');
     return this.$http.get(url)
       .then(response => {
-        let remoteData = yaml.safeLoad(response.data);
-        /* Return a root object - a value of a root key (such as `en` or `fr`). */
-        return remoteData[urlLocale];
+        let yamlText = response.data;
+         /* Extract the root object - a value of the root key (such as `en` or `fr`). */
+        let parsedData = yaml.safeLoad(yamlText)[urlLocale];
+        return { yamlText, parsedData };
       });
   }
 
@@ -139,7 +144,6 @@ export default class TranslationUtils {
     return { newData, unusedTranslatedKeysCount, conflicts, upToDate };
   }
 
-
   /**
    * Counts keys that are present in the first object but are not in the second one.
    *
@@ -178,6 +182,41 @@ export default class TranslationUtils {
   }
 
   /**
+   * Analyzes a YAML document and extracts informations included in commented lines.
+   *
+   * Comments starting with `context:` above a key are saved in the _context property
+   * in the corresponding object.
+   *
+   * @param {String} text A YAML document.
+   * @param {Object} data A processed data corresponding to the YAML document.
+   */
+  parseComments(text, data) {
+    let parseCommentsRecursive = (text, data, keysChainRegexPart) => {
+      for(let key in data) {
+        if(!this.isInnermostProcessedObject(data[key])) {
+          parseCommentsRecursive(text, data[key], `${keysChainRegexPart}[\\s\\S]*?${key}:`);
+        }
+        let regex = new RegExp(`${keysChainRegexPart}[\\s\\S]*?((?:\\s*#.*\\n)*)\\s*${key}:`);
+        let [, comments] = text.match(regex);
+        let commentLines = comments.split('#').map(line => line.trim());
+        /* Deal with the extracted comment lines. */
+        let context = this.computeContextualComment(commentLines);
+        if(context) {
+          data[key]._context = context;
+        }
+      }
+    };
+    parseCommentsRecursive(text, data, '');
+  }
+
+  computeContextualComment(commentLines) {
+    return commentLines
+      .filter(line => line.startsWith('context: '))
+      .map(line => line.replace('context: ', ''))
+      .join(' ');
+  }
+
+  /**
    * Returns a new data that is the raw representation of the given processed data.
    * Maps each key with its translation.
    *
@@ -187,6 +226,7 @@ export default class TranslationUtils {
   processedDataToRaw(processedData) {
     let rawData = {};
     for(let key in processedData) {
+      if(this.isPrivateKey(key)) continue;
       let child = processedData[key];
       rawData[key] = this.isInnermostProcessedObject(child)
                    ? child._translated
@@ -221,6 +261,7 @@ export default class TranslationUtils {
 
     let statisticsRecursive = (data) => {
       for(let key in data) {
+        if(this.isPrivateKey(key)) continue;
         let child = data[key];
         if(this.isInnermostProcessedObject(child)) {
           /* Skip translations of ignored values, which are added automatically. */
@@ -249,14 +290,15 @@ export default class TranslationUtils {
    *
    * Yields objects with two properties:
    *  - key (an actual translation key)
-   *  - chain (an array with the object keys hierarchy)
+   *  - chain (an array with the hierarchy, consists of objects of the form { key, data })
    *
    * @param {Object} data A processed data.
    */
   *untranslatedKeysGenerator(data, _chain = []) {
     for(let key in data) {
+      if(this.isPrivateKey(key)) continue;
       let child = data[key];
-      let chain = [..._chain, key];
+      let chain = [..._chain, { key, data: child }];
       if(this.isInnermostProcessedObject(child)) {
         if(!this.isTranslated(child)) {
           yield { key: child, chain };
@@ -294,6 +336,10 @@ export default class TranslationUtils {
 
   isIgnoredValue(string) {
     return string === '';
+  }
+
+  isPrivateKey(key) {
+    return ['_context'].includes(key);
   }
 
   isTranslated(processedObject) {
