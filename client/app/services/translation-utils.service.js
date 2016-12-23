@@ -114,6 +114,7 @@ export default class TranslationUtils {
             newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
           } else if(processed._translated && original !== processed._original) {
             /* Scenario: a conflict - the existing original text and the new one differ. */
+            newData[key]._translated = null;
             conflicts.push({
               newOriginal: rawOriginal[key],
               currentOriginal: processedData[key]._original,

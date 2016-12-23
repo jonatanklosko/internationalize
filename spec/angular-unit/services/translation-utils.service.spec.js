@@ -48,7 +48,7 @@ describe('TranslationUtils', () => {
           hello: salut
       `);
 
-      TranslationUtils.buildNewData = jasmine.createSpy('buildNewData');
+      TranslationUtils.buildNewData = jasmine.createSpy('buildNewData').and.returnValue({ newData: {} });
 
       TranslationUtils.computeDataForTranslation(translation)
         .then(() => {
@@ -74,7 +74,7 @@ describe('TranslationUtils', () => {
       `);
 
       TranslationUtils.fetchData('/external/yaml/file.yml', 'en')
-        .then(data => expect(data).toEqual({ hello: 'hello', common: { here: 'here' } }))
+        .then(data => expect(data.parsedData).toEqual({ hello: 'hello', common: { here: 'here' } }))
         .then(done, done.fail);
 
       $httpBackend.flush();
@@ -262,9 +262,13 @@ describe('TranslationUtils', () => {
       expect(translations).toEqual([null, null, null]);
     });
 
-    it('includes object keys chain in a yielded value', () => {
+    it('includes a chain of keys and data in a yielded value', () => {
       let chains = values.map(value => value.chain);
-      expect(chains).toEqual([['day'], ['common', 'you'], ['common', 'he']]);
+      expect(chains).toEqual([
+        [{ key: 'day', data: processedData.day }],
+        [{ key: 'common', data: processedData.common }, { key: 'you', data: processedData.common.you }],
+        [{ key: 'common', data: processedData.common }, { key: 'he', data: processedData.common.he }],
+      ]);
     });
   });
 
