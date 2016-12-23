@@ -1,5 +1,7 @@
 en:
+  #context: Keys commonly used.
   common:
+    #context: The greeting user see after signing in.
     hello: "Hello my friend!"
     here: "Here"
     day: "Day"

@@ -221,6 +221,35 @@ describe('TranslationUtils', () => {
     });
   });
 
+  describe('parseComments', () => {
+    it('handles contextual comments', () => {
+      let yaml = `
+        en:
+          #context: A greeting shown on the main page.
+          hello: hello
+          common:
+            #context: Used on the colorful page.
+            colors:
+              white: white
+              #context: A comment about the black color.
+              black: black
+      `;
+      let data = {
+        hello: { _original: 'hello', _translated: null },
+        common: {
+          colors: {
+            white: { _original: 'white', _translated: null },
+            black: { _original: 'black', _translated: null }
+          }
+        }
+      };
+      TranslationUtils.parseComments(yaml, data);
+      expect(data.hello._context).toEqual('A greeting shown on the main page.');
+      expect(data.common.colors._context).toEqual('Used on the colorful page.');
+      expect(data.common.colors.black._context).toEqual('A comment about the black color.');
+    });
+  });
+
   describe('processedDataToRaw', () => {
     it('replaces processed keys with their translation', () => {
       expect(TranslationUtils.processedDataToRaw(processedData)).toEqual({

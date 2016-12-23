@@ -57,6 +57,10 @@ describe('Translating a translation', () => {
     form.submit();
     expect(page).toHaveContent('1/3');
 
+    /* The user should see contextual comments. */
+    expect(page).toHaveContent('Keys commonly used.');
+    expect(page).toHaveContent('The greeting user see after signing in.');
+
     form.element(by.name('translated')).sendKeys('Salut');
     form.submit();
     expect(page).toHaveContent('2/3');
