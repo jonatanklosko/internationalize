@@ -192,12 +192,15 @@ export default class TranslationUtils {
    * @param {Object} data A processed data corresponding to the YAML document.
    */
   parseComments(text, data) {
+    let yamlKey = (key) => `['"]?${key}['"]?:`;
+    let someChars = '[\\s\\S]*?';
+    let commentLinesGroup = '((?:\\s*#.*\\n)*)';
     let parseCommentsRecursive = (text, data, keysChainRegexPart) => {
       for(let key in data) {
         if(!this.isInnermostProcessedObject(data[key])) {
-          parseCommentsRecursive(text, data[key], `${keysChainRegexPart}[\\s\\S]*?${key}:`);
+          parseCommentsRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
         }
-        let regex = new RegExp(`${keysChainRegexPart}[\\s\\S]*?((?:\\s*#.*\\n)*)\\s*${key}:`);
+        let regex = new RegExp(`${keysChainRegexPart}${someChars}${commentLinesGroup}\\s*${yamlKey(key)}`);
         let [, comments] = text.match(regex);
         let commentLines = comments.split('#').map(line => line.trim());
         /* Deal with the extracted comment lines. */
