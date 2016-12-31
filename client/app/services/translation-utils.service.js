@@ -198,17 +198,23 @@ export default class TranslationUtils {
     let parseCommentsRecursive = (text, data, keysChainRegexPart) => {
       for(let key in data) {
         if(!this.isInnermostProcessedObject(data[key])) {
-          parseCommentsRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
+          text = parseCommentsRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
         }
-        let regex = new RegExp(`${keysChainRegexPart}${someChars}${commentLinesGroup}\\s*${yamlKey(key)}`);
-        let [, comments] = text.match(regex);
-        let commentLines = comments.split('#').map(line => line.trim());
-        /* Deal with the extracted comment lines. */
-        let context = this.computeContextualComment(commentLines);
-        if(context) {
-          data[key]._context = context;
-        }
+        let regex = new RegExp(`(${keysChainRegexPart}${someChars})${commentLinesGroup}\\s*${yamlKey(key)}`);
+        /* After processing the match, do a replacement that effectively removes the comments and the key.
+           This decreases the amount of the text to match against
+           and prevents from a wrong result caused by many identical keys in the tree. */
+        text = text.replace(regex, (match, beginning, comments) => {
+          let commentLines = comments.split('#').map(line => line.trim());
+          /* Deal with the extracted comment lines. */
+          let context = this.computeContextualComment(commentLines);
+          if(context) {
+            data[key]._context = context;
+          }
+          return beginning;
+        });
       }
+      return text;
     };
     parseCommentsRecursive(text, data, '');
   }

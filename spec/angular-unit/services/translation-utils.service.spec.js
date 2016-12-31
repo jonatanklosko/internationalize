@@ -233,6 +233,8 @@ describe('TranslationUtils', () => {
               white: white
               #context: A comment about the black color.
               black: black
+          #context: Just a name for a group of colors.
+          colors: colors
       `;
       let data = {
         hello: { _original: 'hello', _translated: null },
@@ -241,12 +243,14 @@ describe('TranslationUtils', () => {
             white: { _original: 'white', _translated: null },
             black: { _original: 'black', _translated: null }
           }
-        }
+        },
+        colors: { _original: 'colors', _translated: null }
       };
       TranslationUtils.parseComments(yaml, data);
       expect(data.hello._context).toEqual('A greeting shown on the main page.');
       expect(data.common.colors._context).toEqual('Used on the colorful page.');
       expect(data.common.colors.black._context).toEqual('A comment about the black color.');
+      expect(data.colors._context).toEqual('Just a name for a group of colors.');
     });
   });
 
