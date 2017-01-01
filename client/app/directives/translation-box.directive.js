@@ -18,6 +18,7 @@ export default () => {
       onSubmit: '&',
       showOriginal: '='
     },
+    transclude: true,
     controllerAs: 'vm',
     controller: class TranslationBoxController {
       constructor($scope, TranslationUtils) {

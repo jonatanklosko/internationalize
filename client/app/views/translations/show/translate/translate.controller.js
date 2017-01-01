@@ -26,4 +26,13 @@ export default class TranslationsTranslateController {
         this.next();
       });
   }
+
+  skip() {
+    this.next();
+  }
+
+  useOriginal() {
+    this.key._translated = this.key._original;
+    this.done();
+  }
 }
