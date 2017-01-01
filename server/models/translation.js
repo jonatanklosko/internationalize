@@ -10,6 +10,8 @@ let yamlUrlValidator = (url, valid) => {
     .catch(() => valid(false));
 };
 
+let localeRegexp = /^[\w-]+$/;
+
 const schema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,12 +25,12 @@ const schema = new mongoose.Schema({
   baseLocale: {
     type: String,
     required: [true, 'Base locale is required.'],
-    match: [/^\w+$/, 'Base locale constains invalid characters.']
+    match: [localeRegexp, 'Base locale constains invalid characters.']
   },
   targetLocale: {
     type: String,
     required: [true, 'Target locale is required.'],
-    match: [/^\w+$/, 'Target locale constains invalid characters.']
+    match: [localeRegexp, 'Target locale constains invalid characters.']
   },
   baseUrl: {
     type: String,
