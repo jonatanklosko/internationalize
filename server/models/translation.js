@@ -49,6 +49,10 @@ const schema = new mongoose.Schema({
   },
   data: {
     type: Object
+  },
+  hashOriginalPhrases: {
+    type: Boolean,
+    default: true
   }
 }, {
   retainKeyOrder: true

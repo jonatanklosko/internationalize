@@ -32,4 +32,14 @@
       It will be used to pre-populate the translation and keep it in sync with any changes to the file.
     </div>
   </md-input-container>
+  <md-divider></md-divider>
+  <md-input-container class="md-block">
+    <md-checkbox name="hashOriginalPhrases" ng-model="vm.translation.hashOriginalPhrases">
+      Include hashed original phrases in the resulting file
+    </md-checkbox>
+    <div class="hint">
+      When enabled, will add `#original_hash: 1234567` above each translated key,
+      where 1234567 are the first 7 characters of the phrase hashed with SHA1.
+    </div>
+  </md-input-container>
 </div>

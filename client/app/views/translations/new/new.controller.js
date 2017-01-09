@@ -7,7 +7,9 @@ export default class TranslationsNewController {
     this.$q = $q;
     this.$state = $state;
 
-    this.translation = {};
+    this.translation = {
+      hashOriginalPhrases: true /* Enable by default. */
+    };
   }
 
   create(translation) {

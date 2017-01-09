@@ -282,11 +282,13 @@ export default class TranslationUtils {
    *
    * @param {Object} processedData
    * @param {String} locale A locale to be used as the root key.
+   * @param {Object} options Can include:
+   *  - hashOriginalPhrases - include comments with hashed original phrases above each innermost key
    * @return {String} A YAML document.
    */
-  processedDataToYaml(processedData, locale) {
+  processedDataToYaml(processedData, locale, options = {}) {
     let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
-    return this.addHahses(rawYaml, processedData);
+    return options.hashOriginalPhrases ? this.addHahses(rawYaml, processedData) : rawYaml;
   }
 
   /**

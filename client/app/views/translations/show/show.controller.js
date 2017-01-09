@@ -25,41 +25,45 @@ export default class TranslationsShowController {
     }];
   }
 
-    showRaw(event) {
-      let yamlData = this.TranslationUtils.processedDataToYaml(this.translation.data, this.translation.targetLocale);
-      this.$mdDialog.show({
-        tergetEvent: event,
-        clickOutsideToClose: true,
-        parent: angular.element('body'),
-        template: showRawDialogTemplate,
-        controllerAs: 'vm',
-        controller: ShowRawDialogController,
-        locals: { yamlData }
-      });
-    }
+  showRaw(event) {
+    this.$mdDialog.show({
+      tergetEvent: event,
+      clickOutsideToClose: true,
+      parent: angular.element('body'),
+      template: showRawDialogTemplate,
+      controllerAs: 'vm',
+      controller: ShowRawDialogController,
+      locals: { yamlData: this.yamlData() }
+    });
+  }
 
-    download() {
-      let yamlData = this.TranslationUtils.processedDataToYaml(this.translation.data, this.translation.targetLocale);
-      let blob = new Blob([yamlData], { type: 'text/yaml' });
-      let downloadLink = angular.element('<a></a>')
-                        .attr('href', window.URL.createObjectURL(blob))
-                        .attr('download', `${this.translation.targetLocale}.yml`);
-      angular.element('body').append(downloadLink);
-      downloadLink[0].click().remove();
-    }
+  download() {
+    let blob = new Blob([this.yamlData()], { type: 'text/yaml' });
+    let downloadLink = angular.element('<a></a>')
+                      .attr('href', window.URL.createObjectURL(blob))
+                      .attr('download', `${this.translation.targetLocale}.yml`);
+    angular.element('body').append(downloadLink);
+    downloadLink[0].click().remove();
+  }
 
-    synchronizeWithRemote(event) {
-      this.TranslationUtils.computeDataForTranslation(this.translation)
-        .then((computationResult) => {
-          this.$mdDialog.show({
-            tergetEvent: event,
-            clickOutsideToClose: true,
-            parent: angular.element('body'),
-            template: synchronizeDialogTemplate,
-            controllerAs: 'vm',
-            controller: SynchronizeDialogController,
-            locals: { translation: this.translation, computationResult }
-          });
+  synchronizeWithRemote(event) {
+    this.TranslationUtils.computeDataForTranslation(this.translation)
+      .then((computationResult) => {
+        this.$mdDialog.show({
+          tergetEvent: event,
+          clickOutsideToClose: true,
+          parent: angular.element('body'),
+          template: synchronizeDialogTemplate,
+          controllerAs: 'vm',
+          controller: SynchronizeDialogController,
+          locals: { translation: this.translation, computationResult }
         });
-    }
+      });
+  }
+
+  yamlData() {
+    return this.TranslationUtils.processedDataToYaml(this.translation.data, this.translation.targetLocale, {
+      hashOriginalPhrases: this.translation.hashOriginalPhrases
+    });
+  }
 }
