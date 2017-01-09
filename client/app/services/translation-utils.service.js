@@ -1,4 +1,5 @@
 import yaml from 'js-yaml';
+import sha1 from 'js-sha1';
 
  /**
   * Introduction & Wording
@@ -226,6 +227,30 @@ export default class TranslationUtils {
       .join(' ');
   }
 
+
+  addHahses(text, data) {
+    let yamlKey = (key) => `['"]?${key}['"]?:`;
+    let someChars = '[\\s\\S]*?';
+    let addHahsesRecursive = (text, data, keysChainRegexPart) => {
+      for(let key in data) {
+        if(this.isPrivateKey(key)) continue;
+        if(!this.isInnermostProcessedObject(data[key])) {
+          text = addHahsesRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
+        } else {
+          /* Make sure to match a key without a comment above. */
+          let noCommentBeforeKey = `(?!${someChars}#[^\\n]*\\n\\s*${yamlKey(key)})`;
+          let regex = new RegExp(`(${keysChainRegexPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
+          text = text.replace(regex, (match, beginning, indentation, yamlKey) => {
+            let hash = sha1(data[key]._original).slice(0, 7);
+            return `${beginning}${indentation}#original_hash: ${hash}\n${indentation}${yamlKey}`;
+          });
+        }
+      }
+      return text;
+    };
+    return addHahsesRecursive(text, data, '');
+  }
+
   /**
    * Returns a new data that is the raw representation of the given processed data.
    * Maps each key with its translation.
@@ -254,7 +279,8 @@ export default class TranslationUtils {
    * @return {String} A YAML document.
    */
   processedDataToYaml(processedData, locale) {
-    return yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
+    let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
+    return this.addHahses(rawYaml, processedData);
   }
 
   /**
