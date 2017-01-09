@@ -254,6 +254,48 @@ describe('TranslationUtils', () => {
     });
   });
 
+  describe('addHashes', () => {
+    it('adds first 7 characters of a hash of an original text for each inntermost key', () => {
+      let yaml = `
+        en:
+          hello: hello
+          common:
+            colors:
+              white: white
+              black: black
+          colors:
+            white: The color of snow.
+      `;
+      let data = {
+        hello: { _original: 'hello', _translated: null },
+        common: {
+          colors: {
+            white: { _original: 'white', _translated: null },
+            black: { _original: 'black', _translated: null }
+          }
+        },
+        colors: {
+          white: { _original: 'The color of snow.', _translated: null },
+        }
+      };
+
+      expect(TranslationUtils.addHahses(yaml, data)).toEqual(`
+        en:
+          #original_hash: aaf4c61
+          hello: hello
+          common:
+            colors:
+              #original_hash: 528cef8
+              white: white
+              #original_hash: 466bc8c
+              black: black
+          colors:
+            #original_hash: d5a2cd8
+            white: The color of snow.
+      `);
+    });
+  });
+
   describe('processedDataToRaw', () => {
     it('replaces processed keys with their translation', () => {
       expect(TranslationUtils.processedDataToRaw(processedData)).toEqual({
