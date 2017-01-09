@@ -1,4 +1,5 @@
 import yaml from 'js-yaml';
+import sha1 from 'js-sha1';
 
  /**
   * Introduction & Wording
@@ -238,8 +239,9 @@ export default class TranslationUtils {
     for(let key in processedData) {
       if(this.isPrivateKey(key)) continue;
       let child = processedData[key];
+      //FIXME: once we handle pluralization, we want to put the hash on the root, not on the children!
       rawData[key] = this.isInnermostProcessedObject(child)
-                   ? child._translated
+                   ? { _translated: child._translated, _hash: sha1(child._original).substring(0,7) }
                    : this.processedDataToRaw(child);
     }
 

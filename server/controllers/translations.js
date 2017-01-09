@@ -1,3 +1,4 @@
+'use strict';
 const Translation = require('../models/translation');
 const User = require('../models/user');
 const status = require('http-status');
