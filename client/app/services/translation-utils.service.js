@@ -227,7 +227,13 @@ export default class TranslationUtils {
       .join(' ');
   }
 
-
+  /**
+   * Adds comments starting with `original_hash:` above each innermost key.
+   * They include 7 first characters of SHA1-hashed original texts.
+   *
+   * @param {String} text A YAML document.
+   * @param {Object} data A processed data corresponding to the YAML document.
+   */
   addHahses(text, data) {
     let yamlKey = (key) => `['"]?${key}['"]?:`;
     let someChars = '[\\s\\S]*?';
