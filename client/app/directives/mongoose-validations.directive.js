@@ -1,4 +1,4 @@
-export default ($compile) => {
+export default ($compile, $timeout) => {
   'ngInject';
 
   return {
@@ -7,22 +7,25 @@ export default ($compile) => {
       errors: '=errorsSource'
     },
     link: ($scope, $element) => {
-      $element.find('[name]').each((i, element) => {
-        let input = $(element);
-        let name = input.attr('name');
+      /* After everything is rendered (e.g. ng-repeat directives on input fields). */
+      $timeout(() => {
+        $element.find('[name]').each((i, element) => {
+          let input = $(element);
+          let name = input.attr('name');
 
-        let messageTemplate = `<div class="error-message" md-colors="{color: 'warn-A700'}" ng-show="errors.${name}">
-                                 {{ errors.${name}.message }}
-                               </div>`;
-        let message = $compile($(messageTemplate))($scope);
-        input.after(message);
+          let messageTemplate = `<div class="error-message" md-colors="{color: 'warn-A700'}" ng-show="errors.${name}">
+                                   {{ errors.${name}.message }}
+                                 </div>`;
+          let message = $compile($(messageTemplate))($scope);
+          input.after(message);
 
-        let mdInputContainer = input.parent('md-input-container');
-        if(mdInputContainer.length) {
-          $scope.$watch(`errors.${name}`, error => {
-            mdInputContainer.toggleClass('md-input-invalid', !!error);
-          });
-        }
+          let mdInputContainer = input.parent('md-input-container');
+          if(mdInputContainer.length) {
+            $scope.$watch(`errors.${name}`, error => {
+              mdInputContainer.toggleClass('md-input-invalid', !!error);
+            });
+          }
+        });
       });
     }
   };

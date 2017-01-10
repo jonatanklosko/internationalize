@@ -7,6 +7,7 @@ import template from './translation-box.template.html';
  * Attributes:
  *  - processedObject - a processed translation object having _original and _translated keys
  *  - onSubmit - a callback called when the form is submitted and valid
+ *  - originalTitle - a text to display before the original phrase
  * Note: the given processedObject is modified when the form is submitted and valid.
  */
 export default () => {
@@ -16,7 +17,7 @@ export default () => {
     scope: {
       processedObject: '=',
       onSubmit: '&',
-      showOriginal: '='
+      originalTitle: '@'
     },
     transclude: true,
     controllerAs: 'vm',
@@ -28,22 +29,29 @@ export default () => {
 
         $scope.$watch('processedObject', processedObject => {
           this.processedObject = processedObject;
+          this.pluralization = this.TranslationUtils.isPluralizationObject(processedObject);
           this.original = processedObject._original;
           this.translated = processedObject._translated;
         });
         this.onSubmit = $scope.onSubmit;
-        this.showOriginal = $scope.showOriginal !== false;
+        this.originalTitle = $scope.originalTitle || 'Original';
       }
 
       submit() {
-        let error = this.TranslationUtils.translationError(this.original, this.translated);
-        if(error) {
-          /* Add mongoose-like validation errors in order to reuse mongoose-validations directive. */
-          this.errors = { translated: { message: error } };
+        this.errors = {};
+        /* Add mongoose-like validation errors in order to reuse mongoose-validations directive. */
+        if(this.pluralization) {
+          for(let key in this.translated) {
+            let error = this.TranslationUtils.translationError('', this.translated[key]);
+            if(error) this.errors[`translated_${key}`] = { message: error };
+          }
         } else {
-          this.errors = {};
+          let error = this.TranslationUtils.translationError(this.original, this.translated);
+          if(error) this.errors['translated'] = { message: error };
+        }
+        if(!Object.keys(this.errors).length) {
           this.processedObject._translated = this.translated;
-          this.onSubmit({ translated: this.translated });
+          this.onSubmit();
         }
       }
     }

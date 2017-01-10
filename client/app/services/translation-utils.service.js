@@ -1,5 +1,6 @@
 import yaml from 'js-yaml';
 import sha1 from 'js-sha1';
+import localesWithpluralizationKeys from './pluralization-keys.json';
 
  /**
   * Introduction & Wording
@@ -16,6 +17,19 @@ import sha1 from 'js-sha1';
   * For example en.common.here with a value of { _original: 'Here', _translated: 'Ici' }.
   *
   * Note: we don't store a root key such as `en` or `fr` in a processed data in order to simplify many things.
+  *
+  * Pluralization
+  *
+  * The assumption: a key needs many plural forms if and only if it has the 'other' sub-key.
+  * Such a key is considered to be innermost and after processing looks like that:
+  *
+  * {
+  *   _original: { one: 'book', other: '%{count} books' },
+  *   _translated: { one: '...', few: '...', other: '...' },
+  *   _pluralization: true
+  * }
+  *
+  * Pluralization keys (e.g. zero, one, few, other) for the translated version are inferred from the target locale.
   */
 
 /**
@@ -49,7 +63,7 @@ export default class TranslationUtils {
         }
       })
       .then(data => translated = data)
-      .then(() => this.buildNewData(original.parsedData, translation.data, translated.parsedData))
+      .then(() => this.buildNewData(original.parsedData, translation.data, translated.parsedData, this.pluralizationKeys(translation.targetLocale)))
       .then(result => {
         this.parseComments(original.yamlText, result.newData);
         return result;
@@ -93,46 +107,56 @@ export default class TranslationUtils {
    *                  - conflicts - an array of the conflicts as describe above
    *                  - upToDate - a boolean indicating whether the resulting newData does not differ from the given processedData
    */
-  buildNewData(rawOriginal, processedData = {}, rawTranslated = {}) {
+  buildNewData(rawOriginal, processedData = {}, rawTranslated = {}, pluralizationKeys) {
     let newData = {};
     let conflicts = [];
     let upToDate = true;
 
     let buildNewDataRecursive = (newData, rawOriginal, processedData, rawTranslated) => {
       for(let key in rawOriginal) {
-        if(typeof rawOriginal[key] === 'object') {
-          newData[key] = {};
-          buildNewDataRecursive(newData[key], rawOriginal[key], processedData[key] || {}, rawTranslated[key] || {});
+        let original = rawOriginal[key];
+        let processed = processedData[key] || {};
+        let translated = rawTranslated[key];
+        newData[key] = {}; // another variable?
+
+        if(typeof original === 'object' && !original.hasOwnProperty('other')) {
+          buildNewDataRecursive(newData[key], original, processed, translated || {});
         } else {
-          let original = rawOriginal[key];
-          let processed = processedData[key] || {};
-          let translated = rawTranslated[key];
+          newData[key]._original = original;
 
-          newData[key] = { _original: original };
-
-          if(this.isIgnoredValue(original)) {
-            /* Scenario: a key with the original text classified as an ignored one. */
-            newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
-          } else if(processed._translated && original !== processed._original) {
-            /* Scenario: a conflict - the existing original text and the new one differ. */
-            newData[key]._translated = null;
-            conflicts.push({
-              newOriginal: rawOriginal[key],
-              currentOriginal: processedData[key]._original,
-              currentTranslated: processedData[key]._translated,
-              resolve: translated => newData[key]._translated = translated
+          if(processed._translated && JSON.stringify(original) !== JSON.stringify(processed._original)) {
+           /* Scenario: a conflict - the existing original text and the new one differ. */
+           newData[key]._translated = null;
+           processed._pluralization && (newData[key]._pluralization = true);
+           conflicts.push({
+             newOriginal: original,
+             currentProcessed: processed,
+             resolve: translated => newData[key]._translated = translated
+           });
+          } else if(original.hasOwnProperty('other')) { /* Is a subject for pluralization. */
+            Object.assign(newData[key], { _translated: {}, _pluralization: true });
+            pluralizationKeys.forEach(pluralizationKey => {
+              newData[key]._translated[pluralizationKey] = (processed._translated && processed._translated[pluralizationKey])
+                                                        || (translated && translated[pluralizationKey])
+                                                        || null;
             });
           } else {
-            /* Scenario: a translation for an untranslated key has been added.*/
-            /* Scenario: conflict - the existing translated text and the new one differ.
-                         -> The existing version takes priority over the remote one. */
-            /* Scenario: a new key as well as its translation has been added. */
-            /* Scenario: nothing has changed - keep the existing translation. */
-            /* Scenario: a new key to be translated has been added. */
-            newData[key]._translated = processed._translated || translated || null;
+            if(this.isIgnoredValue(original)) {
+              /* Scenario: a key with the original text classified as an ignored one. */
+              newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
+            } else {
+              /* Scenario: a translation for an untranslated key has been added.*/
+              /* Scenario: conflict - the existing translated text and the new one differ.
+                           -> The existing version takes priority over the remote one. */
+              /* Scenario: a new key as well as its translation has been added. */
+              /* Scenario: nothing has changed - keep the existing translation. */
+              /* Scenario: a new key to be translated has been added. */
+              newData[key]._translated = processed._translated || translated || null;
+            }
           }
-          upToDate = upToDate && newData[key]._translated === processed._translated
-                              && newData[key]._original === processed._original;
+          /* Use JSON.stringify to make the comparison work both for strings and pluralization objects. */
+          upToDate = upToDate && JSON.stringify(newData[key]._translated) === JSON.stringify(processed._translated)
+                              && JSON.stringify(newData[key]._original) === JSON.stringify(processed._original);
         }
       }
     };
@@ -247,7 +271,8 @@ export default class TranslationUtils {
           let noCommentBeforeKey = `(?!${someChars}#[^\\n]*\\n\\s*${yamlKey(key)})`;
           let regex = new RegExp(`(${keysChainRegexPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
           text = text.replace(regex, (match, beginning, indentation, yamlKey) => {
-            let hash = sha1(data[key]._original).slice(0, 7);
+            let string = this.isPluralizationObject(data[key]) ? JSON.stringify(data[key]._original) : data[key]._original;
+            let hash = sha1(string).slice(0, 7);
             return `${beginning}${indentation}#original_hash: ${hash}\n${indentation}${yamlKey}`;
           });
         }
@@ -387,6 +412,21 @@ export default class TranslationUtils {
   }
 
   isTranslated(processedObject) {
-    return processedObject._translated !== null;
+    if(this.isPluralizationObject(processedObject)) {
+      for(let key in processedObject._translated) {
+        if(processedObject._translated[key] === null) return false;
+      }
+      return true;
+    } else {
+      return processedObject._translated !== null;
+    }
+  }
+
+  isPluralizationObject(object) {
+    return object._pluralization;
+  }
+
+  pluralizationKeys(locale) {
+    return localesWithpluralizationKeys[locale.toLowerCase()] || ['one', 'other'];
   }
 }

@@ -23,7 +23,7 @@ let config = {
   },
   resolve: {
     root: sourcePath,
-    extensions: ['', '.js', '.html', '.scss']
+    extensions: ['', '.js', '.html', '.scss', '.json']
   },
   debug: !production,
   module: {
@@ -41,6 +41,9 @@ let config = {
     }, {
       test: require.resolve('jquery'),
       loaders: ['expose?$', 'expose?jQuery']
+    }, {
+      test: /\.json$/,
+      loader: 'json-loader'
     }]
   },
   plugins: [

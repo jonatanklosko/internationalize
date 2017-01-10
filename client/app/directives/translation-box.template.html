@@ -1,11 +1,30 @@
-<div ng-show="vm.showOriginal">
-  Original: {{ vm.original }}
-</div>
-<form ng-submit="vm.submit()" mongoose-validations errors-source="vm.errors">
-  <md-input-container class="md-block">
-    <label for="translated">Translation</label>
-    <input type="text" name="translated" ng-model="vm.translated">
-  </md-input-container>
+<form ng-submit="vm.submit()">
+  <!-- An input for a standard key. -->
+  <div ng-if="!vm.pluralization" mongoose-validations errors-source="vm.errors">
+    <span>{{ vm.originalTitle }}: {{ vm.original }}</span>
+    <md-input-container class="md-block">
+      <label for="translated">Translation</label>
+      <input type="text" name="translated" ng-model="vm.translated">
+    </md-input-container>
+  </div>
+  <!-- Fields for key pluralization. -->
+  <div ng-if="vm.pluralization" mongoose-validations errors-source="vm.errors">
+    <md-list>
+      <span>{{ vm.originalTitle }}</span>
+      <md-list-item ng-repeat="(key, phrase) in vm.original">
+        <span>{{ key }} <md-icon>trending_flat</md-icon> {{ phrase }}</span>
+      </md-list-item>
+    </md-list>
+    <span>Translation</span>
+    <span>
+      <md-icon>help</md-icon>
+      <md-tooltip md-direction="right">Enter appropriate plural forms of the phrase.</md-tooltip>
+    </span>
+    <md-input-container class="md-block" ng-repeat="(key, phrase) in vm.translated">
+      <label for="translated">{{ key }}</label>
+      <input type="text" name="translated_{{ key }}" ng-model="vm.translated[key]">
+    </md-input-container>
+  </div>
   <div layout="row">
     <md-button type="submit" class="md-raised md-primary">Save</md-button>
     <div class="other-actions" flex layout="row" layout-align="end" ng-transclude></div>

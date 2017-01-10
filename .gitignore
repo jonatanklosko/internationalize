@@ -6,3 +6,6 @@ client/build/
 
 # NPM errors log
 npm-debug.log
+
+# Built pluralization keys (see scripts/fetch-locale-data.js)
+client/app/services/pluralization-keys.json

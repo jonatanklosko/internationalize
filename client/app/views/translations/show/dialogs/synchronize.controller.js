@@ -28,10 +28,7 @@ export default class SynchronizeDialogController {
     let { value, done } = this.conflictsIterator.next();
     this.currentConflict = value;
     this.isConflict = !done;
-    this.currentKey = done ? {} : {
-      _original: value.newOriginal,
-      _translated: value.currentTranslated
-    };
+    this.currentKey = done ? {} : Object.assign({}, value.currentProcessed, { _original: value.newOriginal });
   }
 
   close() {
