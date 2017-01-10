@@ -1,6 +1,5 @@
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
-import highlightJs from 'angular-highlightjs';
 import ngClipboard from 'angular-clipboard';
 
 import routing from './translations.routes';
@@ -15,7 +14,7 @@ import TranslationsBrowseController from './show/browse/browse.controller';
 import './partials/translation-form-fields.partial.html';
 
 export default angular
-  .module('app.views.translations', [uiRouter, highlightJs, ngClipboard.name])
+  .module('app.views.translations', [uiRouter, ngClipboard.name])
   .config(routing)
   .controller('TranslationsNewController', TranslationsNewController)
   .controller('TranslationsEditController', TranslationsEditController)
