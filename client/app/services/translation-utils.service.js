@@ -271,7 +271,7 @@ export default class TranslationUtils {
           let noCommentBeforeKey = `(?!${someChars}#[^\\n]*\\n\\s*${yamlKey(key)})`;
           let regex = new RegExp(`(${keysChainRegexPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
           text = text.replace(regex, (match, beginning, indentation, yamlKey) => {
-            let string = this.isPluralizationObject(data[key]) ? JSON.stringify(data[key]._original) : data[key]._original;
+            let string = data[key]._pluralization ? JSON.stringify(data[key]._original) : data[key]._original;
             let hash = sha1(string).slice(0, 7);
             return `${beginning}${indentation}#original_hash: ${hash}\n${indentation}${yamlKey}`;
           });
@@ -412,7 +412,7 @@ export default class TranslationUtils {
   }
 
   isTranslated(processedObject) {
-    if(this.isPluralizationObject(processedObject)) {
+    if(processedObject._pluralization) {
       for(let key in processedObject._translated) {
         if(processedObject._translated[key] === null) return false;
       }
@@ -420,10 +420,6 @@ export default class TranslationUtils {
     } else {
       return processedObject._translated !== null;
     }
-  }
-
-  isPluralizationObject(object) {
-    return object._pluralization;
   }
 
   pluralizationKeys(locale) {

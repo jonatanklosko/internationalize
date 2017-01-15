@@ -55,7 +55,8 @@ describe('TranslationUtils', () => {
           expect(TranslationUtils.buildNewData).toHaveBeenCalledWith(
             { hello: 'hello', month: 'month' },
             translation.data,
-            { hello: 'salut' }
+            { hello: 'salut' },
+            ['one', 'other']
           );
         })
         .then(done, done.fail);
@@ -188,8 +189,7 @@ describe('TranslationUtils', () => {
         let conflict = result.conflicts[0];
         expect(conflict).toEqual(jasmine.objectContaining({
           newOriginal: 'He',
-          currentOriginal: 'he',
-          currentTranslated: 'il'
+          currentProcessed: { _original: 'he', _translated: 'il' }
         }));
 
         conflict.resolve('La version correcte');

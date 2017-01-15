@@ -4,11 +4,13 @@ describe('mongooseValidations directive', () => {
   beforeEach(angular.mock.module('app.directives'));
 
   let $compile,
-      $rootScope;
+      $rootScope,
+      $timeout;
 
-  beforeEach(angular.mock.inject((_$compile_, _$rootScope_) => {
+  beforeEach(angular.mock.inject((_$compile_, _$rootScope_, _$timeout_) => {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
+    $timeout = _$timeout_;
   }));
 
   let form;
@@ -21,6 +23,7 @@ describe('mongooseValidations directive', () => {
         </md-input-container>
       </form>
     `)($rootScope);
+    $timeout.flush();
   });
 
   it('inserts an error container after an input', () => {

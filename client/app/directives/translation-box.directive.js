@@ -29,7 +29,7 @@ export default () => {
 
         $scope.$watch('processedObject', processedObject => {
           this.processedObject = processedObject;
-          this.pluralization = this.TranslationUtils.isPluralizationObject(processedObject);
+          this.pluralization = processedObject._pluralization;
           this.original = processedObject._original;
           this.translated = processedObject._translated;
         });
