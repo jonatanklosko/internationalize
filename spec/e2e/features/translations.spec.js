@@ -4,9 +4,9 @@ let dialog = element(by.tagName('md-dialog'));
 let translationMenu = element(by.css('[aria-label="Open translation interactions menu"]'));
 let formAttributes = ['name', 'baseLocale', 'targetLocale', 'baseUrl'];
 
-let createTranslation = () => {
+let createTranslation = (attributes = {}) => {
   browser.get('/translations/new');
-  factory.attrs('translation', { name: 'My translation' })
+  factory.attrs('translation', Object.assign(attributes, { name: 'My translation' }))
     .then(translation => helpers.submitForm(form, formAttributes, translation));
   browser.waitForAngular(); /* Wait until the remote data is fetched, processed and pushed to the server. */
   browser.get('/translations/list');
@@ -76,6 +76,20 @@ describe('Translating a translation', () => {
     expect(dialog).toHaveContent('name: Nom');
     expect(dialog).toHaveContent('hello: Salut');
     expect(dialog).toHaveContent('here: Ici');
+  });
+
+  it('a user translates keys that have multiple plural forms', () => {
+    createTranslation({ baseUrl: `${process.env.EXTERNAL_FILES_URL}/en-pluralization.yml` });
+
+    form.element(by.name('translated_one')).sendKeys('1 personne');
+    form.element(by.name('translated_other')).sendKeys('%{count} personnes');
+    form.submit();
+    expect(page).toHaveContent('1/1');
+
+    translationMenu.click();
+    element(by.partialButtonText('Show raw')).click();
+    expect(dialog).toHaveContent('one: 1 personne');
+    expect(dialog).toHaveContent("other: '%{count} personnes'");
   });
 });
 

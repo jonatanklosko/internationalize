@@ -1,0 +1,4 @@
+en:
+  person:
+    one: "1 person"
+    other: "%{count} persons"

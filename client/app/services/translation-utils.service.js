@@ -113,7 +113,7 @@ export default class TranslationUtils {
     let conflicts = [];
     let upToDate = true;
 
-    let buildNewDataRecursive = (newData, rawOriginal, processedData, rawTranslated) => {
+    let buildNewDataRecursive = (newData, rawOriginal, processedData = {}, rawTranslated = {}) => {
       for(let key in rawOriginal) {
         let original = rawOriginal[key];
         let processed = processedData[key] || {};

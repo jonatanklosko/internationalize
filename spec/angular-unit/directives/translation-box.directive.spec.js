@@ -69,4 +69,18 @@ describe('translationBox directive', () => {
       expect($rootScope.processedObject._translated).toEqual('salut!');
     });
   });
+
+  it('handles keys that requires pluralization', () => {
+    TranslationUtils.translationError = () => null;
+    $rootScope.processedObject = {
+      _original: { one: '1 person', other: '%{count} persons' },
+      _translated: { zero: null, one: '1 personne', other: null },
+      _pluralization: true
+    };
+    $rootScope.$digest();
+    translationBox.find('input[name="translated_zero"]').val('0 personne').trigger('input');
+    translationBox.find('input[name="translated_other"]').val('${count} personnes').trigger('input');
+    submitTranslation();
+    expect($rootScope.processedObject._translated).toEqual({ zero: '0 personne', one: '1 personne', other: '${count} personnes' });
+  });
 });

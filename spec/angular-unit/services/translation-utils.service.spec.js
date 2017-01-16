@@ -196,6 +196,18 @@ describe('TranslationUtils', () => {
         expect(result.newData.he).toEqual({ _original: 'He', _translated: 'La version correcte' });
       });
     });
+
+    describe('pluralization', () => {
+      it('handles processing keys with multiple plural forms', () => {
+        rawOriginal.person = { one: '1 person', other: '%{count} persons' };
+        let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated, ['zero', 'one', 'other']);
+        expect(result.newData.person).toEqual({
+          _original: { one: '1 person', other: '%{count} persons' },
+          _translated: { zero: null, one: null, other: null },
+          _pluralization: true
+        });
+      });
+    });
   });
 
   describe('unusedTranslatedKeysCount', () => {
