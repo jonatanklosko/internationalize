@@ -81,13 +81,17 @@ describe('Translating a translation', () => {
   it('a user translates keys that have multiple plural forms', () => {
     createTranslation({ baseUrl: `${process.env.EXTERNAL_FILES_URL}/en-pluralization.yml` });
 
+    form.element(by.name('translated_zero')).sendKeys('0 personne');
     form.element(by.name('translated_one')).sendKeys('1 personne');
+    form.submit();
+    expect(form).toHaveContent('Translation must not be empty.');
     form.element(by.name('translated_other')).sendKeys('%{count} personnes');
     form.submit();
     expect(page).toHaveContent('1/1');
 
     translationMenu.click();
     element(by.partialButtonText('Show raw')).click();
+    expect(dialog).toHaveContent('zero: 0 personne');
     expect(dialog).toHaveContent('one: 1 personne');
     expect(dialog).toHaveContent("other: '%{count} personnes'");
   });

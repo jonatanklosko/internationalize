@@ -56,7 +56,7 @@ describe('TranslationUtils', () => {
             { hello: 'hello', month: 'month' },
             translation.data,
             { hello: 'salut' },
-            ['one', 'other']
+            ['zero', 'one', 'other']
           );
         })
         .then(done, done.fail);

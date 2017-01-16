@@ -424,6 +424,8 @@ export default class TranslationUtils {
   }
 
   pluralizationKeys(locale) {
-    return localesWithpluralizationKeys[locale.toLowerCase()] || ['one', 'other'];
+    let keys = localesWithpluralizationKeys[locale.toLowerCase()] || ['one', 'other'];
+    keys.includes('zero') || keys.unshift('zero'); /* Enforce zero to be included in the keys. */
+    return keys;
   }
 }
