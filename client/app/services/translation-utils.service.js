@@ -99,15 +99,16 @@ export default class TranslationUtils {
    *  - resolve - a function taking the final translation, it updates the computed newData accordingly
    *
    * @param {Object} rawOriginal A raw original data.
-   * @param {Object} [processedData] An already processed data.
-   * @param {Object} [rawTranslated] A raw translated data.
+   * @param {Object} processedData An already processed data.
+   * @param {Object} rawTranslated A raw translated data.
+   * @param {Array} pluralizationKeys An array of keys used to store multiple plural forms of a key.
    * @return {Object} With these properties:
    *                  - newData - a processed data, the actual reslut of the computation
    *                  - unusedTranslatedKeysCount - the count of translated keys that are present in the processedData but are not in the rawOriginal
    *                  - conflicts - an array of the conflicts as describe above
    *                  - upToDate - a boolean indicating whether the resulting newData does not differ from the given processedData
    */
-  buildNewData(rawOriginal, processedData = {}, rawTranslated = {}, pluralizationKeys) {
+  buildNewData(rawOriginal, processedData, rawTranslated, pluralizationKeys) {
     let newData = {};
     let conflicts = [];
     let upToDate = true;
@@ -117,33 +118,33 @@ export default class TranslationUtils {
         let original = rawOriginal[key];
         let processed = processedData[key] || {};
         let translated = rawTranslated[key];
-        newData[key] = {}; // another variable?
+        let newProcessed = newData[key] = {};
 
         if(typeof original === 'object' && !original.hasOwnProperty('other')) {
-          buildNewDataRecursive(newData[key], original, processed, translated || {});
+          buildNewDataRecursive(newProcessed, original, processed, translated || {});
         } else {
-          newData[key]._original = original;
+          newProcessed._original = original;
 
           if(processed._translated && JSON.stringify(original) !== JSON.stringify(processed._original)) {
            /* Scenario: a conflict - the existing original text and the new one differ. */
-           newData[key]._translated = null;
-           processed._pluralization && (newData[key]._pluralization = true);
+           newProcessed._translated = null;
+           processed._pluralization && (newProcessed._pluralization = true);
            conflicts.push({
              newOriginal: original,
              currentProcessed: processed,
-             resolve: translated => newData[key]._translated = translated
+             resolve: translated => newProcessed._translated = translated
            });
           } else if(original.hasOwnProperty('other')) { /* Is a subject for pluralization. */
-            Object.assign(newData[key], { _translated: {}, _pluralization: true });
+            Object.assign(newProcessed, { _translated: {}, _pluralization: true });
             pluralizationKeys.forEach(pluralizationKey => {
-              newData[key]._translated[pluralizationKey] = (processed._translated && processed._translated[pluralizationKey])
+              newProcessed._translated[pluralizationKey] = (processed._translated && processed._translated[pluralizationKey])
                                                         || (translated && translated[pluralizationKey])
                                                         || null;
             });
           } else {
             if(this.isIgnoredValue(original)) {
               /* Scenario: a key with the original text classified as an ignored one. */
-              newData[key]._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
+              newProcessed._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
             } else {
               /* Scenario: a translation for an untranslated key has been added.*/
               /* Scenario: conflict - the existing translated text and the new one differ.
@@ -151,12 +152,12 @@ export default class TranslationUtils {
               /* Scenario: a new key as well as its translation has been added. */
               /* Scenario: nothing has changed - keep the existing translation. */
               /* Scenario: a new key to be translated has been added. */
-              newData[key]._translated = processed._translated || translated || null;
+              newProcessed._translated = processed._translated || translated || null;
             }
           }
           /* Use JSON.stringify to make the comparison work both for strings and pluralization objects. */
-          upToDate = upToDate && JSON.stringify(newData[key]._translated) === JSON.stringify(processed._translated)
-                              && JSON.stringify(newData[key]._original) === JSON.stringify(processed._original);
+          upToDate = upToDate && JSON.stringify(newProcessed._translated) === JSON.stringify(processed._translated)
+                              && JSON.stringify(newProcessed._original) === JSON.stringify(processed._original);
         }
       }
     };
