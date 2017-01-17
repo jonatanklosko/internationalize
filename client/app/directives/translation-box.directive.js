@@ -1,4 +1,5 @@
 import template from './translation-box.template.html';
+import * as _ from 'lodash';
 
 /**
  * translation-box
@@ -41,15 +42,15 @@ export default () => {
         this.errors = {};
         /* Add mongoose-like validation errors in order to reuse mongoose-validations directive. */
         if(this.pluralization) {
-          for(let key in this.translated) {
-            let error = this.TranslationUtils.translationError('', this.translated[key]);
+          _.each(this.translated, (translated, key) => {
+            let error = this.TranslationUtils.translationError('', translated);
             if(error) this.errors[`translated_${key}`] = { message: error };
-          }
+          });
         } else {
           let error = this.TranslationUtils.translationError(this.original, this.translated);
           if(error) this.errors['translated'] = { message: error };
         }
-        if(!Object.keys(this.errors).length) {
+        if(_.isEmpty(this.errors)) {
           this.processedObject._translated = this.translated;
           this.onSubmit();
         }

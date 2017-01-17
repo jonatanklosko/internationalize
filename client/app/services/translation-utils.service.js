@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import yaml from 'js-yaml';
 import sha1 from 'js-sha1';
 import localesWithpluralizationKeys from './pluralization-keys.json';
@@ -120,12 +121,12 @@ export default class TranslationUtils {
         let translated = rawTranslated[key];
         let newProcessed = newData[key] = {};
 
-        if(typeof original === 'object' && !original.hasOwnProperty('other')) {
+        if(_.isPlainObject(original) && !original.hasOwnProperty('other')) {
           buildNewDataRecursive(newProcessed, original, processed, translated || {});
         } else {
           newProcessed._original = original;
 
-          if(processed._translated && JSON.stringify(original) !== JSON.stringify(processed._original)) {
+          if(processed._translated && !_.isEqual(original, processed._original)) {
            /* Scenario: a conflict - the existing original text and the new one differ. */
            newProcessed._translated = null;
            processed._pluralization && (newProcessed._pluralization = true);
@@ -137,9 +138,8 @@ export default class TranslationUtils {
           } else if(original.hasOwnProperty('other')) { /* Is a subject for pluralization. */
             Object.assign(newProcessed, { _translated: {}, _pluralization: true });
             pluralizationKeys.forEach(pluralizationKey => {
-              newProcessed._translated[pluralizationKey] = (processed._translated && processed._translated[pluralizationKey])
-                                                        || (translated && translated[pluralizationKey])
-                                                        || null;
+              newProcessed._translated[pluralizationKey] = _.get(processed, ['_translated', pluralizationKey])
+                                                        || _.get(translated, pluralizationKey, null);
             });
           } else {
             if(this.isIgnoredValue(original)) {
@@ -155,9 +155,7 @@ export default class TranslationUtils {
               newProcessed._translated = processed._translated || translated || null;
             }
           }
-          /* Use JSON.stringify to make the comparison work both for strings and pluralization objects. */
-          upToDate = upToDate && JSON.stringify(newProcessed._translated) === JSON.stringify(processed._translated)
-                              && JSON.stringify(newProcessed._original) === JSON.stringify(processed._original);
+          upToDate = upToDate && _.isEqual(newProcessed, processed);
         }
       }
     };
