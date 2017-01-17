@@ -16,6 +16,6 @@
   <translation-context chain="vm.chain"></translation-context>
   <translation-box processed-object="vm.key" on-submit="vm.done()">
     <md-button class="md-raised" ng-click="vm.skip()">Skip for now</md-button>
-    <md-button class="md-raised" ng-click="vm.useOriginal()">Use original version</md-button>
+    <md-button class="md-raised" ng-click="vm.useOriginal()" ng-if="!vm.key._pluralization">Use original version</md-button>
   </translation-box>
 </div>
