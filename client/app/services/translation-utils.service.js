@@ -95,8 +95,7 @@ export default class TranslationUtils {
    * In case of any conflicts between an original text in the rawOriginal and processedData
    * the result will include an array of conflict objects with the following properties:
    *  - newOriginal - the new version of an original text
-   *  - currentOriginal - the current version of the original text
-   *  - currentTranslated - the current translation of the original text
+   *  - currentProcessed - the current processed object
    *  - resolve - a function taking the final translation, it updates the computed newData accordingly
    *
    * @param {Object} rawOriginal A raw original data.
