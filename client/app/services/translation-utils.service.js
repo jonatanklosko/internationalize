@@ -155,7 +155,8 @@ export default class TranslationUtils {
               newProcessed._translated = processed._translated || translated || null;
             }
           }
-          upToDate = upToDate && _.isEqual(newProcessed, processed);
+          upToDate = upToDate && _.isEqual(newProcessed._original, processed._original)
+                              && _.isEqual(newProcessed._translated, processed._translated);
         }
       }
     };
