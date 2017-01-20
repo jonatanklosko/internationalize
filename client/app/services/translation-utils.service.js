@@ -260,6 +260,7 @@ export default class TranslationUtils {
   addHahses(text, data) {
     let yamlKey = (key) => `['"]?${key}['"]?:`;
     let someChars = '[\\s\\S]*?';
+    let nextLine = '\\n\\s*';
     let addHahsesRecursive = (text, data, keysChainRegexPart) => {
       for(let key in data) {
         if(this.isPrivateKey(key)) continue;
@@ -267,7 +268,7 @@ export default class TranslationUtils {
           text = addHahsesRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
         } else {
           /* Make sure to match a key without a comment above. */
-          let noCommentBeforeKey = `(?!${someChars}#[^\\n]*\\n\\s*${yamlKey(key)})`;
+          let noCommentBeforeKey = `(?!${someChars}${nextLine}#[^\\n]*${nextLine}${yamlKey(key)})`;
           let regex = new RegExp(`(${keysChainRegexPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
           text = text.replace(regex, (match, beginning, indentation, yamlKey) => {
             let string = data[key]._pluralization ? JSON.stringify(data[key]._original) : data[key]._original;
