@@ -383,16 +383,24 @@ export default class TranslationUtils {
    *
    * @param {String} original An orginal phrase.
    * @param {String} translated A translation of the phrase.
+   * @param {Object} [validations] Options indicating which validations should (not) be used. All are enabled by default.
    * @return {String} An error message if there's any and null otherwise.
    */
-  translationError(original, translated) {
-    if(!translated) {
+  translationError(original, translated, { presence = true, variables = true } = {}) {
+    if(presence && !translated) {
       return 'Translation must not be empty.';
     }
-    let variables = original.match(/%{.+?}/g) || [];
-    for(let variable of variables) {
-      if(!translated.match(variable)) {
-        return `Translation must include all variables from the original phrase (${variable}).`;
+    if(variables) {
+      let variables = phrase => phrase.match(/%{.+?}/g) || [];
+      let originalVariables = variables(original);
+      let translatedVariables = variables(translated);
+      let unusedVariables = _.difference(originalVariables, translatedVariables);
+      let overusedVariables = _.difference(translatedVariables, originalVariables);
+      if(unusedVariables.length) {
+        return `Translation must include all variables from the original phrase (${unusedVariables.join(', ')}).`;
+      }
+      if(overusedVariables.length) {
+        return `Translation must not include variables, that are not present in the original phrase (${overusedVariables.join(', ')}).`;
       }
     }
 

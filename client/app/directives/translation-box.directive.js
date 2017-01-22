@@ -43,7 +43,7 @@ export default () => {
         /* Add mongoose-like validation errors in order to reuse mongoose-validations directive. */
         if(this.pluralization) {
           _.each(this.translated, (translated, key) => {
-            let error = this.TranslationUtils.translationError('', translated);
+            let error = this.TranslationUtils.translationError('', translated, { variables: false });
             if(error) this.errors[`translated_${key}`] = { message: error };
           });
         } else {

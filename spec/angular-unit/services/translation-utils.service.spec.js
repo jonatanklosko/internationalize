@@ -370,8 +370,17 @@ describe('TranslationUtils', () => {
       });
     });
 
-    it('validates translation variables', () => {
-      expect(TranslationUtils.translationError('There are %{count} apples', 'Il y a %{nombre} pommes.')).toMatch('%{count}');
+    describe('validates translation variables', () => {
+      it('checks if all variables from the original phrase are used', () => {
+        expect(TranslationUtils.translationError('There are %{count} apples', 'Il y a %{nombre} pommes.')).toMatch('%{count}');
+      });
+      it('checks if all variables from the translated phrase are present in the original one', () => {
+        expect(TranslationUtils.translationError('There are apples', 'Il y a %{nombre} pommes.')).toMatch('%{nombre}');
+      });
+    });
+
+    it('allows disabling particular validations', () => {
+      expect(TranslationUtils.translationError('whatever', '', { presence: false })).toBeNull();
     });
   });
 });
