@@ -16,7 +16,7 @@ export default () => {
     controller: class TranslationContextController {
       constructor($scope) {
         'ngInject';
-        $scope.$watch('chain', chain => {
+        $scope.$watchCollection('chain', chain => {
           this.context = chain.filter(obj => obj.data._context);
         });
       }

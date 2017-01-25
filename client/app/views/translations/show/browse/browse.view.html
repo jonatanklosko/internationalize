@@ -13,5 +13,14 @@
 </md-list>
 <div ng-if="vm.isEditMode()">
   <translation-context chain="vm.chain"></translation-context>
-  <translation-box processed-object="vm.data" on-submit="vm.save()"></translation-box>
+  <translation-box processed-object="vm.data" on-submit="vm.save()">
+    <md-button class="md-raised" ng-click="vm.navigate(false)">
+      <md-icon>navigate_before</md-icon>
+      <md-tooltip md-direction="top">Previous</md-tooltip>
+    </md-button>
+    <md-button class="md-raised" ng-click="vm.navigate(true)">
+      <md-icon>navigate_next</md-icon>
+      <md-tooltip md-direction="top">Next</md-tooltip>
+    </md-button>
+  </translation-box>
 </div>
