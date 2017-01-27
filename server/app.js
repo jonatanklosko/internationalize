@@ -21,7 +21,7 @@ let app = express();
 
 const staticFilesPath = path.resolve(__dirname, `../client/build`);
 app.use(express.static(staticFilesPath));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '1mb' }));
 app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoDbStore({
