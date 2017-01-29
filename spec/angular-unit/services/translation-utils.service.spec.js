@@ -291,7 +291,7 @@ describe('TranslationUtils', () => {
         }
       };
 
-      expect(TranslationUtils.addHahses(yaml, data)).toEqual(`
+      expect(TranslationUtils.addHashes(yaml, data)).toEqual(`
         en:
           #original_hash: aaf4c61
           hello: hello

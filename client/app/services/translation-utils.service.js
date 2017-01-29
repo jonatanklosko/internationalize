@@ -257,15 +257,15 @@ export default class TranslationUtils {
    * @param {String} text A YAML document.
    * @param {Object} data A processed data corresponding to the YAML document.
    */
-  addHahses(text, data) {
+  addHashes(text, data) {
     let yamlKey = (key) => `['"]?${key}['"]?:`;
     let someChars = '[\\s\\S]*?';
     let nextLine = '\\n\\s*';
-    let addHahsesRecursive = (text, data, keysChainRegexPart) => {
+    let addHashesRecursive = (text, data, keysChainRegexPart) => {
       for(let key in data) {
         if(this.isPrivateKey(key)) continue;
         if(!this.isInnermostProcessedObject(data[key])) {
-          text = addHahsesRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
+          text = addHashesRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
         } else {
           /* Make sure to match a key without a comment above. */
           let noCommentBeforeKey = `(?!${someChars}${nextLine}#[^\\n]*${nextLine}${yamlKey(key)})`;
@@ -279,7 +279,7 @@ export default class TranslationUtils {
       }
       return text;
     };
-    return addHahsesRecursive(text, data, '');
+    return addHashesRecursive(text, data, '');
   }
 
   /**
@@ -313,7 +313,7 @@ export default class TranslationUtils {
    */
   processedDataToYaml(processedData, locale, options = {}) {
     let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
-    return options.hashOriginalPhrases ? this.addHahses(rawYaml, processedData) : rawYaml;
+    return options.hashOriginalPhrases ? this.addHashes(rawYaml, processedData) : rawYaml;
   }
 
   /**
