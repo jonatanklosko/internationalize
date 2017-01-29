@@ -261,16 +261,18 @@ export default class TranslationUtils {
     let yamlKey = (key) => `['"]?${key}['"]?:`;
     let someChars = '[\\s\\S]*?';
     let nextLine = '\\n\\s*';
-    let addHashesRecursive = (text, data, keysChainRegexPart) => {
+    let addHashesRecursive = (text, data, keysChainRegexpPart) => {
       for(let key in data) {
         if(this.isPrivateKey(key)) continue;
         if(!this.isInnermostProcessedObject(data[key])) {
-          text = addHashesRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
+          if(keysChainRegexpPart) keysChainRegexpPart += `${someChars}${nextLine}`;
+          keysChainRegexpPart += yamlKey(key);
+          text = addHashesRecursive(text, data[key], keysChainRegexpPart);
         } else {
           /* Make sure to match a key without a comment above. */
           let noCommentBeforeKey = `(?!${someChars}${nextLine}#[^\\n]*${nextLine}${yamlKey(key)})`;
-          let regex = new RegExp(`(${keysChainRegexPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
-          text = text.replace(regex, (match, beginning, indentation, yamlKey) => {
+          let regexp = new RegExp(`(${keysChainRegexpPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
+          text = text.replace(regexp, (match, beginning, indentation, yamlKey) => {
             let string = data[key]._pluralization ? JSON.stringify(data[key]._original) : data[key]._original;
             let hash = sha1(string).slice(0, 7);
             return `${beginning}${indentation}#original_hash: ${hash}\n${indentation}${yamlKey}`;
