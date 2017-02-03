@@ -22,6 +22,9 @@ export default class TranslationsShowController {
     }, {
       state: 'translations.show.browse',
       text: 'Browse'
+    }, {
+      state: 'translations.show.search',
+      text: 'Search'
     }];
   }
 

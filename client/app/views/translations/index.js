@@ -10,6 +10,7 @@ import TranslationsListController from './list/list.controller';
 import TranslationsShowController from './show/show.controller';
 import TranslationsTranslateController from './show/translate/translate.controller';
 import TranslationsBrowseController from './show/browse/browse.controller';
+import TranslationsSearchController from './show/search/search.controller';
 
 import './partials/translation-form-fields.partial.html';
 
@@ -22,4 +23,5 @@ export default angular
   .controller('TranslationsTranslateController', TranslationsTranslateController)
   .controller('TranslationsBrowseController', TranslationsBrowseController)
   .controller('TranslationsShowController', TranslationsShowController)
+  .controller('TranslationsSearchController', TranslationsSearchController)
   .name;

@@ -4,6 +4,7 @@ import translationsListTemplate from './list/list.view.html';
 import translationsShowTemplate from './show/show.view.html';
 import translationsTranslateTemplate from './show/translate/translate.view.html';
 import translationsBrowseTemplate from './show/browse/browse.view.html';
+import translationsSearchTemplate from './show/search/search.view.html';
 
 export default ($stateProvider) => {
   'ngInject';
@@ -67,6 +68,12 @@ export default ($stateProvider) => {
       url: '/browse',
       template: translationsBrowseTemplate,
       controller: 'TranslationsBrowseController',
+      controllerAs: 'vm'
+    })
+    .state('translations.show.search', {
+      url: '/search',
+      template: translationsSearchTemplate,
+      controller: 'TranslationsSearchController',
       controllerAs: 'vm'
     });
 };
