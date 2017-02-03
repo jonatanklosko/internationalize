@@ -9,13 +9,13 @@
 <div ng-if="!vm.finished">
   <div>
     <span>{{ vm.translation.targetLocale }}</span>
-    <span ng-repeat="parent in vm.chain">
+    <span ng-repeat="parent in vm.key.chain">
       <md-icon>navigate_next</md-icon> {{ parent.key }}
     </span>
   </div>
-  <translation-context chain="vm.chain"></translation-context>
-  <translation-box processed-object="vm.key" on-submit="vm.done()">
+  <translation-context chain="vm.key.chain"></translation-context>
+  <translation-box processed-object="vm.key.value" on-submit="vm.done()">
     <md-button class="md-raised" ng-click="vm.skip()">Skip for now</md-button>
-    <md-button class="md-raised" ng-click="vm.useOriginal()" ng-if="!vm.key._pluralization">Use original version</md-button>
+    <md-button class="md-raised" ng-click="vm.useOriginal()" ng-if="!vm.key.value._pluralization">Use original version</md-button>
   </translation-box>
 </div>

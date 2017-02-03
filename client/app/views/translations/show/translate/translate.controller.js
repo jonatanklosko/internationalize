@@ -6,21 +6,18 @@ export default class TranslationsTranslateController {
     this.TranslationService = TranslationService;
 
     this.statistics = TranslationUtils.statistics(translation.data);
-    this.untranslatedKeys = TranslationUtils.untranslatedKeysGenerator(translation.data);
+    this.untranslatedKeys = TranslationUtils.keysGenerator(translation.data);
     this.next();
   }
 
   next() {
     let generated = this.untranslatedKeys.next();
-    let { key = null, chain = [] } = generated.value || {};
-    this.key = key;
-    this.chain = chain;
+    this.key = generated.value || {};
     this.finished = generated.done;
   }
 
   done() {
-    let keyId = this.chain.map(parent => parent.key).join('.');
-    this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.key._translated)
+    this.TranslationService.updateKey(this.translation._id, `${this.key.path}._translated`, this.key.value._translated)
       .then(() => {
         this.statistics.translatedCount++;
         this.next();
@@ -32,7 +29,7 @@ export default class TranslationsTranslateController {
   }
 
   useOriginal() {
-    this.key._translated = this.key._original;
+    this.key.value._translated = this.key.value._original;
     this.done();
   }
 }

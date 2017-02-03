@@ -360,22 +360,26 @@ export default class TranslationUtils {
    * and yields only those keys that haven't been translated yet.
    *
    * Yields objects with two properties:
-   *  - key (an actual translation key)
+   *  - path (dot separated key names hierarchy, e.g. en.common.day)
+   *  - value (an actual translation of the key)
    *  - chain (an array with the hierarchy, consists of objects of the form { key, data })
    *
    * @param {Object} data A processed data.
+   * @param {Object} options Can include:
+   *  - skipTranslated - don't yield translated keys
    */
-  *untranslatedKeysGenerator(data, _chain = []) {
+  *keysGenerator(data, { skipTranslated = true } = {}, _chain = []) {
     for(let key in data) {
       if(this.isPrivateKey(key)) continue;
       let child = data[key];
       let chain = [..._chain, { key, data: child }];
       if(this.isInnermostProcessedObject(child)) {
-        if(!this.isTranslated(child)) {
-          yield { key: child, chain };
+        if(!(skipTranslated && this.isTranslated(child))) {
+          let path = chain.map(_.property('key')).join('.');
+          yield { value: child, chain, path };
         }
       } else {
-        yield *this.untranslatedKeysGenerator(child, chain);
+        yield *this.keysGenerator(child, { skipTranslated }, chain);
       }
     }
   }
