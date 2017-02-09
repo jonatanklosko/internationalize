@@ -7,6 +7,7 @@ import 'jquery';
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import ngMaterial from 'angular-material';
+import mdCollectionPagination from 'md-collection-pagination';
 
 import config from './app.config';
 
@@ -18,6 +19,7 @@ angular
   .module('app', [
     uiRouter,
     ngMaterial,
+    mdCollectionPagination,
     services,
     directives,
     views
