@@ -113,6 +113,24 @@ describe('Browsing a translation', () => {
   });
 });
 
+describe('Searching a translation', () => {
+  it('a user goes to his translation page and searches for translation keys', () => {
+    createTranslation();
+
+    element(by.clickableText('Search')).click();
+    element(by.name('search')).sendKeys('Here');
+    expect(element.all(by.repeater('key in vm.displayedKeys')).count()).toEqual(1);
+    element(by.cssContainingText('md-list-item', 'common.here')).click();
+
+    form.element(by.name('translated')).sendKeys('Ici');
+    form.submit();
+
+    translationMenu.click();
+    element(by.clickableText('Show raw')).click();
+    expect(dialog).toHaveContent('here: Ici');
+  });
+});
+
 describe('Synchronizing with a remote', () => {
   it('a user goes to his translation page, synchronizes with the remote and solves any possible conflicts', () => {
     createTranslation();

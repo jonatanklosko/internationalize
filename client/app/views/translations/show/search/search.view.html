@@ -1,11 +1,8 @@
 <div ng-show="!vm.selectedKey">
-  <form ng-submit="vm.search()">
-    <md-input-container class="md-block">
-      <md-icon>search</md-icon>
-      <input type="text" ng-model="vm.searchValue" placeholder="Type a part of the key path, the original phrase or the translated one">
-    </md-input-container>
-  </form>
-
+  <md-input-container class="md-block">
+    <md-icon>search</md-icon>
+    <input type="text" name="search" ng-model="vm.searchValue" placeholder="Type a part of the key path, the original phrase or the translated one">
+  </md-input-container>
   <p>
     {{ vm.matchingKeys.length }} of {{ vm.allKeys.length }} keys matches the given phrase.
   </p>
