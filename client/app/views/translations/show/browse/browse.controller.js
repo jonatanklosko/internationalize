@@ -1,13 +1,12 @@
-import angular from 'angular';
 import * as _ from 'lodash';
 
 export default class TranslationsBrowseController {
-  constructor(translation, TranslationUtils, TranslationService, $mdToast) {
+  constructor(translation, TranslationUtils, TranslationService, ToastService) {
     'ngInject';
     this.translation = translation;
     this.TranslationUtils = TranslationUtils;
     this.TranslationService = TranslationService;
-    this.$mdToast = $mdToast;
+    this.ToastService = ToastService;
 
     this.data = this.translation.data;
     this.chain = [];
@@ -58,14 +57,7 @@ export default class TranslationsBrowseController {
     /* Slice the initial targetLocale element. */
     let keyId = this.chain.slice(1).map(parent => parent.key).join('.');
     this.TranslationService.updateKey(this.translation._id, `${keyId}._translated`, this.data._translated)
-      .then(() => {
-        this.$mdToast.show(
-          this.$mdToast.simple()
-            .textContent('Translation updated.')
-            .position('top right')
-            .parent(angular.element('body'))
-          );
-      });
+      .then(() => this.ToastService.simpleToast('Translation updated.'));
   }
 
   isEditMode() {

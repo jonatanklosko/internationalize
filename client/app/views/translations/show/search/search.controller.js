@@ -1,12 +1,11 @@
 import * as _ from 'lodash';
-import angular from 'angular';
 
 export default class TranslationsSearchController {
-  constructor(translation, TranslationUtils, TranslationService, $mdToast, $scope) {
+  constructor(translation, TranslationUtils, TranslationService, ToastService, $scope) {
     'ngInject';
 
     this.TranslationService = TranslationService;
-    this.$mdToast = $mdToast;
+    this.ToastService = ToastService;
     this.translation = translation;
     this.searchValue = '';
     this.allKeys = [...TranslationUtils.keysGenerator(translation.data, { skipTranslated: false })];
@@ -35,16 +34,6 @@ export default class TranslationsSearchController {
 
   save() {
     this.TranslationService.updateKey(this.translation._id, `${this.selectedKey.path}._translated`, this.selectedKey.value._translated)
-      .then(() => {
-        this.$mdToast.show(
-          this.$mdToast.simple()
-            .textContent('Translation updated.')
-            .position('top right')
-            .parent(angular.element('body'))
-          );
-      });
+      .then(() => this.ToastService.simpleToast('Translation updated.'));
   }
-
-  // TODO: directive/whatever for showing the chain (?)
-  // TODO: refactor Translation update. toast
 }
