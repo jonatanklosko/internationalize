@@ -340,17 +340,23 @@ describe('TranslationUtils', () => {
     });
   });
 
-  describe('untranslatedKeysGenerator', () => {
-    let values;
-    beforeEach(() => values = [...TranslationUtils.untranslatedKeysGenerator(processedData)]);
+  describe('keysGenerator', () => {
+    let keys;
+    beforeEach(() => keys = [...TranslationUtils.keysGenerator(processedData)]);
 
-    it('yields untranslated keys only', () => {
-      let translations = values.map(value => value.key._translated);
+    it('yields untranslated keys only by default', () => {
+      let translations = keys.map(key => key.value._translated);
       expect(translations).toEqual([null, null, null]);
     });
 
+    it('yields translated as well as untranslated keys, when skipTranslated is set to false', () => {
+      keys = [...TranslationUtils.keysGenerator(processedData, { skipTranslated: false })];
+      let translations = keys.map(key => key.value._translated);
+      expect(translations).toEqual(['salut', 'monde', null, 'ici', 'moi', null, null, 'elle']);
+    });
+
     it('includes a chain of keys and data in a yielded value', () => {
-      let chains = values.map(value => value.chain);
+      let chains = keys.map(key => key.chain);
       expect(chains).toEqual([
         [{ key: 'day', data: processedData.day }],
         [{ key: 'common', data: processedData.common }, { key: 'you', data: processedData.common.you }],
