@@ -265,9 +265,10 @@ export default class TranslationUtils {
       for(let key in data) {
         if(this.isPrivateKey(key)) continue;
         if(!this.isInnermostProcessedObject(data[key])) {
-          if(keysChainRegexpPart) keysChainRegexpPart += `${someChars}${nextLine}`;
-          keysChainRegexpPart += yamlKey(key);
-          text = addHashesRecursive(text, data[key], keysChainRegexpPart);
+          let newKeysChainRegexpPart = keysChainRegexpPart;
+          if(newKeysChainRegexpPart) newKeysChainRegexpPart += `${someChars}${nextLine}`;
+          newKeysChainRegexpPart += yamlKey(key);
+          text = addHashesRecursive(text, data[key], newKeysChainRegexpPart);
         } else {
           /* Make sure to match a key without a comment above. */
           let noCommentBeforeKey = `(?!${someChars}${nextLine}#[^\\n]*${nextLine}${yamlKey(key)})`;
