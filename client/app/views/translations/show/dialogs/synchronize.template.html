@@ -32,19 +32,19 @@
         </ng-pluralize>
       </md-list-item>
     </md-list>
-    <div ng-show="vm.isConflict">
+    <div class="conflicts-box" ng-show="vm.isConflict">
       <h3 class="md-headline">Resolve conflicts ({{ vm.resolvedConflictsCount + 1 }} of {{ vm.conflicts.length }})</h3>
       <p>Some original texts have been changed, please ensure that they are still translated correctly.</p>
       <div ng-if="vm.currentConflict.currentProcessed._pluralization">
         <md-list>
-          <span>The version you've translated</span>
+          <span class="original-title">The version you've translated</span>
           <md-list-item ng-repeat="(key, phrase) in vm.currentConflict.currentProcessed._original">
             <span>{{ key }} <md-icon>trending_flat</md-icon> {{ phrase }}</span>
           </md-list-item>
         </md-list>
       </div>
       <div ng-if="!vm.currentConflict.currentProcessed._pluralization">
-        The version you've translated: {{ vm.currentConflict.currentProcessed._original }}
+        <span class="original-title">The version you've translated:</span> {{ vm.currentConflict.currentProcessed._original }}
       </div>
       <translation-box processed-object="vm.currentKey" on-submit="vm.resolveConflict()" original-title="The new version"></translation-box>
     </div>

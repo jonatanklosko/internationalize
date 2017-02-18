@@ -1,7 +1,7 @@
 <form ng-submit="vm.submit()">
   <!-- An input for a standard key. -->
   <div ng-if="!vm.pluralization" mongoose-validations errors-source="vm.errors">
-    <span>{{ vm.originalTitle }}: {{ vm.original }}</span>
+    <span class="original-title">{{ vm.originalTitle }}: </span><span>{{ vm.original }}</span>
     <md-input-container class="md-block">
       <label for="translated">Translation</label>
       <input type="text" name="translated" ng-model="vm.translated">
@@ -10,7 +10,7 @@
   <!-- Fields for key pluralization. -->
   <div ng-if="vm.pluralization" mongoose-validations errors-source="vm.errors">
     <md-list>
-      <span>{{ vm.originalTitle }}</span>
+      <span class="original-title">{{ vm.originalTitle }}</span>
       <md-list-item ng-repeat="(key, phrase) in vm.original">
         <span>{{ key }} <md-icon>trending_flat</md-icon> {{ phrase }}</span>
       </md-list-item>
