@@ -6,14 +6,22 @@ export default class TranslationsTranslateController {
     this.TranslationService = TranslationService;
 
     this.statistics = TranslationUtils.statistics(translation.data);
-    this.untranslatedKeys = TranslationUtils.keysGenerator(translation.data);
+    this.setUpUntranslatedKeysGenerator();
+  }
+
+  setUpUntranslatedKeysGenerator() {
+    this.untranslatedKeys = this.TranslationUtils.keysGenerator(this.translation.data);
     this.next();
   }
 
   next() {
-    let generated = this.untranslatedKeys.next();
-    this.key = generated.value || {};
-    this.finished = generated.done;
+    let { value, done } = this.untranslatedKeys.next();
+    this.key = value;
+    this.finished = done;
+    /* The user may have skipped some keys, in such case renew the generator. */
+    if(this.finished && this.statistics.translatedCount !== this.statistics.overallCount) {
+      this.setUpUntranslatedKeysGenerator();
+    }
   }
 
   done() {
