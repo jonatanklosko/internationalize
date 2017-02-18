@@ -389,4 +389,22 @@ describe('TranslationUtils', () => {
       expect(TranslationUtils.translationError('whatever', '', { presence: false })).toBeNull();
     });
   });
+
+  describe('hasPluralizationKeys', () => {
+    it('returns true if the object contains one pluralization key', () => {
+      expect(TranslationUtils.hasPluralizationKeys({ few: '...' }));
+    });
+
+    it('returns true if the object contains many pluralization keys', () => {
+      expect(TranslationUtils.hasPluralizationKeys({ one: '...', other: '...' }));
+    });
+
+    it('returns false if the object doesn\'t contain any keys at all', () => {
+      expect(TranslationUtils.hasPluralizationKeys({}));
+    });
+
+    it('returns false if the object doesn\'t contain any pluralization key', () => {
+      expect(TranslationUtils.hasPluralizationKeys({ cat: '...', dog: '...' }));
+    });
+  });
 });

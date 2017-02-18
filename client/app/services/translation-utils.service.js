@@ -14,6 +14,8 @@ export default class TranslationUtils {
 
     this.$http = $http;
     this.$q = $q;
+
+    this.allPluralizationKeys = _.uniq(_.flatten(_.values(localesWithpluralizationKeys)));
   }
 
   /**
@@ -92,7 +94,7 @@ export default class TranslationUtils {
         let translated = rawTranslated[key];
         let newProcessed = newData[key] = {};
 
-        if(_.isPlainObject(original) && !original.hasOwnProperty('other')) {
+        if(_.isPlainObject(original) && !this.hasPluralizationKeys(original)) {
           buildNewDataRecursive(newProcessed, original, processed, translated || {});
         } else {
           newProcessed._original = original;
@@ -106,7 +108,7 @@ export default class TranslationUtils {
              currentProcessed: processed,
              resolve: translated => newProcessed._translated = translated
            });
-          } else if(original.hasOwnProperty('other')) { /* Is a subject for pluralization. */
+          } else if(this.hasPluralizationKeys(original)) { /* Is a subject for pluralization. */
             Object.assign(newProcessed, { _translated: {}, _pluralization: true });
             pluralizationKeys.forEach(pluralizationKey => {
               newProcessed._translated[pluralizationKey] = _.get(processed, ['_translated', pluralizationKey])
@@ -407,6 +409,10 @@ export default class TranslationUtils {
     } else {
       return processedObject._translated !== null;
     }
+  }
+
+  hasPluralizationKeys(object) {
+    return this.allPluralizationKeys.some(key => object.hasOwnProperty(key));
   }
 
   pluralizationKeys(locale) {

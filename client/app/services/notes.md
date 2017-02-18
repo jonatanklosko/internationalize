@@ -19,7 +19,7 @@ See the [Example](#example) section for clarification.
 
 ## Pluralization
 
-We assume that a key needs many plural forms if and only if it has the `other` sub-key.
+We assume that a key needs many plural forms if and only if it has a sub-key that is one of the pluralization keys (`zero`, `one`, `two`, `few`, `many`, `other`).
 Such a key is considered to be innermost and after processing looks like that:
 
 ```javascript
