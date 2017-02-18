@@ -89,3 +89,19 @@ Now assuming that the target language has pluralization rules `one`, `few` and `
   }
 }
 ```
+
+## Synchronization scenarios
+
+There are numerous possibilities when doing a synchronization with a remote. Here's a list of them.
+
+1. Everything is up do date.
+2. Changes are straightforward (doesn't conflict with the user's work).
+  - Some keys that haven't been translated yet are removed.
+  - Some new keys that needs to be translated are added.
+  - Translations for some keys that haven't been translated yet are added.
+  - Both new keys and their translations are added.
+  - Some keys with ignored values (e.g. an empty string) are added.
+3. Changes conflicts with the user's work.
+  - Some keys that have already been translated are removed.
+  - Some original values (i.e. some original phrases) are changed.
+  - Some translated values (i.e. some translated phrases) are changed. They differ from those stored in the application.
