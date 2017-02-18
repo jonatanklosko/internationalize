@@ -3,35 +3,7 @@ import yaml from 'js-yaml';
 import sha1 from 'js-sha1';
 import localesWithpluralizationKeys from './pluralization-keys.json';
 
- /**
-  * Introduction & Wording
-  *
-  * Across the app we use so called *processed data*, which is computed from a *raw* one (parsed from YAML to JSON).
-  * It has its innermost keys changed from the original form to an object:
-  *
-  * {
-  *   _original: 'Original value',
-  *   _translated: 'Translated value'
-  * }
-  *
-  * In most cases a *key* apart from the standart meaning, refers to the innermost key of a translation data.
-  * For example en.common.here with a value of { _original: 'Here', _translated: 'Ici' }.
-  *
-  * Note: we don't store a root key such as `en` or `fr` in a processed data in order to simplify many things.
-  *
-  * Pluralization
-  *
-  * The assumption: a key needs many plural forms if and only if it has the 'other' sub-key.
-  * Such a key is considered to be innermost and after processing looks like that:
-  *
-  * {
-  *   _original: { one: 'book', other: '%{count} books' },
-  *   _translated: { one: '...', few: '...', other: '...' },
-  *   _pluralization: true
-  * }
-  *
-  * Pluralization keys (e.g. zero, one, few, other) for the translated version are inferred from the target locale.
-  */
+/* Read ./notes.md for a clarification of how things are done. */
 
 /**
  * A class meant for a translation data manipulation.
