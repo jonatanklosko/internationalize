@@ -47,6 +47,13 @@ const schema = new mongoose.Schema({
       message: 'Base URL must either be blank or lead to a valid YAML document.'
     }
   },
+  indentation: {
+    type: Number,
+    validate: {
+      validator: Number.isInteger,
+      message: '{VALUE} is not an integer value',
+    },
+  },
   data: {
     type: Object
   },

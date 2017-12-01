@@ -8,6 +8,7 @@ export default class SynchronizeDialogController {
 
     this.translation = translation;
     this.newData = computationResult.newData;
+    this.newIndentation = computationResult.indentation;
     this.conflicts = computationResult.conflicts;
     this.upToDate = computationResult.upToDate;
     this.unusedTranslatedKeysCount = computationResult.unusedTranslatedKeysCount;
@@ -37,6 +38,7 @@ export default class SynchronizeDialogController {
 
   synchronize() {
     this.translation.data = this.newData;
+    this.translation.indentation = this.newIndentation;
     this.TranslationService.update(this.translation._id, this.translation)
       .then(() => {
         this.close();

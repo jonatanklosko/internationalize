@@ -38,7 +38,7 @@ export default class TranslationUtils {
         }
       })
       .then(data => translated = data)
-      .then(() => this.buildNewData(original.parsedData, translation.data, translated.parsedData, this.pluralizationKeys(translation.targetLocale)))
+      .then(() => this.buildNewData(original, translation, translated.parsedData, this.pluralizationKeys(translation.targetLocale)))
       .then(result => {
         this.parseComments(original.yamlText, result.newData);
         return result;
@@ -59,7 +59,12 @@ export default class TranslationUtils {
         let yamlText = response.data;
          /* Extract the root object - a value of the root key (such as `en` or `fr`). */
         let parsedData = yaml.safeLoad(yamlText)[urlLocale];
-        return { yamlText, parsedData };
+        let indentations = yamlText.split("\n").map(line => {
+          let m = line.match(/^( *)[^ ].*$/);
+          return m ? m[1].length : 0;
+        }).sort((a, b) => a - b).filter(indent => indent > 0);
+        let indentation = indentations[1] - indentations[0];
+        return { yamlText, parsedData, indentation };
       });
   }
 
@@ -77,19 +82,22 @@ export default class TranslationUtils {
    * @param {Object} rawTranslated A raw translated data.
    * @param {Array} pluralizationKeys An array of keys used to store multiple plural forms of a key.
    * @return {Object} With these properties:
-   *                  - newData - a processed data, the actual reslut of the computation
+   *                  - newData - a processed data, the actual result of the computation
    *                  - unusedTranslatedKeysCount - the count of translated keys that are present in the processedData but are not in the rawOriginal
    *                  - conflicts - an array of the conflicts as describe above
    *                  - upToDate - a boolean indicating whether the resulting newData does not differ from the given processedData
+   *                  - indentation - an integer indicating the number of spaces used for indentation in the original yaml file
    */
-  buildNewData(rawOriginal, processedData, rawTranslated, pluralizationKeys) {
+  buildNewData(rawOriginal, translation, rawTranslated, pluralizationKeys) {
+    let rawData = rawOriginal.parsedData;
+    let processedData = translation.data;
     let newData = {};
     let conflicts = [];
     let upToDate = true;
 
-    let buildNewDataRecursive = (newData, rawOriginal, processedData = {}, rawTranslated = {}) => {
-      for(let key in rawOriginal) {
-        let original = rawOriginal[key];
+    let buildNewDataRecursive = (newData, rawData, processedData = {}, rawTranslated = {}) => {
+      for(let key in rawData) {
+        let original = rawData[key];
         let processed = processedData[key] || {};
         let translated = rawTranslated[key];
         let newProcessed = newData[key] = {};
@@ -133,14 +141,15 @@ export default class TranslationUtils {
         }
       }
     };
-    buildNewDataRecursive(newData, rawOriginal, processedData, rawTranslated);
+    buildNewDataRecursive(newData, rawData, processedData, rawTranslated);
 
     /* Scenario: if the `unusedTranslatedKeysCount` is not equal 0, then some translated keys are removed. */
     let { unusedTranslatedKeysCount, unusedKeysCount } = this.unusedKeysCount(processedData, newData);
 
     upToDate = upToDate && unusedKeysCount === 0;
+    upToDate = upToDate && translation.indentation === rawOriginal.indentation;
 
-    return { newData, unusedTranslatedKeysCount, conflicts, upToDate };
+    return { newData, unusedTranslatedKeysCount, conflicts, upToDate, indentation: rawOriginal.indentation };
   }
 
   /**
@@ -286,10 +295,11 @@ export default class TranslationUtils {
    * @param {String} locale A locale to be used as the root key.
    * @param {Object} options Can include:
    *  - hashOriginalPhrases - include comments with hashed original phrases above each innermost key
+   *  - indentation - an integer indicating how many spaces to use for indentation in the generated yaml
    * @return {String} A YAML document.
    */
   processedDataToYaml(processedData, locale, options = {}) {
-    let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
+    let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }), { indent: options.indentation });
     return options.hashOriginalPhrases ? this.addHashes(rawYaml, processedData) : rawYaml;
   }
 
