@@ -38,11 +38,12 @@ describe('TranslationUtils', () => {
         data: { hello: { _original: 'hello', _translated: null } }
       };
 
-      $httpBackend.expectGET(translation.baseUrl).respond(200, `
+      let baseYamlText = `
         en:
           hello: hello
           month: month
-      `);
+      `;
+      $httpBackend.expectGET(translation.baseUrl).respond(200, baseYamlText);
       $httpBackend.expectGET(translation.targetUrl).respond(200, `
         fr:
           hello: salut
@@ -51,10 +52,14 @@ describe('TranslationUtils', () => {
       TranslationUtils.buildNewData = jasmine.createSpy('buildNewData').and.returnValue({ newData: {} });
 
       TranslationUtils.computeDataForTranslation(translation)
-        .then(() => {
+        .then((data) => {
           expect(TranslationUtils.buildNewData).toHaveBeenCalledWith(
-            { hello: 'hello', month: 'month' },
-            translation.data,
+            {
+              yamlText: baseYamlText,
+              parsedData: { hello: 'hello', month: 'month' },
+              indentation: 2,
+            },
+            translation,
             { hello: 'salut' },
             ['zero', 'one', 'other']
           );
@@ -75,7 +80,10 @@ describe('TranslationUtils', () => {
       `);
 
       TranslationUtils.fetchData('/external/yaml/file.yml', 'en')
-        .then(data => expect(data.parsedData).toEqual({ hello: 'hello', common: { here: 'here' } }))
+        .then(data => {
+          expect(data.parsedData).toEqual({ hello: 'hello', common: { here: 'here' } });
+          expect(data.indentation).toEqual(2);
+        })
         .then(done, done.fail);
 
       $httpBackend.flush();
@@ -83,17 +91,21 @@ describe('TranslationUtils', () => {
   });
 
   describe('buildNewData', () => {
-    let rawOriginal, processedData, rawTranslated;
+    let rawOriginal, translation, rawTranslated;
 
     beforeEach(() => {
-      rawOriginal  = {
-        hi: 'hi',
-        here: 'here'
+      rawOriginal = {
+        parsedData: {
+          hi: 'hi',
+          here: 'here',
+        },
       };
 
-      processedData = {
-        hi: { _original: 'hi', _translated: 'salut' },
-        here: { _original: 'here', _translated: 'ici' }
+      translation = {
+        data: {
+          hi: { _original: 'hi', _translated: 'salut' },
+          here: { _original: 'here', _translated: 'ici' },
+        },
       };
 
       rawTranslated = {
@@ -103,56 +115,56 @@ describe('TranslationUtils', () => {
     });
 
     it('is up to date if nothing has changed', () => {
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(true);
-      expect(result.newData).toEqual(processedData);
+      expect(result.newData).toEqual(translation.data);
       expect(result.unusedTranslatedKeysCount).toEqual(0);
       expect(result.conflicts).toEqual([]);
     });
 
     it('handles a removal of untranslated keys', () => {
-      processedData.he = { _original: 'he', _translated: null };
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      translation.data.he = { _original: 'he', _translated: null };
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(false);
       expect(result.newData.he).toBeUndefined();
       expect(result.unusedTranslatedKeysCount).toEqual(0);
       expect(result.conflicts).toEqual([]);
     });
 
-    it('handless an addition of new keys to be translated', () => {
-      rawOriginal.he = 'he';
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+    it('handles an addition of new keys to be translated', () => {
+      rawOriginal.parsedData.he = 'he';
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(false);
       expect(result.newData.he).toEqual({ _original: 'he', _translated: null });
     });
 
     it('handles an addition of translations for untranslated keys', () => {
-      rawOriginal.he = 'he';
-      processedData.he = { _original: 'he', _translated: null };
+      rawOriginal.parsedData.he = 'he';
+      translation.data.he = { _original: 'he', _translated: null };
       rawTranslated.he = 'il';
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(false);
       expect(result.newData.he).toEqual({ _original: 'he', _translated: 'il' });
     });
 
     it('handles an addition of keys with translations', () => {
-      rawOriginal.he = 'he';
+      rawOriginal.parsedData.he = 'he';
       rawTranslated.he = 'il';
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(false);
       expect(result.newData.he).toEqual({ _original: 'he', _translated: 'il' });
     });
 
     it('handles an addition of keys with original text classified as an ignored one', () => {
-      rawOriginal.emptyHint = '';
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      rawOriginal.parsedData.emptyHint = '';
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(false);
       expect(result.newData.emptyHint).toEqual({ _original: '', _translated: '' });
     });
 
     it('handles a removal of translated keys', () => {
-      processedData.he = { _original: 'he', _translated: 'il' };
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      translation.data.he = { _original: 'he', _translated: 'il' };
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(false);
       expect(result.newData.he).toBeUndefined();
       expect(result.unusedTranslatedKeysCount).toEqual(1);
@@ -160,29 +172,29 @@ describe('TranslationUtils', () => {
     });
 
     it('forces existing translations to take priority over new ones', () => {
-      rawOriginal.he = 'he';
-      processedData.he = { _original: 'he', _translated: 'il' };
+      rawOriginal.parsedData.he = 'he';
+      translation.data.he = { _original: 'he', _translated: 'il' };
       rawTranslated.he = 'Il!';
-      let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+      let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
       expect(result.upToDate).toEqual(true);
-      expect(result.newData.he).toEqual(processedData.he);
+      expect(result.newData.he).toEqual(translation.data.he);
       expect(result.conflicts).toEqual([]);
     });
 
     describe('original text conflicts', () => {
       it('when a key is untranslated, just updates the original text', () => {
-        rawOriginal.he = 'He';
-        processedData.he = { _original: 'he', _translated: null };
-        let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+        rawOriginal.parsedData.he = 'He';
+        translation.data.he = { _original: 'he', _translated: null };
+        let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
         expect(result.upToDate).toEqual(false);
         expect(result.newData.he).toEqual({ _original: 'He', _translated: null });
         expect(result.conflicts).toEqual([]);
       });
 
       it('when the key is translated, adds conflicts', () => {
-        rawOriginal.he = 'He';
-        processedData.he = { _original: 'he', _translated: 'il' };
-        let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated);
+        rawOriginal.parsedData.he = 'He';
+        translation.data.he = { _original: 'he', _translated: 'il' };
+        let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated);
         expect(result.upToDate).toEqual(false);
         expect(result.conflicts.length).toEqual(1);
 
@@ -199,8 +211,8 @@ describe('TranslationUtils', () => {
 
     describe('pluralization', () => {
       it('handles processing keys with multiple plural forms', () => {
-        rawOriginal.person = { one: '1 person', other: '%{count} persons' };
-        let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated, ['zero', 'one', 'other']);
+        rawOriginal.parsedData.person = { one: '1 person', other: '%{count} persons' };
+        let result = TranslationUtils.buildNewData(rawOriginal, translation, rawTranslated, ['zero', 'one', 'other']);
         expect(result.newData.person).toEqual({
           _original: { one: '1 person', other: '%{count} persons' },
           _translated: { zero: null, one: null, other: null },
