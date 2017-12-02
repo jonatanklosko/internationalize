@@ -25,8 +25,9 @@ describe('translationBox directive', () => {
     translationBox = $compile(`
       <translation-box processed-object="processedObject" on-submit="onSubmit()"></translation-box>
     `)($rootScope);
+    angular.element('body').append(translationBox); /* The form should be present in the DOM in order to be submitted. See https://stackoverflow.com/a/42081856 */
 
-    submitTranslation = () => translationBox.find('[type="submit"]').click();
+    submitTranslation = () => translationBox.find('button[type="submit"]').click();
 
     $rootScope.onSubmit = jasmine.createSpy('onSubmit');
     $rootScope.processedObject = { _original: 'hello', _translated: 'salut' };
