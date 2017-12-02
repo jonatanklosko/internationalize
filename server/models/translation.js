@@ -55,6 +55,14 @@ const schema = new mongoose.Schema({
   hashOriginalPhrases: {
     type: Boolean,
     default: true
+  },
+  indentation: {
+    type: Number,
+    default: 2,
+    validate : {
+      validator : Number.isInteger,
+      message   : '{VALUE} is not an integer value.'
+    }
   }
 }, {
   retainKeyOrder: true

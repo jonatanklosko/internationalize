@@ -41,6 +41,7 @@ export default class TranslationUtils {
       .then(() => this.buildNewData(original.parsedData, translation.data, translated.parsedData, this.pluralizationKeys(translation.targetLocale)))
       .then(result => {
         this.parseComments(original.yamlText, result.newData);
+        translation.indentation = this.determineIndentation(original.yamlText);
         return result;
       });
   }
@@ -286,10 +287,11 @@ export default class TranslationUtils {
    * @param {String} locale A locale to be used as the root key.
    * @param {Object} options Can include:
    *  - hashOriginalPhrases - include comments with hashed original phrases above each innermost key
+   *  - indentation - an integer indicating how many spaces to use for indentation in the generated yaml
    * @return {String} A YAML document.
    */
   processedDataToYaml(processedData, locale, options = {}) {
-    let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }));
+    let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }), { indent: options.indentation });
     return options.hashOriginalPhrases ? this.addHashes(rawYaml, processedData) : rawYaml;
   }
 
@@ -419,5 +421,11 @@ export default class TranslationUtils {
     let keys = localesWithpluralizationKeys[locale.toLowerCase()] || ['one', 'other'];
     keys.includes('zero') || keys.unshift('zero'); /* Enforce zero to be included in the keys. */
     return keys;
+  }
+
+  determineIndentation(yamlText) {
+    const allIndentations = yamlText.split('\n').map(line => line.match(/^ */)[0].length);
+    const indentations = _.sortedUniq(allIndentations);
+    return indentations[1] - indentations[0];
   }
 }

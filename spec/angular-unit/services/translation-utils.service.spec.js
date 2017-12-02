@@ -407,4 +407,11 @@ describe('TranslationUtils', () => {
       expect(TranslationUtils.hasPluralizationKeys({ cat: '...', dog: '...' }));
     });
   });
+
+  describe('determineIndentation', () => {
+    it('returns a number indicating how many spaces are used for indentation in the given yaml', () => {
+      const yaml = 'en:\n    hello: hello\n    month: month';
+      expect(TranslationUtils.determineIndentation(yaml)).toEqual(4);
+    });
+  });
 });

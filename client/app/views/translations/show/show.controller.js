@@ -66,7 +66,8 @@ export default class TranslationsShowController {
 
   yamlData() {
     return this.TranslationUtils.processedDataToYaml(this.translation.data, this.translation.targetLocale, {
-      hashOriginalPhrases: this.translation.hashOriginalPhrases
+      hashOriginalPhrases: this.translation.hashOriginalPhrases,
+      indentation: this.translation.indentation
     });
   }
 }
