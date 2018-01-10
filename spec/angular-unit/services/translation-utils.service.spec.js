@@ -199,10 +199,10 @@ describe('TranslationUtils', () => {
 
     describe('pluralization', () => {
       it('handles processing keys with multiple plural forms', () => {
-        rawOriginal.person = { one: '1 person', other: '%{count} persons' };
+        rawOriginal.person = { one: '1 person', other: '%{count} people' };
         let result = TranslationUtils.buildNewData(rawOriginal, processedData, rawTranslated, ['zero', 'one', 'other']);
         expect(result.newData.person).toEqual({
-          _original: { one: '1 person', other: '%{count} persons' },
+          _original: { one: '1 person', other: '%{count} people' },
           _translated: { zero: null, one: null, other: null },
           _pluralization: true
         });
@@ -322,6 +322,42 @@ describe('TranslationUtils', () => {
           she: 'elle'
         }
       });
+    });
+  });
+
+  describe('processedDataToYaml', () => {
+    it('does not include untranslated nodes in the resulting YAML', () => {
+      processedData = {
+        hello: { _original: 'hello', _translated: 'salut' },
+        world: { _original: 'world', _translated: 'monde' },
+        day: { _original: 'day', _translated: null },
+        common: {
+          _context: 'Common phrases.',
+          here: { _original: 'here', _translated: 'ici' },
+          me: { _original: 'me', _translated: 'moi' },
+          you: { _original: 'you', _translated: null },
+          he: { _original: 'he', _translated: null },
+          she: { _original: 'she', _translated: 'elle' }
+        },
+        colors: {
+          white: { _original: 'white', _translated: null },
+          black: { _original: 'black', _translated: null }
+        },
+        person: {
+          _original: { one: '1 person', other: '%{count} people' },
+          _translated: { zero: null, one: null, other: null },
+          _pluralization: true
+        }
+      };
+      expect(TranslationUtils.processedDataToYaml(processedData, 'fr', { hashOriginalPhrases: false })).toEqual(
+`fr:
+  hello: salut
+  world: monde
+  common:
+    here: ici
+    me: moi
+    she: elle
+`);
     });
   });
 

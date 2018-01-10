@@ -291,6 +291,25 @@ export default class TranslationUtils {
    * @return {String} A YAML document.
    */
   processedDataToYaml(processedData, locale, options = {}) {
+    /* Don't include untranslated nodes in the resulting YAML file. */
+    processedData = _.cloneDeep(processedData);
+    let deleteMissingTranslationsRecursive = (data) => {
+      for(let key in data) {
+        if(this.isPrivateKey(key)) continue;
+        if(this.isInnermostProcessedObject(data[key])) {
+          if(!this.isTranslated(data[key])) {
+            delete data[key];
+          }
+        } else {
+          deleteMissingTranslationsRecursive(data[key]);
+          if(_.every(data[key], (processedData, key) => this.isPrivateKey(key))) {
+            /* There are no actual translated nodes. */
+            delete data[key];
+          }
+        }
+      }
+    };
+    deleteMissingTranslationsRecursive(processedData);
     let rawYaml = yaml.safeDump(this.processedDataToRaw({ [locale]: processedData }), { indent: options.indentation });
     return options.hashOriginalPhrases ? this.addHashes(rawYaml, processedData) : rawYaml;
   }

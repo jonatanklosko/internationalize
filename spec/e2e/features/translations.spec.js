@@ -170,6 +170,7 @@ describe('Synchronizing with a remote', () => {
     expect(dialog).not.toHaveContent('name:');
     expect(dialog).toHaveContent('hello: Salut mon ami!');
     expect(dialog).toHaveContent('here: Ici');
-    expect(dialog).toHaveContent('day:');
+    /* The `common.day` key hasn't been translated, so it shouldn't show up. */
+    expect(dialog).not.toHaveContent('day:');
   });
 });
