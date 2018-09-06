@@ -1,9 +1,9 @@
 ## Introduction & Wording
 
-Across the app we use so called `processed data`, which is computed from a `raw data` (parsed from YAML to JSON).
-It has its innermost keys changed from the original form to an object:
+Across the app we use so called `processed data`, which is computed from parsed YAML data.
+It has its innermost keys of the form:
 
-```javascript
+```js
 {
   _original: '<original value>',
   _translated: '<translated value>'
@@ -22,7 +22,7 @@ See the [Example](#example) section for clarification.
 We assume that a key needs many plural forms if and only if it has a sub-key that is one of the pluralization keys (`zero`, `one`, `two`, `few`, `many`, `other`).
 Such a key is considered to be innermost and after processing looks like that:
 
-```javascript
+```js
 {
   _original: { one: 'book', other: '%{count} books' },
   _translated: { one: '...', few: '...', other: '...' },
@@ -39,16 +39,17 @@ Consider the following YAML source file in English:
 ```yaml
 en:
   hello: "Hello!"
+  # context: Common phrases.
   common:
     here: "Here"
+    # context: Some pluralization stuff.
     day:
       one: "1 day"
       other: "%{count} days"
 ```
 
-The parsed `raw data` it looks like this. Nothing fancy.
-
-```javascript
+The corresponding `raw data` looks like this:
+```js
 {
   hello: "Hello!",
   common: {
@@ -61,9 +62,28 @@ The parsed `raw data` it looks like this. Nothing fancy.
 }
 ```
 
-Now assuming that the target language has pluralization rules `one`, `few` and `other` (e.g. Czech), the data after being processed finally looks like this.
 
-```javascript
+The corresponding `parsed data` looks like this:
+```js
+{
+  hello: { _value: "Hello!" },
+  common: {
+    _context: "Common phrases.",
+    here: { _value: "Here" },
+    day: {
+      _context: "Some pluralization stuff.",
+      _value: {
+        one: "1 day",
+        other: "%{count days}"
+      }
+    }
+  }
+}
+```
+
+Now assuming that the target language has pluralization rules `one`, `few` and `other` (e.g. Czech), the data after being processed finally looks like this:
+
+```js
 {
   hello: {
     _original: "Hello!",
@@ -105,3 +125,4 @@ There are numerous possibilities when doing a synchronization with a remote. Her
   - Some keys that have already been translated are removed.
   - Some original values (i.e. some original phrases) are changed.
   - Some translated values (i.e. some translated phrases) are changed. They differ from those stored in the application.
+  - There is no local translation, but remote translation is outdated (some original values changed).

@@ -38,9 +38,8 @@ export default class TranslationUtils {
         }
       })
       .then(data => translated = data)
-      .then(() => this.buildNewData(original.parsedData, translation.data, translated.parsedData, this.pluralizationKeys(translation.targetLocale)))
+      .then(() => this.buildNewData(original.parsedData, translated.parsedData, translation.data, this.pluralizationKeys(translation.targetLocale)))
       .then(result => {
-        this.parseComments(original.yamlText, result.newData);
         translation.indentation = this.determineIndentation(original.yamlText);
         return result;
       });
@@ -59,66 +58,83 @@ export default class TranslationUtils {
       .then(response => {
         let yamlText = response.data;
          /* Extract the root object - a value of the root key (such as `en` or `fr`). */
-        let parsedData = yaml.safeLoad(yamlText)[urlLocale];
+        let parsedData = this.parseYaml(yamlText)[urlLocale];
         return { yamlText, parsedData };
       });
   }
 
   /**
-   * Computes a new processed data from a raw original and translated data as well as a processed one.
+   * Computes a new processed data from a parsed original and translated data as well as a processed one.
    *
-   * In case of any conflicts between an original text in the rawOriginal and processedData
+   * In case of any conflicts between an original text in the parsedOriginal and processedData
    * the result will include an array of conflict objects with the following properties:
    *  - newOriginal - the new version of an original text
    *  - currentProcessed - the current processed object
    *  - resolve - a function taking the final translation, it updates the computed newData accordingly
    *
-   * @param {Object} rawOriginal A raw original data.
+   * @param {Object} parsedOriginal A parsed original data.
+   * @param {Object} parsedTranslated A parsed translated data.
    * @param {Object} processedData An already processed data.
-   * @param {Object} rawTranslated A raw translated data.
    * @param {Array} pluralizationKeys An array of keys used to store multiple plural forms of a key.
    * @return {Object} With these properties:
    *                  - newData - a processed data, the actual reslut of the computation
-   *                  - unusedTranslatedKeysCount - the count of translated keys that are present in the processedData but are not in the rawOriginal
+   *                  - unusedTranslatedKeysCount - the count of translated keys that are present in the processedData but are not in the parsedOriginal
    *                  - conflicts - an array of the conflicts as describe above
    *                  - upToDate - a boolean indicating whether the resulting newData does not differ from the given processedData
    */
-  buildNewData(rawOriginal, processedData, rawTranslated, pluralizationKeys) {
+  buildNewData(parsedOriginal, parsedTranslated, processedData, pluralizationKeys) {
     let newData = {};
     let conflicts = [];
     let upToDate = true;
 
-    let buildNewDataRecursive = (newData, rawOriginal, processedData = {}, rawTranslated = {}) => {
-      for(let key in rawOriginal) {
-        let original = rawOriginal[key];
+    let buildNewDataRecursive = (newData, parsedOriginal, parsedTranslated = {}, processedData = {}) => {
+      for(let key in parsedOriginal) {
+        if(this.isPrivateKey(key)) continue;
+        let original = parsedOriginal[key];
+        let translated = parsedTranslated[key] || {};
         let processed = processedData[key] || {};
-        let translated = rawTranslated[key];
         let newProcessed = newData[key] = {};
 
-        if(_.isPlainObject(original) && !this.hasPluralizationKeys(original)) {
-          buildNewDataRecursive(newProcessed, original, processed, translated || {});
-        } else {
-          newProcessed._original = original;
+        if(original._context) {
+          newProcessed._context = original._context;
+        }
 
-          if(processed._translated && !_.isEqual(original, processed._original)) {
-           /* Scenario: a conflict - the existing original text and the new one differ. */
-           newProcessed._translated = null;
-           processed._pluralization && (newProcessed._pluralization = true);
-           conflicts.push({
-             newOriginal: original,
-             currentProcessed: processed,
-             resolve: translated => newProcessed._translated = translated
-           });
-          } else if(this.hasPluralizationKeys(original)) { /* Is a subject for pluralization. */
-            Object.assign(newProcessed, { _translated: {}, _pluralization: true });
+        if(!this.isInnermostParsedObject(original)) {
+          buildNewDataRecursive(newProcessed, original, translated, processed);
+        } else {
+          newProcessed._original = original._value;
+          if(this.hasPluralizationKeys(original._value)) {
+            newProcessed._pluralization = true;
+          }
+          if(processed._translated && !_.isEqual(original._value, processed._original)) {
+            /* Scenario: a conflict - the existing original text and the new one differ. */
+            newProcessed._translated = null;
+            conflicts.push({
+              newOriginal: original._value,
+              currentProcessed: processed,
+              resolve: translated => newProcessed._translated = translated
+            });
+          } else if(!processed._translated && translated._value && translated._originalHash && !_.isEqual(translated._originalHash, this.computeHash(original._value))) {
+            /* Scenario: a conflict - there is no local translation, but remote translation is outdated. */
+            newProcessed._translated = null;
+            conflicts.push({
+              newOriginal: original._value,
+              currentProcessed: _.assign({
+                _original: undefined,
+                _translated: translated._value,
+              }, _.pick(newProcessed, ['_pluralization'])),
+              resolve: translated => newProcessed._translated = translated
+            });
+          } else if(newProcessed._pluralization) { /* Is a subject for pluralization. */
+            newProcessed._translated = {};
             pluralizationKeys.forEach(pluralizationKey => {
               newProcessed._translated[pluralizationKey] = _.get(processed, ['_translated', pluralizationKey])
-                                                        || _.get(translated, pluralizationKey, null);
+                                                        || _.get(translated._value, pluralizationKey, null);
             });
           } else {
-            if(this.isIgnoredValue(original)) {
+            if(this.isIgnoredValue(original._value)) {
               /* Scenario: a key with the original text classified as an ignored one. */
-              newProcessed._translated = original; // Don't bother with translating ignored values (e.g. an empty string).
+              newProcessed._translated = original._value; // Don't bother with translating ignored values (e.g. an empty string).
             } else {
               /* Scenario: a translation for an untranslated key has been added.*/
               /* Scenario: conflict - the existing translated text and the new one differ.
@@ -126,7 +142,7 @@ export default class TranslationUtils {
               /* Scenario: a new key as well as its translation has been added. */
               /* Scenario: nothing has changed - keep the existing translation. */
               /* Scenario: a new key to be translated has been added. */
-              newProcessed._translated = processed._translated || translated || null;
+              newProcessed._translated = processed._translated || translated._value || null;
             }
           }
           upToDate = upToDate && _.isEqual(newProcessed._original, processed._original)
@@ -134,12 +150,13 @@ export default class TranslationUtils {
         }
       }
     };
-    buildNewDataRecursive(newData, rawOriginal, processedData, rawTranslated);
+    buildNewDataRecursive(newData, parsedOriginal, parsedTranslated, processedData);
 
     /* Scenario: if the `unusedTranslatedKeysCount` is not equal 0, then some translated keys are removed. */
     let { unusedTranslatedKeysCount, unusedKeysCount } = this.unusedKeysCount(processedData, newData);
 
     upToDate = upToDate && unusedKeysCount === 0;
+    upToDate = upToDate && conflicts.length === 0;
 
     return { newData, unusedTranslatedKeysCount, conflicts, upToDate };
   }
@@ -160,6 +177,7 @@ export default class TranslationUtils {
     let unusedKeysCount = 0;
     let unusedTranslatedKeysCountRecursive = (data, latestData) => {
       for(let key in data) {
+        if(this.isPrivateKey(key)) continue;
         if(this.isInnermostProcessedObject(data)) continue;
 
         if(latestData.hasOwnProperty(key)) {
@@ -182,13 +200,37 @@ export default class TranslationUtils {
   }
 
   /**
+   * Parses the given YAML text. Returns its object representation
+   * with additional information extracted from comment.
+   *
+   * @param {String} text A YAML document.
+   * @return {Object} The parsed data.
+   */
+  parseYaml(text) {
+    let rawData = yaml.safeLoad(text);
+    let transformValues = rawData => {
+      let data = {};
+      for(let key in rawData) {
+        let child = rawData[key];
+        data[key] = _.isPlainObject(child) && !this.hasPluralizationKeys(child)
+                     ? transformValues(child)
+                     : { _value: child };
+      }
+      return data;
+    };
+    let transformedData = transformValues(rawData);
+    this.parseComments(text, transformedData);
+    return transformedData;
+  }
+
+  /**
    * Analyzes a YAML document and extracts informations included in commented lines.
    *
    * Comments starting with `context:` above a key are saved in the _context property
    * in the corresponding object.
    *
    * @param {String} text A YAML document.
-   * @param {Object} data A processed data corresponding to the YAML document.
+   * @param {Object} data A parsed data corresponding to the YAML document.
    */
   parseComments(text, data) {
     let yamlKey = (key) => `['"]?${key}['"]?:`;
@@ -196,7 +238,7 @@ export default class TranslationUtils {
     let commentLinesGroup = '((?:\\s*#.*\\n)*)';
     let parseCommentsRecursive = (text, data, keysChainRegexPart) => {
       for(let key in data) {
-        if(!this.isInnermostProcessedObject(data[key])) {
+        if(!this.isInnermostParsedObject(data[key])) {
           text = parseCommentsRecursive(text, data[key], `${keysChainRegexPart}${someChars}${yamlKey(key)}`);
         }
         let regex = new RegExp(`(${keysChainRegexPart}${someChars})${commentLinesGroup}\\s*${yamlKey(key)}`);
@@ -206,9 +248,13 @@ export default class TranslationUtils {
         text = text.replace(regex, (match, beginning, comments) => {
           let commentLines = comments.split('#').map(line => line.trim());
           /* Deal with the extracted comment lines. */
-          let context = this.computeContextualComment(commentLines);
+          let context = this.contextFromComments(commentLines);
           if(context) {
             data[key]._context = context;
+          }
+          let originalHash = this.originalHashFromComments(commentLines);
+          if(originalHash) {
+            data[key]._originalHash = originalHash;
           }
           return beginning;
         });
@@ -218,11 +264,16 @@ export default class TranslationUtils {
     parseCommentsRecursive(text, data, '');
   }
 
-  computeContextualComment(commentLines) {
+  contextFromComments(commentLines) {
     return commentLines
       .filter(line => line.startsWith('context: '))
       .map(line => line.replace('context: ', ''))
       .join(' ');
+  }
+
+  originalHashFromComments(commentLines) {
+    const line = commentLines.find(line => line.startsWith('original_hash: '));
+    return line && line.replace('original_hash: ', '');
   }
 
   /**
@@ -249,8 +300,7 @@ export default class TranslationUtils {
           let noCommentBeforeKey = `(?!${someChars}${nextLine}#[^\\n]*${nextLine}${yamlKey(key)})`;
           let regexp = new RegExp(`(${keysChainRegexpPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
           text = text.replace(regexp, (match, beginning, indentation, yamlKey) => {
-            let string = data[key]._pluralization ? JSON.stringify(data[key]._original) : data[key]._original;
-            let hash = sha1(string).slice(0, 7);
+            let hash = this.computeHash(data[key]._original);
             return `${beginning}${indentation}#original_hash: ${hash}\n${indentation}${yamlKey}`;
           });
         }
@@ -409,8 +459,24 @@ export default class TranslationUtils {
     return null;
   }
 
+  /**
+   * Returns the first 7 characters of SHA1-hashed value.
+   * If an object is given, uses its JSON representation.
+   *
+   * @param {String|Object} value A value to compute hash for.
+   * @return {String}
+   */
+  computeHash(value) {
+    let string = _.isPlainObject(value) ? JSON.stringify(value) : value;
+    return sha1(string).slice(0, 7);
+  }
+
   isInnermostProcessedObject(object) {
     return object.hasOwnProperty('_translated');
+  }
+
+  isInnermostParsedObject(object) {
+    return object.hasOwnProperty('_value');
   }
 
   isIgnoredValue(string) {
