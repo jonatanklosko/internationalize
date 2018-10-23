@@ -1,5 +1,6 @@
 import template from './translation-box.template.html';
 import * as _ from 'lodash';
+import * as jsdiff from 'diff';
 
 /**
  * translation-box
@@ -8,7 +9,7 @@ import * as _ from 'lodash';
  * Attributes:
  *  - processedObject - a processed translation object having _original and _translated keys
  *  - onSubmit - a callback called when the form is submitted and valid
- *  - originalTitle - a text to display before the original phrase
+ *  - oldProcessedObject - a processed translation object with _original key, to show a diff
  * Note: the given processedObject is modified when the form is submitted and valid.
  */
 export default () => {
@@ -18,24 +19,33 @@ export default () => {
     scope: {
       processedObject: '=',
       onSubmit: '&',
-      originalTitle: '@'
+      oldProcessedObject: '='
     },
     transclude: true,
     controllerAs: 'vm',
     controller: class TranslationBoxController {
-      constructor($scope, TranslationUtils) {
+      constructor($scope, $sce, TranslationUtils) {
         'ngInject';
 
         this.TranslationUtils = TranslationUtils;
 
-        $scope.$watch('processedObject', processedObject => {
+        $scope.$watchGroup(['processedObject', 'oldProcessedObject'], ([processedObject, oldProcessedObject]) => {
           this.processedObject = processedObject;
           this.pluralization = processedObject._pluralization;
           this.original = processedObject._original;
           this.translated = processedObject._translated;
+          if (oldProcessedObject && !oldProcessedObject._pluralization) {
+            let diff = jsdiff.diffWordsWithSpace(oldProcessedObject._original, processedObject._original);
+            let diffStrings = diff.map(part => {
+              let span = document.createElement('span');
+              span.style.color = part.added ? 'green' : (part.removed ? 'red' : 'initial');
+              span.innerText = part.value; // This will escape HTML in the original text.
+              return span.outerHTML;
+            });
+            this.diffHtml = $sce.trustAsHtml(diffStrings.join(''));
+          }
         });
         this.onSubmit = $scope.onSubmit;
-        this.originalTitle = $scope.originalTitle || 'Original';
       }
 
       submit() {

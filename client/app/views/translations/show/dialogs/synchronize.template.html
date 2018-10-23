@@ -35,18 +35,7 @@
     <div class="conflicts-box" ng-show="vm.isConflict">
       <h3 class="md-headline">Resolve conflicts ({{ vm.resolvedConflictsCount + 1 }} of {{ vm.conflicts.length }})</h3>
       <p>Some original texts have been changed, please ensure that they are still translated correctly.</p>
-      <div ng-if="vm.currentConflict.currentProcessed._original && vm.currentConflict.currentProcessed._pluralization">
-        <md-list>
-          <span class="original-title">The version you've translated</span>
-          <md-list-item ng-repeat="(key, phrase) in vm.currentConflict.currentProcessed._original">
-            <span>{{ key }} <md-icon>trending_flat</md-icon> {{ phrase }}</span>
-          </md-list-item>
-        </md-list>
-      </div>
-      <div ng-if="vm.currentConflict.currentProcessed._original && !vm.currentConflict.currentProcessed._pluralization">
-        <span class="original-title">The version you've translated:</span> {{ vm.currentConflict.currentProcessed._original }}
-      </div>
-      <translation-box processed-object="vm.currentKey" on-submit="vm.resolveConflict()" original-title="The new version"></translation-box>
+      <translation-box processed-object="vm.currentKey" on-submit="vm.resolveConflict()" old-processed-object="vm.currentConflict.currentProcessed"></translation-box>
     </div>
   </md-dialog-content>
   <md-dialog-actions ng-hide="vm.upToDate || vm.isConflict">
