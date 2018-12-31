@@ -106,7 +106,7 @@ export default class TranslationUtils {
           if(this.hasPluralizationKeys(original._value)) {
             newProcessed._pluralization = true;
           }
-          if(processed._translated && !_.isEqual(original._value, processed._original)) {
+          if(processed._translated && !_.isEqual(original._value, processed._original) && !this.isIgnoredValue(original._value)) {
             /* Scenario: a conflict - the existing original text and the new one differ. */
             newProcessed._translated = null;
             conflicts.push({

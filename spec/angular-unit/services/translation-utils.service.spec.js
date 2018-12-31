@@ -184,6 +184,15 @@ describe('TranslationUtils', () => {
         expect(result.conflicts).toEqual([]);
       });
 
+      it('when the new original text is an ignored value, copies it', () => {
+        parsedOriginal.he = { _value: '' };
+        processedData.he = { _original: 'he', _translated: 'il' };
+        let result = TranslationUtils.buildNewData(parsedOriginal, parsedTranslated, processedData);
+        expect(result.upToDate).toEqual(false);
+        expect(result.newData.he).toEqual({ _original: '', _translated: '' });
+        expect(result.conflicts).toEqual([]);
+      });
+
       it('when the key is translated, adds conflicts', () => {
         parsedOriginal.he = { _value: 'He' };
         processedData.he = { _original: 'he', _translated: 'il' };
