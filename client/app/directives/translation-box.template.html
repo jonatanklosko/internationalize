@@ -9,7 +9,7 @@
     <span>{{ vm.original }}</span>
     <md-input-container class="md-block">
       <label for="translated">Translation</label>
-      <textarea name="translated" ng-model="vm.translated" ng-keypress="vm.handleKeyPress()" />
+      <textarea name="translated" ng-model="vm.translated" ng-keypress="vm.handleKeyPress($event)" />
     </md-input-container>
   </div>
   <!-- Fields for key pluralization. -->

@@ -66,7 +66,7 @@ export default () => {
         }
       }
 
-      handleKeyPress() {
+      handleKeyPress(event) {
         if (event.which === 13) {
           event.preventDefault();
           this.submit();
