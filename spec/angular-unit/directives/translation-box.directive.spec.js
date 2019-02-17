@@ -65,7 +65,7 @@ describe('translationBox directive', () => {
     });
 
     it('modifies the given object', () => {
-      translationBox.find('input[name="translated"]').val('salut!').trigger('input');
+      translationBox.find('textarea[name="translated"]').val('salut!').trigger('input');
       submitTranslation();
       expect($rootScope.processedObject._translated).toEqual('salut!');
     });
