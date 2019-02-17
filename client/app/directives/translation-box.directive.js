@@ -65,6 +65,13 @@ export default () => {
           this.onSubmit();
         }
       }
+
+      handleKeyPress() {
+        if (event.which === 13) {
+          event.preventDefault();
+          this.submit();
+        }
+      }
     }
   };
 };
