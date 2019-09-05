@@ -1,0 +1,10 @@
+<md-list class="reference-list" ng-if="vm.referenceValues.length > 0">
+  <span>References</span>
+  <md-list-item ng-repeat="referenceValue in vm.referenceValues">
+    <span>{{ referenceValue._original }}</span>
+    <md-icon>
+      arrow_right
+    </md-icon>
+    <span flex>{{ referenceValue._translated }}</span>
+  </md-list-item>
+</md-list>

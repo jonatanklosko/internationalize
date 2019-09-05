@@ -14,6 +14,7 @@
     </span>
   </div>
   <translation-context chain="vm.key.chain"></translation-context>
+  <translation-references chain="vm.key.chain" data="vm.translation.data"></translation-references>
   <translation-box processed-object="vm.key.value" on-submit="vm.done()">
     <md-button class="md-raised" ng-click="vm.skip()">Skip for now</md-button>
     <md-button class="md-raised" ng-click="vm.useOriginal()" ng-if="!vm.key.value._pluralization">Use original version</md-button>
