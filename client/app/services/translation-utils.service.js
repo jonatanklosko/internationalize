@@ -98,6 +98,9 @@ export default class TranslationUtils {
         if(original._context) {
           newProcessed._context = original._context;
         }
+        if(original._references) {
+          newProcessed._references = original._references;
+        }
 
         if(!this.isInnermostParsedObject(original)) {
           buildNewDataRecursive(newProcessed, original, translated, processed);
@@ -226,8 +229,12 @@ export default class TranslationUtils {
   /**
    * Analyzes a YAML document and extracts informations included in commented lines.
    *
-   * Comments starting with `context:` above a key are saved in the _context property
-   * in the corresponding object.
+   * Comments starting with `context:` above a key are saved
+   * in the _context property in the corresponding object.
+   * Comments starting with `original_hash:` above a key are saved
+   * in the _originalHash property corresponding object.
+   * Comments starting with `reference:` above a key are saved
+   * in the _references property corresponding object (an array that may contain multiple references).
    *
    * @param {String} text A YAML document.
    * @param {Object} data A parsed data corresponding to the YAML document.
@@ -256,6 +263,10 @@ export default class TranslationUtils {
           if(originalHash) {
             data[key]._originalHash = originalHash;
           }
+          let references = this.referencesFromComments(commentLines);
+          if(references.length > 0) {
+            data[key]._references = references;
+          }
           return beginning;
         });
       }
@@ -274,6 +285,12 @@ export default class TranslationUtils {
   originalHashFromComments(commentLines) {
     const line = commentLines.find(line => line.startsWith('original_hash: '));
     return line && line.replace('original_hash: ', '');
+  }
+
+  referencesFromComments(commentLines) {
+    return commentLines
+      .filter(line => line.startsWith('reference: '))
+      .map(line => line.replace('reference: ', '').trim());
   }
 
   /**
@@ -405,7 +422,7 @@ export default class TranslationUtils {
    * A generator function that iterates over the given data
    * and yields only those keys that haven't been translated yet.
    *
-   * Yields objects with two properties:
+   * Yields objects with three properties:
    *  - path (dot separated key names hierarchy, e.g. en.common.day)
    *  - value (an actual translation of the key)
    *  - chain (an array with the hierarchy, consists of objects of the form { key, data })
@@ -484,7 +501,7 @@ export default class TranslationUtils {
   }
 
   isPrivateKey(key) {
-    return ['_context'].includes(key);
+    return ['_context', '_references'].includes(key);
   }
 
   isTranslated(processedObject) {

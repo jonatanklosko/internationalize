@@ -295,6 +295,30 @@ describe('TranslationUtils', () => {
       expect(data.common.colors.black._context).toEqual('A comment about the black color.');
       expect(data.colors._context).toEqual('Just a name for a group of colors.');
     });
+
+    it('handles reference comments', () => {
+      let yaml = `
+        en:
+          common:
+            colors:
+              white: white
+              black: black
+          #reference: common.colors.white
+          #reference: common.colors.black
+          colors: colors like white and black
+      `;
+      let data = {
+        common: {
+          colors: {
+            white: { _value: 'white' },
+            black: { _value: 'black' }
+          }
+        },
+        colors: { _value: 'colors' }
+      };
+      TranslationUtils.parseComments(yaml, data);
+      expect(data.colors._references).toEqual(['common.colors.white', 'common.colors.black']);
+    });
   });
 
   describe('addHashes', () => {
