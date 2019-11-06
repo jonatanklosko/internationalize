@@ -54,7 +54,7 @@
     "js-yaml": "^3.6.1",
     "lodash": "^4.17.10",
     "md-collection-pagination": "^1.0.0",
-    "mongoose": "^4.7.0",
+    "mongoose": "^5.7.5",
     "mongoose-unique-validator": "^1.0.2",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
