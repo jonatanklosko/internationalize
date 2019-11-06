@@ -303,28 +303,31 @@ export default class TranslationUtils {
   addHashes(text, data) {
     let yamlKey = (key) => `['"]?${key}['"]?:`;
     let someChars = '[\\s\\S]*?';
-    let nextLine = '\\n\\s*';
-    let addHashesRecursive = (text, data, keysChainRegexpPart) => {
+    let textWithoutEmptyLines = text.split('\n').filter(l => l).join('\n');
+    let initialIndentation = textWithoutEmptyLines.match(/^ */)[0].length;
+    let indentation = this.determineIndentation(textWithoutEmptyLines);
+    let addHashesRecursive = (text, data, keysChainRegexpPart, level) => {
+      let keyIndentation = ' '.repeat(initialIndentation + indentation * level);
       for(let key in data) {
         if(this.isPrivateKey(key)) continue;
         if(!this.isInnermostProcessedObject(data[key])) {
           let newKeysChainRegexpPart = keysChainRegexpPart;
-          if(newKeysChainRegexpPart) newKeysChainRegexpPart += `${someChars}${nextLine}`;
+          if(newKeysChainRegexpPart) newKeysChainRegexpPart += `${someChars}\\n${keyIndentation}`;
           newKeysChainRegexpPart += yamlKey(key);
-          text = addHashesRecursive(text, data[key], newKeysChainRegexpPart);
+          text = addHashesRecursive(text, data[key], newKeysChainRegexpPart, level + 1);
         } else {
           /* Make sure to match a key without a comment above. */
-          let noCommentBeforeKey = `(?!${someChars}${nextLine}#[^\\n]*${nextLine}${yamlKey(key)})`;
-          let regexp = new RegExp(`(${keysChainRegexpPart}${noCommentBeforeKey}${someChars}\\n)(\\s*)(${yamlKey(key)})`);
-          text = text.replace(regexp, (match, beginning, indentation, yamlKey) => {
+          let noCommentBeforeKey = `(?!${someChars}\\n${keyIndentation}#[^\\n]*\\n${keyIndentation}${yamlKey(key)})`;
+          let regexp = new RegExp(`(${keysChainRegexpPart}${noCommentBeforeKey}${someChars}\\n)${keyIndentation}(${yamlKey(key)})`);
+          text = text.replace(regexp, (match, beginning, yamlKey) => {
             let hash = this.computeHash(data[key]._original);
-            return `${beginning}${indentation}#original_hash: ${hash}\n${indentation}${yamlKey}`;
+            return `${beginning}${keyIndentation}#original_hash: ${hash}\n${keyIndentation}${yamlKey}`;
           });
         }
       }
       return text;
     };
-    return addHashesRecursive(text, data, '');
+    return addHashesRecursive(text, data, '', 1);
   }
 
   /**

@@ -330,6 +330,7 @@ describe('TranslationUtils', () => {
             colors:
               white: white
               black: black
+            white: white
           colors:
             white: The color of snow.
       `;
@@ -339,7 +340,8 @@ describe('TranslationUtils', () => {
           colors: {
             white: { _original: 'white', _translated: null },
             black: { _original: 'black', _translated: null }
-          }
+          },
+          white: { _original: 'white', _translated: null },
         },
         colors: {
           white: { _original: 'The color of snow.', _translated: null },
@@ -356,6 +358,8 @@ describe('TranslationUtils', () => {
               white: white
               #original_hash: 466bc8c
               black: black
+            #original_hash: 528cef8
+            white: white
           colors:
             #original_hash: d5a2cd8
             white: The color of snow.
