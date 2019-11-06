@@ -29,7 +29,7 @@
     "test:angular-unit:watch": "karma start spec/angular-unit/karma.conf.js --auto-watch",
     "test:e2e": "protractor spec/e2e/protractor.conf.js",
     "pre:test:e2e": "SERVER_URL=http://localhost:3001 webpack-dev-server --host localhost --port 3002",
-    "webdriver:update": "webdriver-manager update"
+    "webdriver:update": "webdriver-manager update --versions.chrome=72.0.3626.69"
   },
   "engines": {
     "node": "8.9.1"
