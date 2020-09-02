@@ -48,7 +48,7 @@ let server;
 module.exports = app;
 
 module.exports.run = (callback) => {
-  mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true }).then(() => {
+  mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
     server = app.listen(process.env.PORT, callback);
   });
 };
