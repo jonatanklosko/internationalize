@@ -18,10 +18,15 @@ export default class TranslationsSearchController {
     this.matchingKeys = this.allKeys.filter(({ value, path }) => {
       if(path.includes(this.searchValue)) return true;
       return _.some(_.compact([value._original, value._translated]), object => {
-        return value._pluralization ? _.some(object, phrase => phrase && phrase.includes(this.searchValue)) /* Check all pluralization forms. */
-                                      : object.includes(this.searchValue);
+        return value._pluralization
+          ? _.some(object, phrase => phrase && this.caseInsensitiveIncludes(phrase, this.searchValue)) /* Check all pluralization forms. */
+          : this.caseInsensitiveIncludes(object, this.searchValue);
       });
     });
+  }
+
+  caseInsensitiveIncludes(left, right) {
+    return left.toLowerCase().includes(right.toLowerCase());
   }
 
   select(key) {
