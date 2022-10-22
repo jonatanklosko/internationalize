@@ -21,12 +21,6 @@ let app = express();
 
 /* Register the middleware used. */
 
-/* Force the use of HTTPS in production. */
-if(process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    req.headers['x-forwarded-proto'] === 'https' ? next() : res.redirect(`https://${req.headers.host}${req.originalUrl}`);
-  });
-}
 const staticFilesPath = path.resolve(__dirname, `../client/build`);
 app.use(express.static(staticFilesPath));
 app.use(bodyParser.json({ limit: '1mb' }));
