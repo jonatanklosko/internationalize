@@ -46,6 +46,7 @@
     "body-parser": "^1.15.2",
     "connect-mongodb-session": "^2.4.1",
     "diff": "^3.5.0",
+    "dotenv": "^16.0.3",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "http-status": "^0.2.3",
