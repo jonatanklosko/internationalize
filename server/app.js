@@ -1,13 +1,13 @@
 /* Load environment variables. */
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 require(`./config/environments/${process.env.NODE_ENV}`);
-
-require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 /* Load dependencies. */
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
