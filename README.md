@@ -1,6 +1,6 @@
 # Internationalize [![Build Status](https://travis-ci.org/jonatanklosko/internationalize.svg?branch=master)](https://travis-ci.org/jonatanklosko/internationalize)
 Translating Rails apps made easy.
-Check out [the website](http://internationalize.herokuapp.com/) for details.
+Check out [the website](https://internationalize.jonatanklosko.com/) for details.
 
 ## Development
 
