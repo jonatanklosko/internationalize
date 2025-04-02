@@ -504,7 +504,7 @@ export default class TranslationUtils {
   }
 
   isPrivateKey(key) {
-    return ['_context', '_references'].includes(key);
+    return ['_context', '_references', '_originalHash'].includes(key);
   }
 
   isTranslated(processedObject) {
