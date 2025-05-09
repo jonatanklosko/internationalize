@@ -313,7 +313,7 @@ export default class TranslationUtils {
         if(!this.isInnermostProcessedObject(data[key])) {
           let newKeysChainRegexpPart = keysChainRegexpPart;
           if(newKeysChainRegexpPart) newKeysChainRegexpPart += `${someChars}\\n${keyIndentation}`;
-          newKeysChainRegexpPart += yamlKey(key);
+          newKeysChainRegexpPart += yamlKey(key) + "(?=\\n)";
           text = addHashesRecursive(text, data[key], newKeysChainRegexpPart, level + 1);
         } else {
           /* Make sure to match a key without a comment above. */
