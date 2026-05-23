@@ -34,7 +34,7 @@ export default () => {
           this.pluralization = processedObject._pluralization;
           this.original = processedObject._original;
           this.translated = processedObject._translated;
-          if (oldProcessedObject && !oldProcessedObject._pluralization) {
+          if (oldProcessedObject && !oldProcessedObject._pluralization && !processedObject._pluralization) {
             let diff = jsdiff.diffWordsWithSpace(oldProcessedObject._original, processedObject._original);
             let diffStrings = diff.map(part => {
               let span = document.createElement('span');
