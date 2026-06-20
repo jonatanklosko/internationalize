@@ -226,6 +226,25 @@ describe('TranslationUtils', () => {
         conflict.resolve('La version correcte');
         expect(result.newData.he).toEqual({ _original: 'He', _translated: 'La version correcte' });
       });
+
+      it('when a translated key changes from string to pluralized, sets _pluralization and initializes _translated', () => {
+        parsedOriginal.he = { _value: { one: '1 person', other: '%{count} people' } };
+        processedData.he = { _original: 'he', _translated: 'il' };
+        let result = TranslationUtils.buildNewData(parsedOriginal, parsedTranslated, processedData, ['zero', 'one', 'other']);
+        expect(result.conflicts.length).toEqual(1);
+
+        let conflict = result.conflicts[0];
+        expect(conflict.newOriginal).toEqual({ one: '1 person', other: '%{count} people' });
+        expect(conflict.currentProcessed._pluralization).toEqual(true);
+        expect(conflict.currentProcessed._translated).toEqual({ zero: null, one: null, other: null });
+
+        conflict.resolve({ zero: null, one: '1 personne', other: '%{count} personnes' });
+        expect(result.newData.he).toEqual({
+          _original: { one: '1 person', other: '%{count} people' },
+          _translated: { zero: null, one: '1 personne', other: '%{count} personnes' },
+          _pluralization: true
+        });
+      });
     });
 
     describe('pluralization', () => {

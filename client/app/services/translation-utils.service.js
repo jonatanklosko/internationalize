@@ -112,9 +112,25 @@ export default class TranslationUtils {
           if(processed._translated && !_.isEqual(original._value, processed._original) && !this.isIgnoredValue(original._value)) {
             /* Scenario: a conflict - the existing original text and the new one differ. */
             newProcessed._translated = null;
+            const pluralizationChanged = !!newProcessed._pluralization !== !!processed._pluralization;
+            let initialTranslated = processed._translated;
+            if(pluralizationChanged) {
+              if(newProcessed._pluralization) {
+                initialTranslated = {};
+                pluralizationKeys.forEach(key => { initialTranslated[key] = null; });
+              } else {
+                initialTranslated = null;
+              }
+            }
+            let conflictCurrentProcessed = _.assign({}, processed, { _translated: initialTranslated });
+            if(newProcessed._pluralization) {
+              conflictCurrentProcessed._pluralization = true;
+            } else {
+              delete conflictCurrentProcessed._pluralization;
+            }
             conflicts.push({
               newOriginal: original._value,
-              currentProcessed: processed,
+              currentProcessed: conflictCurrentProcessed,
               resolve: translated => newProcessed._translated = translated
             });
           } else if(!processed._translated && translated._value && translated._originalHash && !_.isEqual(translated._originalHash, this.computeHash(original._value))) {
@@ -463,7 +479,7 @@ export default class TranslationUtils {
       return 'Translation must not be empty.';
     }
     if(variables) {
-      let variables = phrase => phrase.match(/%{.+?}/g) || [];
+      let variables = phrase => (typeof phrase === 'string' ? phrase.match(/%{.+?}/g) : null) || [];
       let originalVariables = variables(original);
       let translatedVariables = variables(translated);
       let unusedVariables = _.difference(originalVariables, translatedVariables);
